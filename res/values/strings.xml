@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">digPlay</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello worlds!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main_menu">Main Menu</string>
 
