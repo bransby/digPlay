@@ -31,4 +31,5 @@ public class MainMenu extends Activity implements OnClickListener {
 		Intent intent = new Intent(arg0.getContext(),MainMenu.class);
 		startActivity(intent);
 	}
+	//test
 }
