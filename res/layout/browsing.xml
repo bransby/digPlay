@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent" >
+
+    <Gallery
+        android:id="@+id/gallery1"
+        android:layout_width="fill_parent"
+        android:layout_height="400dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="200dp"
+        android:layout_marginRight="200dp"
+        android:layout_marginTop="100dp" />
+
+    <TextView
+        android:id="@+id/browsing_play_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/gallery1"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:text="PLAY NAME"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="40dp" />
+
+    <Button
+        android:id="@+id/browsing_edit_play"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:layout_alignLeft="@+id/gallery1"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="85dp"
+        android:text="EDIT PLAY"
+        android:textSize="20dp" />
+
+    <Button
+        android:id="@+id/browsing_add_to_gameplan"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
+        android:layout_alignLeft="@+id/browsing_edit_play"
+        android:layout_alignParentBottom="true"
+        android:text="ADD TO GAMEPLAN"
+        android:textSize="20dp" />
+
+</RelativeLayout>
