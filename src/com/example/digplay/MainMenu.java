@@ -32,8 +32,4 @@ public class MainMenu extends Activity implements OnClickListener {
 		startActivity(intent);
 	}
 	
-	public void test()
-	{
-		
-	}
 }
