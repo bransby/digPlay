@@ -26,7 +26,7 @@
         android:textSize="40dp" />
 
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/playview_sort_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/playviewlist"
@@ -44,5 +44,13 @@
         android:layout_toLeftOf="@+id/spinner1"
         android:text="SORT BY"
         android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Spinner
+        android:id="@+id/playview_gameplan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="32dp" />
 
 </RelativeLayout>

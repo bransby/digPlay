@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Field {
 	private ArrayList<Player> _playersOnField;
+	private boolean _run;
 	
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
@@ -28,5 +29,11 @@ public class Field {
 	}
 	public void removeAllPlayers(){
 		_playersOnField.clear();
+	}
+	public boolean isRun() {
+		return _run;
+	}
+	public void setRun(boolean _run) {
+		this._run = _run;
 	}
 }
