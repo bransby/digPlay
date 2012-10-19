@@ -5,7 +5,14 @@ import java.util.ArrayList;
 public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
+	private String _playName;
 	
+	public String getPlayName(){
+		return _playName;
+	}
+	public void setPlayName(String name){
+		_playName = name;
+	}
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
 		_playersOnField.add(player);
