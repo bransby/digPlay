@@ -6,6 +6,10 @@ public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	
+	public Field() {
+		_playersOnField = new ArrayList<Player>();
+	}
+	
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
 		_playersOnField.add(player);

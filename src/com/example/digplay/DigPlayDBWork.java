@@ -76,8 +76,10 @@ public class DigPlayDBWork {
 		DigPlayDBData data = new DigPlayDBData();
 		data.setId(cursor.getLong(0));
 		data.setPlayName(cursor.getString(1));
+		/*
 		data.setField();
 		data.setGamePlans();
+		*/
 		return data;
 		
 	}
