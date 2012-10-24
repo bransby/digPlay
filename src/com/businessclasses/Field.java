@@ -7,12 +7,22 @@ public class Field {
 	private boolean _run;
 	private String _playName;
 	
+
 	public String getPlayName(){
 		return _playName;
 	}
 	public void setPlayName(String name){
 		_playName = name;
 	}
+
+	public Field() {
+		_playersOnField = new ArrayList<Player>();
+	}
+	
+	public Field() {
+		_playersOnField = new ArrayList<Player>();
+	}
+	
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
 		_playersOnField.add(player);
