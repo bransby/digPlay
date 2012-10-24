@@ -5,7 +5,16 @@ import java.util.ArrayList;
 public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
-	
+	private String _playName;
+
+
+	public String getPlayName(){
+		return _playName;
+	}
+	public void setPlayName(String name){
+		_playName = name;
+	}
+
 	public Field() {
 		_playersOnField = new ArrayList<Player>();
 	}
