@@ -19,6 +19,11 @@ public class Field {
 		_playersOnField = new ArrayList<Player>();
 	}
 	
+	public ArrayList<Player> getAllPlayers()
+	{
+		return _playersOnField;
+	}
+	
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
 		_playersOnField.add(player);

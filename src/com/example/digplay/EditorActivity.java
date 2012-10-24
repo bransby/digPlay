@@ -2,6 +2,7 @@ package com.example.digplay;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Player;
 import com.businessclasses.Position;
 
 import android.annotation.SuppressLint;
@@ -23,24 +24,23 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 public class EditorActivity extends Activity {
-
-	private Field field;
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(new DrawView(this));
-	    field = new Field();
 	}
 	
 	public class DrawView extends View implements OnTouchListener {
 
+		Field field;
 		Bitmap fieldBitmap;
 		private int _xDelta;
 		private int _yDelta;
 		Canvas c;
 		Paint p;
+		Location playerLoc;
 		float density = getResources().getDisplayMetrics().density;
 		
 	    public DrawView(Context context) {
@@ -51,6 +51,8 @@ public class EditorActivity extends Activity {
 	        		*/
 	        fieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fb, null);
 	        p = new Paint();
+	        field = new Field();
+	        addPlayer();
 	    }
 
 		@Override 
@@ -66,6 +68,11 @@ public class EditorActivity extends Activity {
 	        this.setOnTouchListener(this);
 	    }
 		
+		private void addPlayer() {
+			playerLoc = new Location((int) (70*density), (int) (70*density));
+			field.addPlayer(playerLoc, Position.QUARTERBACK);
+		}
+		
 		public boolean onTouch(View v, MotionEvent event) {
 		    
 			final int x = (int) event.getRawX();
@@ -75,9 +82,14 @@ public class EditorActivity extends Activity {
 	        	case MotionEvent.ACTION_DOWN:
 	            	_xDelta = (int) (x*density);
 	            	_yDelta = (int) (y*density);
+	            	double distance = Math.sqrt(((70-_xDelta)*(70-_xDelta)) + ((120-_yDelta)*(120-_yDelta)));
 	            	System.out.println(_xDelta);
 	            	System.out.println(_yDelta);
-	            	
+	            	System.out.println(distance);
+	            	if (distance < 15)
+	            	{
+	            		System.out.println("HI");
+	            	}
 	            	break;
 	        	case MotionEvent.ACTION_UP:
 	            	break;
