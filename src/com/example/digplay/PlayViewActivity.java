@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.PlayAdapter;
+import com.businessclasses.Sort;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -23,6 +24,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private Spinner playSort;
 	private Spinner gamePlans;
 	private Button refineSearch;
+	private PlayAdapter _adapter; 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,21 +52,26 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		ArrayList<Field> plays = new ArrayList<Field>();
 		plays = getDummyPlays();
 		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,plays);
-		playList.setAdapter(adapter);
+		_adapter = adapter;
+		playList.setAdapter(_adapter);
 		playList.setOnItemClickListener(this);
 	}
 	private ArrayList<Field> getDummyPlays() {
 		ArrayList<Field> plays = new ArrayList<Field>();
 		for(int i = 0;i < 15;i++){
 			Field newPlay = new Field();
+			newPlay.setPlayName("Play Number " + i);
+			if(i % 2 == 0){
+				newPlay.setPlayType("RUN");
+			}else newPlay.setPlayType("PASS");
 			plays.add(newPlay);
 		}
 		return plays;
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		String playName = (String) adapter.getItemAtPosition(position);
+		Field play = (Field) adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),BrowsingActivity.class);
-		intent.putExtra("playName", playName);
+		intent.putExtra("playName", play.getPlayName());
 		startActivity(intent);
 	}
 	private void setButtons(){
@@ -72,8 +79,11 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		refineSearch.setOnClickListener(this);
 	}
 	public void onClick(View v) {
-		
-		
+		Sort s = new Sort();
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,getDummyPlays());
+		String playType = (String)playSort.getSelectedItem();
+		adapter = s.sortPlaysByRunPass(adapter, playType);
+		playList.setAdapter(adapter);
 	}
 	
 

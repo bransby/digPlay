@@ -27,7 +27,7 @@
 
     <Spinner
         android:id="@+id/playview_sort_by"
-        android:layout_width="wrap_content"
+        android:layout_width="175dip"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true" />
@@ -43,7 +43,7 @@
 
     <Spinner
         android:id="@+id/playview_gameplan"
-        android:layout_width="wrap_content"
+        android:layout_width="175dip"
         android:layout_height="wrap_content"
         android:layout_above="@+id/playview_sort_by"
         android:layout_alignParentLeft="true"

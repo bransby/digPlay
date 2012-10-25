@@ -49,13 +49,13 @@ public class PlayAdapter extends ArrayAdapter<Field>{
             holder = (ContactHolder)row.getTag();
         }
         Field play = plays.get(position);
-        if(play.isRun()){
-        	holder.imgIcon.setImageResource(R.drawable.rushing_cartoon);
+        if(play.getPlayType().equals("RUN")){
+        	holder.imgIcon.setImageResource(R.drawable.rush_pic);
         }else{
-        	holder.imgIcon.setImageResource(R.drawable.football_cartoon_pass);
+        	holder.imgIcon.setImageResource(R.drawable.pass_pic);
         }
-        holder.topTitle.setText("play name");
-        holder.bottomTitle.setText(String.valueOf("this play"));
+        holder.topTitle.setText(play.getPlayName());
+        holder.bottomTitle.setText(String.valueOf("Play Description"));
         row.setBackgroundColor(Color.WHITE);
         return row;
     }

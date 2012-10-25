@@ -6,7 +6,7 @@ public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	private String _playName;
-
+	private String _playType;
 
 	public String getPlayName(){
 		return _playName;
@@ -48,5 +48,11 @@ public class Field {
 	}
 	public void setRun(boolean _run) {
 		this._run = _run;
+	}
+	public String getPlayType() {
+		return _playType;
+	}
+	public void setPlayType(String _playType) {
+		this._playType = _playType;
 	}
 }

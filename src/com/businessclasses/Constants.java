@@ -9,6 +9,7 @@ import com.example.digplay.R;
 public class Constants {
 	public static ArrayList<String> getPlayTypes(){
 		ArrayList<String> playTypes = new ArrayList<String>();
+		playTypes.add("ALL PLAYS");
 		playTypes.add("RUN");
 		playTypes.add("PASS");
 		return playTypes;
