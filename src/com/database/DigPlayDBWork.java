@@ -1,4 +1,4 @@
-package com.example.digplay;
+package com.database;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class DigPlayDBWork {
 	private DigPlayDB dbHelper;
 	private String[] allColumns = {DigPlayDB.COLUMN_ID,
 			DigPlayDB.COLUMN_PLAYNAME, DigPlayDB.COLUMN_COORDINATES,
-			DigPlayDB.COLUMN_GAMEPLANS};
+			DigPlayDB.COLUMN_GAMEPLANS, DigPlayDB.COLUMN_IMAGE};
 
 	//open the database
 	public void open() throws SQLException {
@@ -28,12 +28,13 @@ public class DigPlayDBWork {
 	}
 	
 	//method used to add a play to the database
-	public DigPlayDBData addPlay(String name, Field field, ArrayList<String> gamePlans) throws SQLiteException{
+	public DigPlayDBData addPlay(String name, Field field, ArrayList<String> gamePlans, Byte[] image) throws SQLiteException{
 		this.open();
 		
 		//executes sql query with given inputs
 		database.execSQL("INSERT INTO " + DigPlayDB.DB_NAME + "(" + DigPlayDB.COLUMN_PLAYNAME + "," + 
-				DigPlayDB.COLUMN_COORDINATES + "," + DigPlayDB.COLUMN_GAMEPLANS+ ")" + "VALUES ( name, field, gamePlans)", null);
+				DigPlayDB.COLUMN_COORDINATES + "," + DigPlayDB.COLUMN_GAMEPLANS + 
+				DigPlayDB.COLUMN_IMAGE + ")" + "VALUES (" + name + "," + field + "," + gamePlans + "," + image + ")", null);
 		
 		//sets the cursor to the location of the field that was just added
 		Cursor cursor = database.rawQuery("SELECT " + DigPlayDB.COLUMN_PLAYNAME + " FROM " + DigPlayDB.DB_NAME +
@@ -55,18 +56,29 @@ public class DigPlayDBWork {
 	
 	
 	//need to implement
-	public DigPlayDBData changePlayName(String newName){
+	public DigPlayDBData changePlayName(String oldName, String newName){
+		
 		return null;
 	}
-	public DigPlayDBData changeField(Field newField){
+	public DigPlayDBData changeField(String playName, Field newField){
 		return null;
 	}
-	public DigPlayDBData addToGamePlan(String gamePlan){
+	public DigPlayDBData addToGamePlan(String, playName, String gamePlan){
 		return null;
 	}
-	public void removeFromGamePlan(String gamePlan){
+	public void removeFromGamePlan(String playName, String gamePlan){
+		
 		return;
+	}	
+	
+	public byte[] getPlayImage(String playName){
+		return null;	
 	}
+	public Field getField(String playName){
+		return null;
+	}
+	
+
 	
 	
 	
