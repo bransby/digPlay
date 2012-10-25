@@ -42,6 +42,7 @@ public class EditorActivity extends Activity {
 		Paint p;
 		Location playerLoc;
 		float density = getResources().getDisplayMetrics().density;
+		int playerIndex = -1;
 		
 	    public DrawView(Context context) {
 	        super(context);
@@ -53,55 +54,75 @@ public class EditorActivity extends Activity {
 	        p = new Paint();
 	        field = new Field();
 	        addPlayer();
+	        
+	        this.setOnTouchListener(this);
 	    }
 
 		@Override 
 	    protected void onDraw(Canvas canvas) {
-	        //super.onDraw(canvas);
+	        super.onDraw(c);
 	        
 	        p.setColor(0xFFFF8000);
-	        canvas.drawBitmap(fieldBitmap, 90*density,
+	        c = canvas;
+	        c.drawBitmap(fieldBitmap, 90*density,
 	        		70*density, null);
 	        
-	        canvas.drawCircle(70*density, 70*density,
-	        		15*density, p);
-	        this.setOnTouchListener(this);
+	        int xpos = -1;
+	        int ypos = -1;
+	        for (int i = 0; i < field.getAllPlayers().size(); i++)
+	        {
+	        	xpos = field.getAllPlayers().get(i).getLocation().getX();
+	        	ypos = field.getAllPlayers().get(i).getLocation().getY()-50;
+	        	System.out.println(xpos);
+	        	System.out.println(ypos);
+	        	c.drawCircle(xpos, ypos, 15*density, p);
+	        }
+	        
+	        System.out.println("hi");
 	    }
 		
 		private void addPlayer() {
-			playerLoc = new Location((int) (70*density), (int) (70*density));
+			playerLoc = new Location(Math.round(70*density), Math.round((70+50)*density));
 			field.addPlayer(playerLoc, Position.QUARTERBACK);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
 		    
-			final int x = (int) event.getRawX();
-			final int y = (int) event.getRawY();
+			final int x = (int) (event.getRawX()*density);
+			final int y = (int) (event.getRawY()*density);
+			int playerXPos = -1;
+			int playerYPos = -1;
 			
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 	        	case MotionEvent.ACTION_DOWN:
-	            	_xDelta = (int) (x*density);
-	            	_yDelta = (int) (y*density);
-	            	double distance = Math.sqrt(((70-_xDelta)*(70-_xDelta)) + ((120-_yDelta)*(120-_yDelta)));
-	            	System.out.println(_xDelta);
-	            	System.out.println(_yDelta);
-	            	System.out.println(distance);
-	            	if (distance < 15)
+	            	for (int i = 0; i < field.getAllPlayers().size(); i++)
 	            	{
-	            		System.out.println("HI");
+	            		playerXPos = field.getAllPlayers().get(i).getLocation().getX();
+	            		playerYPos = field.getAllPlayers().get(i).getLocation().getY();
+	            		double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
+	            				+ ((playerYPos-y)*(playerYPos-y)));
+	            		if (distance < 15)
+		            	{
+		            		playerIndex = i;
+		            		break;
+		            	}
 	            	}
+	            	invalidate();
 	            	break;
 	        	case MotionEvent.ACTION_UP:
+	        		playerIndex = -1;
+	        		invalidate();
 	            	break;
 	        	case MotionEvent.ACTION_POINTER_DOWN:
 	            	break;
 	        	case MotionEvent.ACTION_POINTER_UP:
 	            	break;
 	        	case MotionEvent.ACTION_MOVE:
-	            	//RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) this.getLayoutParams();
-	            	//layoutParams.leftMargin = x - _xDelta;
-	            	//layoutParams.topMargin = y - _yDelta;
-	            	//this.setLayoutParams(layoutParams);
+	        		if (playerIndex != -1)
+	        		{
+	        			field.getAllPlayers().get(playerIndex).setLocation(new Location(x, y));
+	        		}
+	        		invalidate();
 	            	break;
 			}
 			return true;
