@@ -1,4 +1,4 @@
-package com.example.digplay;
+package com.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -13,6 +13,7 @@ public class DigPlayDB extends SQLiteOpenHelper {
 	public final static String COLUMN_PLAYNAME = "PlayName";
 	public final static String COLUMN_COORDINATES = "Coordinates";
 	public final static String COLUMN_GAMEPLANS = "GamePlans";
+	public final static String COLUMN_IMAGE = "Image";
 	
 	//database name and version
 	public final static int DB_VERSION = 1;
@@ -22,7 +23,7 @@ public class DigPlayDB extends SQLiteOpenHelper {
 	private static final String DATABASE_CREATE = "CREATE TABLE" + TABLE_DIGPLAY +
 		"(" +  COLUMN_ID + " integer primary key autoincrement, " + 
 		COLUMN_PLAYNAME + "TEXT NOT NULL," + COLUMN_COORDINATES + "TEXT NOT NULL," +
-		COLUMN_GAMEPLANS + "TEXT NOT NULL);";
+		COLUMN_GAMEPLANS + "TEXT NOT NULL," + COLUMN_IMAGES + "BLOB");";
 	
 	//constructor
 	public DigPlayDB(Context context) {
