@@ -8,6 +8,7 @@ import com.example.digplay.R;
 
 
 import android.content.Context;
+import android.graphics.Color;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,7 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         }
         holder.topTitle.setText("play name");
         holder.bottomTitle.setText(String.valueOf("this play"));
+        row.setBackgroundColor(Color.WHITE);
         return row;
     }
     

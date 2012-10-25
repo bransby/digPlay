@@ -6,15 +6,18 @@
     android:layout_height="fill_parent"
     android:padding="10dp">
     
-     <ImageView android:id="@+id/imgIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:gravity="center_vertical"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp" />
+     <ImageView
+         android:id="@+id/imgIcon"
+         android:layout_width="wrap_content"
+         android:layout_height="fill_parent"
+         android:layout_alignParentBottom="true"
+         android:layout_alignParentTop="true"
+         android:layout_marginBottom="5dp"
+         android:layout_marginRight="15dp"
+         android:layout_marginTop="5dp"
+         android:gravity="center_vertical"
+         android:maxHeight="15dip"
+         android:maxWidth="15dip" />
         
      <LinearLayout
         android:orientation="vertical"

@@ -11,7 +11,6 @@
         android:layout_marginLeft="200dp"
         android:layout_marginRight="200dp"
         android:layout_marginTop="100dp" >
-
     </ListView>
 
     <TextView
@@ -21,7 +20,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="false"
-        android:text="SELECT PLAY"
+        android:gravity="center"
+        android:text="CLICK PLAY TO SEE IN BROWSER"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="40dp" />
 
@@ -29,28 +29,42 @@
         android:id="@+id/playview_sort_by"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/playviewlist"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="31dp"
-        android:layout_marginLeft="250dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true" />
 
-    <TextView
-        android:id="@+id/textView2"
+    <Button
+        android:id="@+id/playview_refine_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/spinner1"
-        android:layout_alignBottom="@+id/spinner1"
-        android:layout_marginRight="38dp"
-        android:layout_toLeftOf="@+id/spinner1"
-        android:text="SORT BY"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/playview_sort_by"
+        android:layout_marginTop="27dp"
+        android:text="Refine Search" />
 
     <Spinner
         android:id="@+id/playview_gameplan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/playview_sort_by"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="32dp" />
+        android:layout_marginBottom="36dp"/>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/playview_sort_by"
+        android:layout_alignParentLeft="true"
+        android:text="PLAY TYPE"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/playview_gameplan"
+        android:layout_alignParentLeft="true"
+        android:text="GAMEPLAN"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>
