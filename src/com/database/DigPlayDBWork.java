@@ -63,7 +63,7 @@ public class DigPlayDBWork {
 	public DigPlayDBData changeField(String playName, Field newField){
 		return null;
 	}
-	public DigPlayDBData addToGamePlan(String, playName, String gamePlan){
+	public DigPlayDBData addToGamePlan(String playName, String gamePlan){
 		return null;
 	}
 	public void removeFromGamePlan(String playName, String gamePlan){

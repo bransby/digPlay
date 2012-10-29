@@ -25,9 +25,11 @@ public class DigPlayDBData {
 	public ArrayList<String> getGamePlans(){
 		return this.gamePlans;
 	}
+	/*
 	public Byte[] getImage(){
-		return this.image.getBlob();
+		//return this.image.getBlob();
 	}
+	*/
 	
 	
 	//setters
@@ -43,9 +45,11 @@ public class DigPlayDBData {
 	public void setGamePlans(ArrayList<String> _gamePlans){
 		this.gamePlans = _gamePlans;
 	}	
+	/*
 	public void setImage(byte[] _image){
 		this.image = _image;
 	}
+	*/
 	public String toString(){
 		return playName;
 	}
