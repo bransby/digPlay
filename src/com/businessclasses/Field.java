@@ -28,6 +28,9 @@ public class Field {
 		Player player = new Player(l,p);
 		_playersOnField.add(player);
 	}
+	public void clearField(){
+		_playersOnField.clear();
+	}
 	public void clearRoutes(){
 		for(int i=0;i<_playersOnField.size();i++){
 			_playersOnField.get(i).clearRoute();

@@ -10,7 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -19,9 +21,22 @@ import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class EditorActivity extends Activity {
 
+	private static Field field;
+	static Location playerLoc;
+	static float density; // density coefficient
+	static boolean addingPlayer = false;
+	static int playerIndex = -1; // index of array for which player has been selected
+	
+	static int x;
+	static int y;
+	
+	static DrawView drawView;
+	static TextView messageBar;
+	
 	static Button save;
 	static Button addPlayer;
 	static Button removeRoute;
@@ -41,6 +56,11 @@ public class EditorActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
 
+		drawView = (DrawView) findViewById(R.id.DrawView);
+		
+		messageBar = (TextView) findViewById(R.id.message_bar);
+		messageBar.setText("Add players to begin");
+		
 		save = (Button) findViewById(R.id.save);
 		addPlayer = (Button) findViewById(R.id.add_player);
 		removeRoute = (Button) findViewById(R.id.remove_route);
@@ -68,7 +88,7 @@ public class EditorActivity extends Activity {
 
 		ArrayAdapter<CharSequence> routeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.route_type_array, R.layout.spinner_layout);
 		routeTypeAdapter.setDropDownViewResource(R.layout.spinner_layout);
-		routeType.setAdapter(routeTypeAdapter);
+ 		routeType.setAdapter(routeTypeAdapter);
 
 		ArrayAdapter<CharSequence> yardageAdapter = ArrayAdapter.createFromResource(this, R.array.yardage_array, R.layout.spinner_layout);
 		yardageAdapter.setDropDownViewResource(R.layout.spinner_layout);
@@ -121,6 +141,53 @@ public class EditorActivity extends Activity {
 		switch(v.getId()) {
 			case R.id.save:
 				break;
+			case R.id.add_player:
+				messageBar.setText("Select location for player");
+				addingPlayer = true;
+				break;
+			case R.id.delete_player:
+				if (addingPlayer)
+				{
+					break;
+				}
+				field.getAllPlayers().remove(playerIndex);
+				drawView.invalidate();
+				disableSpinners();
+				disableButtons();
+				if (field.getAllPlayers().size()==0)
+				{
+					messageBar.setText("Add players to begin");
+				}
+				else
+				{
+					messageBar.setText("Select or add player");
+				}
+				break;
+			case R.id.clear_routes:
+				if (addingPlayer)
+				{
+					break;
+				}
+				field.clearRoutes();
+				playerIndex = -1;
+				messageBar.setText("Select or add player");
+				drawView.invalidate();
+				break;
+			case R.id.clear_field:
+				if (addingPlayer)
+				{
+					break;
+				}
+				field.clearField();
+				messageBar.setText("Add players to begin");
+				playerIndex = -1;
+				drawView.invalidate();
+				break;
+			case R.id.add_route:
+				break;
+			case R.id.remove_route:
+				field.getAllPlayers().get(playerIndex).clearRoute();
+				break;
 			default:
 				break;
 		}
@@ -128,15 +195,9 @@ public class EditorActivity extends Activity {
 	
 	public static class DrawView extends View implements OnTouchListener {
 
-		Field field;
-
 		Bitmap fieldBitmap;
 		Canvas c;
 		Paint paint;
-
-		Location playerLoc;
-		float density = getResources().getDisplayMetrics().density; // density coefficient
-		int playerIndex = -1; // index of array for which player has been selected
 
 		public DrawView(Context context, AttributeSet attrs) {
 			super(context, attrs);
@@ -145,12 +206,11 @@ public class EditorActivity extends Activity {
 
 		public void build(Context context, AttributeSet attrs)
 		{
+			density = getResources().getDisplayMetrics().density;
 			field = new Field();
 
 			fieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.one_two_eight_zero_by_eight_zero_zero, null);
-			paint = new Paint(); 
-
-			addPlayer();
+			paint = new Paint();
 
 			this.setOnTouchListener(this);
 		}
@@ -175,54 +235,65 @@ public class EditorActivity extends Activity {
 				{
 					paint.setColor(Color.RED);
 				}
-				c.drawCircle(xpos, ypos, 75*density, paint);
+				c.drawCircle(xpos, ypos, 25*density, paint);
 				paint.setColor(0xFFFF8000);
 			}
-
-			paint.setColor(Color.BLACK);
-			paint.setTextSize(50);
-			canvas.drawText("Message Bar", 5*density, 45*density, paint);
-		}
-
-		private void addPlayer() {
-			playerLoc = new Location(Math.round(70*density), Math.round((70+50)*density));
-			field.addPlayer(playerLoc, Position.QUARTERBACK);
-			playerLoc = new Location(Math.round(370*density), Math.round((370+50)*density));
-			field.addPlayer(playerLoc, Position.QUARTERBACK);
+			
+			paint.setColor(0xFF000080);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setStrokeWidth(5*density);
+			canvas.drawLine(0, 475*density, 1280*density, 475*density, paint);
+			paint.setColor(0xFFFFA000);
+			canvas.drawLine(0, 371*density, 1280*density, 371*density, paint);
+			paint.setStyle(Paint.Style.FILL);
 		}
 
 		public boolean onTouch(View v, MotionEvent event) {
 
-			final int x = (int) (event.getRawX()*density);
-			final int y = (int) (event.getRawY()*density);
+			x = (int) (event.getRawX()*density);
+			y = (int) (event.getRawY()*density);
 			int playerXPos = -1;
 			int playerYPos = -1;
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				boolean hasBeenSet = false;
-				for (int i = 0; i < field.getAllPlayers().size(); i++)
+				if (addingPlayer)
 				{
-					playerXPos = field.getAllPlayers().get(i).getLocation().getX();
-					playerYPos = field.getAllPlayers().get(i).getLocation().getY();
-					double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
-							+ ((playerYPos-y)*(playerYPos-y)));
-					if (distance < 75)
+					playerLoc = new Location(Math.round(x*density), Math.round(y*density));
+					field.addPlayer(playerLoc, Position.QUARTERBACK);
+					addingPlayer = false;
+					playerIndex = field.getAllPlayers().size()-1;
+					messageBar.setText("Set route, remove route, or remove player");
+					enableSpinners();
+					enableButtons();
+				}
+				else
+				{
+					boolean hasBeenSet = false;
+					for (int i = 0; i < field.getAllPlayers().size(); i++)
 					{
-						playerIndex = i;
-						enableButtons();
-						enableSpinners();
-						hasBeenSet = true;
-						break;
+						playerXPos = field.getAllPlayers().get(i).getLocation().getX();
+						playerYPos = field.getAllPlayers().get(i).getLocation().getY();
+						double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
+								+ ((playerYPos-y)*(playerYPos-y)));
+						if (distance < 25)
+						{
+							playerIndex = i;
+							enableButtons();
+							enableSpinners();
+							messageBar.setText("Set route, remove route, or remove player");
+							hasBeenSet = true;
+							break;
+						}
+					}
+					if (!hasBeenSet)
+					{
+						playerIndex = -1;
+						disableButtons();
+						disableSpinners();
 					}
 				}
-				if (!hasBeenSet)
-				{
-					playerIndex = -1;
-					disableButtons();
-					disableSpinners();
-				}
-				invalidate();
+				invalidate();	
 				break;
 			case MotionEvent.ACTION_UP:
 				break;
