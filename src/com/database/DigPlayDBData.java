@@ -10,7 +10,7 @@ public class DigPlayDBData {
 	private String playName;
 	private Field field;
 	private ArrayList<String> gamePlans;
-	private Byte[] image;
+	private byte[] image;
 	
 	//getters
 	public long getId(){
@@ -25,11 +25,9 @@ public class DigPlayDBData {
 	public ArrayList<String> getGamePlans(){
 		return this.gamePlans;
 	}
-	/*
-	public Byte[] getImage(){
-		//return this.image.getBlob();
-	}
-	*/
+	//public Byte[] getImage(){
+	//	return this.image.getBlob();
+	//}
 	
 	
 	//setters
@@ -45,11 +43,9 @@ public class DigPlayDBData {
 	public void setGamePlans(ArrayList<String> _gamePlans){
 		this.gamePlans = _gamePlans;
 	}	
-	/*
 	public void setImage(byte[] _image){
 		this.image = _image;
 	}
-	*/
 	public String toString(){
 		return playName;
 	}
