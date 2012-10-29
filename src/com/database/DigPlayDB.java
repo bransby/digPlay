@@ -23,7 +23,7 @@ public class DigPlayDB extends SQLiteOpenHelper {
 	private static final String DATABASE_CREATE = "CREATE TABLE" + TABLE_DIGPLAY +
 		"(" +  COLUMN_ID + " integer primary key autoincrement, " + 
 		COLUMN_PLAYNAME + "TEXT NOT NULL," + COLUMN_COORDINATES + "TEXT NOT NULL," +
-		COLUMN_GAMEPLANS + "TEXT NOT NULL," + COLUMN_IMAGES + "BLOB");";
+		COLUMN_GAMEPLANS + "TEXT NOT NULL," + COLUMN_IMAGE + "BLOB);";
 	
 	//constructor
 	public DigPlayDB(Context context) {
