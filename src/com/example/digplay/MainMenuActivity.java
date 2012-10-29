@@ -33,7 +33,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		viewGameplan.setOnClickListener(this);
 		createGameplan.setOnClickListener(this);
 		lookAtPlaybook.setOnClickListener(this);
-		
+		/*
 		drawNewPlay.setGravity(Gravity.CENTER_HORIZONTAL);
 		drawNewPlay.setGravity(Gravity.CENTER_VERTICAL);
 		
@@ -42,7 +42,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		createGameplan.setGravity(Gravity.CENTER_HORIZONTAL);
 		createGameplan.setGravity(Gravity.CENTER_VERTICAL);
 		lookAtPlaybook.setGravity(Gravity.CENTER_HORIZONTAL);
-		lookAtPlaybook.setGravity(Gravity.CENTER_VERTICAL);
+		lookAtPlaybook.setGravity(Gravity.CENTER_VERTICAL);*/
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		int buttonPressed = v.getId();
 		Intent intent = null;
 		if(buttonPressed == drawNewPlay.getId())intent = new Intent(v.getContext(),EditorActivity.class);
-		else if(buttonPressed == viewGameplan.getId())intent = new Intent(v.getContext(),BrowsingActivity.class);
+		else if(buttonPressed == viewGameplan.getId())intent = new Intent(v.getContext(),PlayViewActivity.class);
 		else if(buttonPressed == createGameplan.getId())intent = new Intent(v.getContext(),PlayViewActivity.class);
 		else intent = new Intent(v.getContext(),PlayViewActivity.class);
 		startActivity(intent);
