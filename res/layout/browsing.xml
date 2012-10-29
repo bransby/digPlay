@@ -35,20 +35,13 @@
         android:text="ADD TO GAMEPLAN"
         android:textSize="20dp" />
 
-    <Gallery
-        android:id="@+id/Gallery01"
-        android:layout_width="400dp"
-        android:layout_height="200dp"
-        android:layout_below="@+id/browsing_play_name"
-        android:layout_toRightOf="@+id/browsing_play_name" />
-
-    <ImageSwitcher
-        android:id="@+id/ImageSwitcher01"
-        android:layout_width="400dp"
-        android:layout_height="400dp"
+    <ViewFlipper
+        android:id="@+id/viewFlipper1"
+        android:layout_width="900dp"
+        android:layout_height="600dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/browsing_play_name"
-        android:layout_marginRight="104dp" >
-    </ImageSwitcher>
+        android:layout_centerVertical="true"
+        android:layout_marginRight="56dp" >
+    </ViewFlipper>
 
 </RelativeLayout>

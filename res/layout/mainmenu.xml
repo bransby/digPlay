@@ -5,45 +5,38 @@
 
     <Button
         android:id="@+id/maindrawplay"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_marginLeft="300dp"
-        android:layout_marginRight="300dp"
-        android:layout_marginTop="75dp"
+		android:layout_width="600dp" 
+		android:layout_height="100dp"
+        android:layout_marginTop="50dp"
         android:text="DRAW NEW PLAY"
-        android:textSize="25dp" />
+        android:textSize="50dp" 
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/mainviewgameplan"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_alignLeft="@+id/maindrawplay"
-        android:layout_below="@+id/maindrawplay"
-        android:layout_marginRight="300dp"
-        android:layout_marginTop="50dp"
+		android:layout_width="600dp" 
+		android:layout_height="100dp"
+        android:layout_marginTop="200dp"
+        android:layout_centerHorizontal="true"
         android:text="VIEW GAME PLAN"
-        android:textSize="25dp" />
+        android:textSize="50dp" />
 
     <Button
         android:id="@+id/maincreategameplan"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_alignLeft="@+id/mainviewgameplan"
-        android:layout_below="@+id/mainviewgameplan"
-        android:layout_marginRight="300dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="600dp" 
+		android:layout_height="100dp"
+        android:layout_marginTop="350dp"
+        android:layout_centerHorizontal="true"
         android:text="CREATE GAME PLAN"
-        android:textSize="25dp" />
+        android:textSize="50dp" />
 
     <Button
         android:id="@+id/mainlookatplaybook"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_alignLeft="@+id/maincreategameplan"
-        android:layout_below="@+id/maincreategameplan"
-        android:layout_marginRight="300dp"
-        android:layout_marginTop="50dp"
+        android:layout_width="600dp" 
+		android:layout_height="100dp"
+        android:layout_marginTop="500dp"
+        android:layout_centerHorizontal="true"
         android:text="LOOK AT PLAYBOOK"
-        android:textSize="25dp" />
+        android:textSize="50dp" />
 
 </RelativeLayout>
