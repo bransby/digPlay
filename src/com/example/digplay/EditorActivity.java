@@ -115,7 +115,8 @@ public class EditorActivity extends Activity {
 			fieldForCreatePlayer = new Field();
 			
 			short adjustedHeight = 670+50; // pixel location we want to draw the 8
-										   // created players at
+										   // created players at. 50 pixels is used
+										   // at the top for all android devices
 			
 			// add players at bottom of screen, 75dp width between each of them
 			playerLocQB = new Location((int)(75*density), (int)(adjustedHeight*density));
