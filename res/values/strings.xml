@@ -4,40 +4,10 @@
     <string name="hello_world">Hello!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main_menu">Main Menu</string>
-    <string name="play_type">Select Play Type</string>
-    <string name="yardage">Select Yardage</string>
     <string name="route_type">Select Route Type</string>
-    <string name="positions">Select Position</string>
-
-    <string-array name="play_type_array">
-        <item>Pass</item>
-        <item>Run</item>
-    </string-array>
     
     <string-array name="route_type_array">
         <item>Nothing</item>
-    </string-array>
-    
-    <string-array name="yardage_array">
-        <item>0</item>
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-        <item>20</item>
-        <item>25</item>
-        <item>30</item>
-    </string-array>
-    
-    <string-array name="position_array">
-        <item>Quarterback</item>
-        <item>Wide Receiver</item>
-        <item>Fullback</item>
-        <item>Tight End</item>
-        <item>Tackle</item>
-        <item>Guard</item>
-        <item>Center</item>
-        <item>Flanker</item>
-        <item>Slot Back</item>
     </string-array>
     
 </resources>
