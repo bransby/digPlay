@@ -1,9 +1,12 @@
 package com.example.digplay;
 
+import java.util.ArrayList;
+
 import com.businessclasses.Field;
 import com.businessclasses.Location;
 import com.businessclasses.Player;
 import com.businessclasses.Position;
+import com.businessclasses.Route;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,11 +20,15 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
-public class EditorActivity extends Activity {
+import android.widget.TextView;
+public class EditorActivity extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
 	private static Field field; // the one field
 	static Location playerLoc; // location of player
@@ -39,6 +46,11 @@ public class EditorActivity extends Activity {
 
 	static Spinner routeType;
 	
+	static SeekBar routeDistance;
+	static int routeYardage;
+	static TextView routeYardageTV;
+	static Button trashCan;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,15 +62,24 @@ public class EditorActivity extends Activity {
 		save = (Button) findViewById(R.id.save);
 		clearRoutes = (Button) findViewById(R.id.clear_routes);
 		clearField = (Button) findViewById(R.id.clear_field);
+		trashCan = (Button) findViewById(R.id.editor_trash_can);
 
 		routeType = (Spinner) findViewById(R.id.route_type);
+		routeDistance = (SeekBar)findViewById(R.id.seekBar1);
+		routeYardageTV = (TextView)findViewById(R.id.editor_route_yardage);
 		
 		routeType.setEnabled(false);
 		routeType.setClickable(false);
+		routeDistance.setOnSeekBarChangeListener(this);
+		trashCan.setOnClickListener(this);
+		
+		trashCan.setBackgroundResource(R.drawable.trashcan);
+		routeDistance.setMax(20);
+		routeDistance.setProgress(10);
+		routeYardageTV.setText("10 yds");
 
-		ArrayAdapter<CharSequence> routeTypeAdapter = ArrayAdapter.createFromResource(this, R.array.route_type_array, R.layout.spinner_layout);
-		routeTypeAdapter.setDropDownViewResource(R.layout.spinner_layout);
- 		routeType.setAdapter(routeTypeAdapter);
+		ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,this.getRoutes());
+ 		routeType.setAdapter(rtAdapter);
 	}
 	
 	public void onBtnClicked(View v) {
@@ -342,5 +363,34 @@ public class EditorActivity extends Activity {
 			}
 			return true;
 		}
+	}
+
+	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
+		routeYardage = routeDistance.getProgress();
+		routeYardageTV.setText("" + routeYardage + " yds");
+	}
+
+	public void onStartTrackingTouch(SeekBar arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void onStopTrackingTouch(SeekBar arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public String[] getRoutes(){
+		Route[] routes = Route.values();
+		String[] stringRoutes = new String[routes.length + 1];
+		for(int i = 0;i < routes.length;i++){
+			stringRoutes[i + 1] = routes[i].toString();
+		}
+		stringRoutes[0] = "No Route";
+		return stringRoutes;
+	}
+
+	public void onClick(View v) {
+		
 	}
 }
