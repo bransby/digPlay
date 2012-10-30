@@ -1,5 +1,7 @@
 package com.businessclasses;
 
+
+
 public enum Route {
 	FLY,
 	IN,
@@ -12,5 +14,4 @@ public enum Route {
 	ARROW,
 	WHEEL,
 	FADE;
-	
 }
