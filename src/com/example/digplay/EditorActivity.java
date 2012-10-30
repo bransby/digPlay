@@ -67,13 +67,13 @@ public class EditorActivity extends Activity {
 				break;
 			case R.id.clear_routes:
 				field.clearRoutes();
-				playerIndex = -1;
-				drawView.invalidate();
+				playerIndex = -1; // reset player selection index
+				drawView.invalidate(); // redraw the screen
 				break;
 			case R.id.clear_field:
 				field.clearField();
-				playerIndex = -1;
-				drawView.invalidate();
+				playerIndex = -1; // reset player selection index
+				drawView.invalidate(); // redraw the screen
 				break;
 			default:
 				break;
@@ -85,11 +85,14 @@ public class EditorActivity extends Activity {
 		Bitmap fieldBitmap;
 		Canvas c;
 		Paint paint;
-		int createdPlayerIndex;
+		int createdPlayerIndex; // this is the index of the 8 players on the
+								// bottom of the stuff
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
 		Field fieldForCreatePlayer;
+		
+		// locations of the 8 players
 		Location playerLocQB;
 		Location playerLocWR;
 		Location playerLocRB;
@@ -111,9 +114,10 @@ public class EditorActivity extends Activity {
 						
 			fieldForCreatePlayer = new Field();
 			
-			short adjustedHeight = 670+50;
+			short adjustedHeight = 670+50; // pixel location we want to draw the 8
+										   // created players at
 			
-			// add players at bottom of screen
+			// add players at bottom of screen, 75dp width between each of them
 			playerLocQB = new Location((int)(75*density), (int)(adjustedHeight*density));
 			fieldForCreatePlayer.addPlayer(playerLocQB, Position.QUARTERBACK);
 			
@@ -138,8 +142,9 @@ public class EditorActivity extends Activity {
 			playerLocT = new Location((int)(600*density), (int)(adjustedHeight*density));
 			fieldForCreatePlayer.addPlayer(playerLocT, Position.TACKLE);
 			
-			createdPlayerIndex = -1;
+			createdPlayerIndex = -1; // index of which of the 8 players has been selected
 			
+			// the main field
 			field = new Field();
 
 			// the field picture
@@ -162,22 +167,26 @@ public class EditorActivity extends Activity {
 			// orangish color
 			paint.setColor(0xFFFF8000);
 
+			// y values are all the same, so just reuse one
+			float eightPlayerY = playerLocQB.getY()-(50*density);
+			
 			// the canvas does is not exactly the same as the real pixels, because
 			// the canvas is drawn at 50 pixels down from the top of the screen
-			c.drawCircle(playerLocQB.getX(), playerLocQB.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocWR.getX(), playerLocWR.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocRB.getX(), playerLocRB.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocFB.getX(), playerLocFB.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocTE.getX(), playerLocTE.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocC.getX(), playerLocC.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocG.getX(), playerLocG.getY()-(50*density), 25*density, paint);
-			c.drawCircle(playerLocT.getX(), playerLocT.getY()-(50*density), 25*density, paint);
+			c.drawCircle(playerLocQB.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocWR.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocRB.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocFB.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocTE.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocC.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocG.getX(), eightPlayerY, 25*density, paint);
+			c.drawCircle(playerLocT.getX(), eightPlayerY, 25*density, paint);
 						
 			paint.setColor(Color.BLACK);
 			
 			paint.setTextAlign(Align.CENTER);
 			paint.setTextSize(25*density);
 			
+			// descent and ascent are used for centering text vertically
 			float height = (playerLocQB.getY()-50*density)-((paint.descent() + paint.ascent()) / 2);
 			
 			c.drawText("QB", playerLocQB.getX(), height, paint);
@@ -208,32 +217,33 @@ public class EditorActivity extends Activity {
 				}
 				// draw the play again, but red this time
 				c.drawCircle(xpos, ypos, 25*density, paint);
+				// descent and ascent are used for centering text vertically
 				height = ypos-((paint.descent() + paint.ascent()) / 2);
 				paint.setColor(Color.BLACK);
 				switch(field.getAllPlayers().get(i).getPosition()) {
 				case QUARTERBACK:
-					c.drawText("QB", xpos, height, paint);
+					drawCenteredText("QB", xpos, height);
 					break;
 				case WIDE_RECIEVER:
-					c.drawText("WR", xpos, height, paint);
+					drawCenteredText("WR", xpos, height);
 					break;
 				case RUNNING_BACK:
-					c.drawText("RB", xpos, height, paint);
+					drawCenteredText("RB", xpos, height);
 					break;
 				case FULLBACK:
-					c.drawText("FB", xpos, height, paint);
+					drawCenteredText("FB", xpos, height);
 					break;
 				case TIGHT_END:
-					c.drawText("TE", xpos, height, paint);
+					drawCenteredText("TE", xpos, height);
 					break;
 				case CENTER:
-					c.drawText("C", xpos, height, paint);
+					drawCenteredText("C", xpos, height);
 					break;
 				case GUARD:
-					c.drawText("G", xpos, height, paint);
+					drawCenteredText("G", xpos, height);
 					break;
 				case TACKLE:
-					c.drawText("T", xpos, height, paint);
+					drawCenteredText("T", xpos, height);
 					break;
 				default:
 					break;
@@ -253,33 +263,41 @@ public class EditorActivity extends Activity {
 			paint.setStyle(Paint.Style.FILL);
 		}
 
+		// for drawing the positions on players
+		public void drawCenteredText(String value, int x, float height)
+		{
+			c.drawText(value, x, height, paint);
+		}
+		
 		public boolean onTouch(View v, MotionEvent event) {
 
 			x = (int) (event.getRawX()*density);
 			y = (int) (event.getRawY()*density);
-			System.out.println(y);
 			int playerXPos = -1;
 			int playerYPos = -1;
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
 				boolean staticPlayerSelected = false;
+				// loop for selecting bottom 8 players
 				for (int i = 0; i < fieldForCreatePlayer.getAllPlayers().size(); i++)
 				{
 					playerXPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getX();
 					playerYPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getY();
+					// calculate distance between user click and this player
 					double dist = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
 							+ ((playerYPos-y)*(playerYPos-y)));
 					if (dist < 25)
 					{
 						// this player has been selected
 						Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-						createdPlayerIndex = i;
-						field.addPlayer(temp.getLocation(), temp.getPosition());
-						playerIndex = field.getAllPlayers().size()-1;
+						createdPlayerIndex = i; // save location of player in array
+						field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
+						playerIndex = field.getAllPlayers().size()-1; // this player is the last 
+																	  // player to be added to field
 						routeType.setEnabled(true);
 						routeType.setClickable(true);
-						staticPlayerSelected = true;
+						staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
 						break;
 					}
 				}
@@ -291,6 +309,7 @@ public class EditorActivity extends Activity {
 					{
 						playerXPos = field.getAllPlayers().get(i).getLocation().getX();
 						playerYPos = field.getAllPlayers().get(i).getLocation().getY();
+						// calculate distance between user click and this player
 						double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
 								+ ((playerYPos-y)*(playerYPos-y)));
 						if (distance < 25)
@@ -317,11 +336,15 @@ public class EditorActivity extends Activity {
 			case MotionEvent.ACTION_UP:
 				if (playerIndex != -1)
 				{
-					if (x < 37*density || x > 1217*density || y < 97*density || y > 667*density)
+					// is player outside of the field?
+					if (x < 75*density || x > 1205*density || y < 135*density || y > 655*density)
 					{
 						field.getAllPlayers().remove(playerIndex);
-						playerIndex = -1;
-						invalidate();
+						playerIndex = -1; // reset selection
+						// disable route possibilities
+						routeType.setEnabled(false);
+						routeType.setClickable(false);
+						invalidate(); // redraw
 					}
 				}
 				break;
