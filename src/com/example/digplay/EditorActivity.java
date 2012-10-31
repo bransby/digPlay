@@ -10,6 +10,7 @@ import com.businessclasses.Route;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -72,6 +73,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		routeType.setClickable(false);
 		routeDistance.setOnSeekBarChangeListener(this);
 		trashCan.setOnClickListener(this);
+		save.setOnClickListener(this);
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		routeDistance.setMax(20);
@@ -415,6 +417,10 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	}
 
 	public void onClick(View v) {
-		
+		Intent intent = null;
+		if(v.getId() == save.getId()){
+			intent = new Intent(v.getContext(),SaveActivity.class);
+			startActivity(intent);
+		}
 	}
 }
