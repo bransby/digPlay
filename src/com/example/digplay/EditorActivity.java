@@ -76,6 +76,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		save.setOnClickListener(this);
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
+		save.setBackgroundResource(R.drawable.floppy_disk);
 		routeDistance.setMax(20);
 		routeDistance.setProgress(10);
 		routeYardageTV.setText("10 yds");
