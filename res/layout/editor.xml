@@ -9,37 +9,41 @@
         android:id="@+id/DrawView"
 		android:layout_width="wrap_content" 
 		android:layout_height="wrap_content"/>
-	   
+	   
     <Button
         android:id="@+id/save"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dip"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="15dip"
+        android:layout_marginTop="7dip"
         android:onClick="onBtnClicked"
-        android:text="Save"
         android:textSize="30dp" />
-     
-    <Button android:id="@+id/clear_routes"
-      	android:text="Clear Routes"
-      	android:layout_alignParentTop="true"
-      	android:layout_alignParentRight="true"
-      	android:layout_width="240dp"
+     
+    <Button
+        android:id="@+id/clear_routes"
+        android:layout_width="240dp"
         android:layout_height="60dp"
-      	android:textSize="30dp"
-      	android:layout_marginRight="420dp"
-      	android:onClick="onBtnClicked" />
-
-    <Button android:id="@+id/clear_field"
-      	android:text="Clear Field"
-      	android:layout_width="240dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="420dp"
+        android:layout_marginTop="3dip"
+        android:onClick="onBtnClicked"
+        android:text="Clear Routes"
+        android:textSize="30dp" />
+
+    <Button
+        android:id="@+id/clear_field"
+        android:layout_width="240dp"
         android:layout_height="60dp"
-      	android:layout_alignParentRight="true"
-      	android:layout_alignParentTop="true"
-      	android:textSize="30dp"
-      	android:layout_marginRight="160dp"
-      	android:onClick="onBtnClicked" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="160dp"
+        android:layout_marginTop="3dip"
+        android:onClick="onBtnClicked"
+        android:text="Clear Field"
+        android:textSize="30dp" />
     
     <Spinner android:id="@+id/route_type"
         android:layout_width="240dp"
@@ -67,14 +71,15 @@
         android:layout_toLeftOf="@+id/seekBar1"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <Button
         android:id="@+id/editor_trash_can"
         android:layout_width="100dip"
-        android:layout_height="50dip"
+        android:layout_height="65dip"
         android:layout_alignBottom="@+id/save"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="181dp"/>
+        android:layout_marginLeft="181dp"
+        android:layout_marginTop="7dip" />
 
 </RelativeLayout>
 

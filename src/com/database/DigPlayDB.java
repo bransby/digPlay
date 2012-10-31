@@ -1,3 +1,4 @@
+/*
 package com.database;
 
 import android.content.Context;
@@ -48,3 +49,4 @@ public class DigPlayDB extends SQLiteOpenHelper {
 		    onCreate(db);
 	}
 }
+*/
