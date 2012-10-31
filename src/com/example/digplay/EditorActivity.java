@@ -170,7 +170,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 			field = new Field();
 
 			// the field picture
-			fieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.one_two_eight_zero_by_eight_zero_zero, null);
+			fieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.field, null);
 			paint = new Paint();
 
 			this.setOnTouchListener(this);
@@ -185,6 +185,16 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 			c = canvas;
 			c.drawBitmap(fieldBitmap, 50*density,
 					60*density, null);
+			
+			// blue color
+			paint.setColor(0xFF000080);
+			// 5 pixel line width
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setStrokeWidth(5*density);
+			// draw line of scrimmage
+			canvas.drawLine(51*density, 363*density, 1230*density, 363*density, paint);
+			// fill = fill enclosed shapes with the color, like a circle with the middle one color
+			paint.setStyle(Paint.Style.FILL);
 
 			// orangish color
 			paint.setColor(0xFFFF8000);
@@ -273,16 +283,6 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 				// reset to orangish color
 				paint.setColor(0xFFFF8000);
 			}
-			
-			// blue color
-			paint.setColor(0xFF000080);
-			// 5 pixel line width
-			paint.setStyle(Paint.Style.STROKE);
-			paint.setStrokeWidth(5*density);
-			// draw line of scrimmage
-			canvas.drawLine(50*density, 475*density, 1230*density, 475*density, paint);
-			// fill = fill enclosed shapes with the color, like a circle with the middle one color
-			paint.setStyle(Paint.Style.FILL);
 		}
 
 		// for drawing the positions on players
@@ -297,6 +297,8 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 			y = (int) (event.getRawY()*density);
 			int playerXPos = -1;
 			int playerYPos = -1;
+			
+			double playerIndexDistance = Float.MAX_VALUE;
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
@@ -309,18 +311,17 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 					// calculate distance between user click and this player
 					double dist = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
 							+ ((playerYPos-y)*(playerYPos-y)));
-					if (dist < 25)
+					if (dist < 35)
 					{
 						// this player has been selected
 						Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
 						createdPlayerIndex = i; // save location of player in array
 						field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
 						playerIndex = field.getAllPlayers().size()-1; // this player is the last 
-																	  // player to be added to field
+						// player to be added to field
 						routeType.setEnabled(true);
 						routeType.setClickable(true);
 						staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
-						break;
 					}
 				}
 				if (!staticPlayerSelected)
@@ -334,15 +335,18 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 						// calculate distance between user click and this player
 						double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
 								+ ((playerYPos-y)*(playerYPos-y)));
-						if (distance < 25)
+						if (distance < 35)
 						{
-							// this player has been selected
-							playerIndex = i;
-							// routes can be changed for this player
-							routeType.setEnabled(true);
-							routeType.setClickable(true);
-							hasBeenSet = true;
-							break;
+							if (distance < playerIndexDistance)
+							{
+								playerIndexDistance = distance;
+								// this player has been selected
+								playerIndex = i;
+								// routes can be changed for this player
+								routeType.setEnabled(true);
+								routeType.setClickable(true);
+								hasBeenSet = true;
+							}
 						}
 					}
 					// if not selected, disable the route spinner and reset player index
