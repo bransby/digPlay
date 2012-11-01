@@ -13,7 +13,6 @@ import com.db4o.ObjectContainer;
 import com.db4o.ObjectSet;
 
 public class DigPlayDBHelper {
-
 	String dpPath;
 	ObjectContainer playsDB;
 	ObjectContainer gamePlanDB;

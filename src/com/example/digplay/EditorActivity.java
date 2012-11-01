@@ -32,25 +32,25 @@ import android.widget.TextView;
 public class EditorActivity extends Activity implements OnSeekBarChangeListener, OnClickListener {
 
 	private static Field field; // the one field
-	static Location playerLoc; // location of player
-	static float density; // density coefficient
-	static int playerIndex = -1; // index of array for which player has been selected
+	private static Location playerLoc; // location of player
+	private static float density; // density coefficient
+	private static int playerIndex = -1; // index of array for which player has been selected
 	
-	static int x; // for locating screen X value
-	static int y; // for locating screen Y value
+	private static int x; // for locating screen X value
+	private static int y; // for locating screen Y value
 	
-	static DrawView drawView; // custom view
+	private static DrawView drawView; // custom view
 	
-	static Button save;
-	static Button clearRoutes;
-	static Button clearField;
+	private static Button save;
+	private static Button clearRoutes;
+	private static Button clearField;
 
-	static Spinner routeType;
+	private static Spinner routeType;
 	
-	static SeekBar routeDistance;
-	static int routeYardage;
-	static TextView routeYardageTV;
-	static Button trashCan;
+	private static SeekBar routeDistance;
+	private static int routeYardage;
+	private static TextView routeYardageTV;
+	private static Button trashCan;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -106,25 +106,25 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	
 	public static class DrawView extends View implements OnTouchListener {
 
-		Bitmap fieldBitmap;
-		Canvas c;
-		Paint paint;
-		int createdPlayerIndex; // this is the index of the 8 players on the
+		private Bitmap fieldBitmap;
+		private Canvas c;
+		private Paint paint;
+		private int createdPlayerIndex; // this is the index of the 8 players on the
 								// bottom of the stuff
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
-		Field fieldForCreatePlayer;
+		private Field fieldForCreatePlayer;
 		
 		// locations of the 8 players
-		Location playerLocQB;
-		Location playerLocWR;
-		Location playerLocRB;
-		Location playerLocFB;
-		Location playerLocTE;
-		Location playerLocC;
-		Location playerLocG;
-		Location playerLocT;
+		private Location playerLocQB;
+		private Location playerLocWR;
+		private Location playerLocRB;
+		private Location playerLocFB;
+		private Location playerLocTE;
+		private Location playerLocC;
+		private Location playerLocG;
+		private Location playerLocT;
 
 		public DrawView(Context context, AttributeSet attrs) {
 			super(context, attrs);
@@ -374,6 +374,35 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 						routeType.setEnabled(false);
 						routeType.setClickable(false);
 						invalidate(); // redraw
+					}
+					else
+					{
+						Player tempPlayer = field.getAllPlayers().get(playerIndex);
+						int tempX = tempPlayer.getLocation().getX();
+						int tempY = tempPlayer.getLocation().getY();
+						System.out.println(tempX);
+						System.out.println(tempY);
+						if(tempX % 25 >= 13)
+						{
+							tempX = tempX + (25 - tempX % 25);
+						}
+						else
+						{
+							tempX = tempX - (tempX % 25);
+						}
+						if(tempY % 25 >= 13)
+						{
+							tempY = tempY + (25 - tempY % 25);
+						}
+						else
+						{
+							tempY = tempY - (tempY % 25);
+						}
+						Location tempLocation = new Location(tempX, tempY);
+						tempPlayer.setLocation(tempLocation);
+						System.out.println(tempX);
+						System.out.println(tempY);
+						invalidate(); // redrew
 					}
 				}
 				break;
