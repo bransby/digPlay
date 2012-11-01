@@ -10,6 +10,13 @@ public class Player {
 		_position = p;
 		_route = null;		
 	}
+
+	//overloading constructor for db use
+	public Player(Location l, Position p, Route r){
+		_position = p;
+		_spotOnField = l;
+		_route = r;
+	}
 	
 	public Position getPosition(){
 		return _position;

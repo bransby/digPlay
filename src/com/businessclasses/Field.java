@@ -2,11 +2,14 @@ package com.businessclasses;
 
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
+
 public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	private String _playName;
 	private String _playType;
+	private Bitmap _bitmap;
 
 	public String getPlayName(){
 		return _playName;
@@ -27,6 +30,19 @@ public class Field {
 	public void addPlayer(Location l, Position p){
 		Player player = new Player(l,p);
 		_playersOnField.add(player);
+	}
+
+	//overloading method for DB use
+	public void addPlayerAndRoute(Location l, Position p, Route r){
+		Player player = new Player(l,p,r);
+		_playersOnField.add(player);
+	}
+	
+	public Bitmap getImage(){
+		return this._bitmap;
+	}
+	public void setImage(Bitmap image){
+		this._bitmap = image;
 	}
 	public void clearField(){
 		_playersOnField.clear();
