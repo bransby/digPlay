@@ -55,7 +55,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 		int buttonPressed = v.getId();
 		Intent intent = null;
 		if(buttonPressed == drawNewPlay.getId())intent = new Intent(v.getContext(),EditorActivity.class);
-		else if(buttonPressed == viewGameplan.getId())intent = new Intent(v.getContext(),PlayViewActivity.class);
+		else if(buttonPressed == viewGameplan.getId())intent = new Intent(v.getContext(),GameplanManagerActivity.class);
 		else if(buttonPressed == createGameplan.getId())intent = new Intent(v.getContext(),GameplanManagerActivity.class);
 		else intent = new Intent(v.getContext(),PlayViewActivity.class);
 		startActivity(intent);

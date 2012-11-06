@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -27,6 +28,7 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.gameplan_manager);
+	    
 	    playbookPlays = new ArrayList<String>();
 	    gameplanPlays = new ArrayList<String>();
 	    playbookPlays.add("play 1");
@@ -51,12 +53,14 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	}
 	
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+		boolean gpPressed = false;
+		if(adapter.getId() == gameplanLV.getId())gpPressed = true;
 		if(!deletePressed){
 			String playSelected = (String) adapter.getItemAtPosition(position);
-			gameplanPlays.add(playSelected);
+			if(!gameplanPlays.contains(playSelected))gameplanPlays.add(playSelected);
 			ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
 			gameplanLV.setAdapter(thisAdapter);
-		}else{
+		}else if(deletePressed && gpPressed){
 			gameplanPlays.remove(position);
 			ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
 			gameplanLV.setAdapter(thisAdapter);

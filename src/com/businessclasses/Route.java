@@ -14,4 +14,14 @@ public enum Route {
 	ARROW,
 	WHEEL,
 	FADE;
+	
+	@Override
+	public String toString(){
+		if(this.equals(STOP_AND_GO)){
+			return "STOP AND GO";
+		}if(this.equals(SKINNY_POST)){
+			return "SKINNY POST";
+		}
+		return super.toString();
+	}
 }
