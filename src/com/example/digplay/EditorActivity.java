@@ -1,18 +1,12 @@
 package com.example.digplay;
 
 import com.businessclasses.Field;
-import com.businessclasses.Location;
-import com.businessclasses.Player;
-import com.businessclasses.Position;
-import com.businessclasses.Route;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -182,103 +176,15 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 
 			x = (int) (event.getRawX()*DENSITY);
 			y = (int) (event.getRawY()*DENSITY);
-			int playerXPos = -1;
-			int playerYPos = -1;
-			
-			double playerIndexDistance = Float.MAX_VALUE;
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				boolean staticPlayerSelected = false; 
-				// loop for selecting bottom 8 players
-				for (int i = 0; i < fieldForCreatePlayer.getAllPlayers().size(); i++)
-				{
-					playerXPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getX();
-					playerYPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getY();
-					// calculate distance between user click and this player
-					double dist = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
-							+ ((playerYPos-y)*(playerYPos-y)));
-					if (dist < TOUCH_SENSITIVITY)
-					{
-						// this player has been selected
-						Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-						field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), Route.NO_ROUTE); // add to field
-						playerIndex = field.getAllPlayers().size()-1; // this player is the last 
-						// player to be added to field
-						enableAll();
-						staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
-					}
-				}
-				if (!staticPlayerSelected)
-				{
-					boolean hasBeenSet = false;
-					// check if one of the players has been selected
-					for (int i = 0; i < field.getAllPlayers().size(); i++)
-					{
-						playerXPos = field.getAllPlayers().get(i).getLocation().getX();
-						playerYPos = field.getAllPlayers().get(i).getLocation().getY();
-						// calculate distance between user click and this player
-						double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
-								+ ((playerYPos-y)*(playerYPos-y)));
-						if (distance < TOUCH_SENSITIVITY)
-						{
-							if (distance < playerIndexDistance)
-							{
-								playerIndexDistance = distance;
-								// this player has been selected
-								playerIndex = i;
-								// routes can be changed for this player
-								enableAll();
-								hasBeenSet = true;
-							}
-						}
-					}
-					// if not selected, disable the route spinner and reset player index
-					if (!hasBeenSet)
-					{
-						disableAll();
-					}
-				}
+				DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex);
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_UP:
-				if (playerIndex != -1)
-				{
-					// is player outside of the field?
-					if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS || y < 135*DENSITY || y > 660*DENSITY)
-					{
-						field.getAllPlayers().remove(playerIndex);
-						// disable route possibilities
-						disableAll();
-						invalidate(); // redraw
-					}
-					else
-					{
-						Player tempPlayer = field.getAllPlayers().get(playerIndex);
-						int tempX = tempPlayer.getLocation().getX()-40;
-						int tempY = tempPlayer.getLocation().getY()-60;
-						// this is the grid
-						if(tempX % 25 >= 13)
-						{
-							tempX = tempX + (25 - tempX % 25);
-						}
-						else
-						{
-							tempX = tempX - (tempX % 25);
-						}
-						if(tempY % 25 >= 13)
-						{
-							tempY = tempY + (25 - tempY % 25);
-						}
-						else
-						{
-							tempY = tempY - (tempY % 25);
-						}
-						Location tempLocation = new Location(tempX+40, tempY+60);
-						tempPlayer.setLocation(tempLocation);
-						invalidate(); // redrew
-					}
-				}
+				DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, DENSITY, x, y);
+				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:
 				break;
@@ -286,10 +192,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 				break;
 			case MotionEvent.ACTION_MOVE:
 				// update the player location when dragging
-				if (playerIndex != -1)
-				{
-					field.getAllPlayers().get(playerIndex).setLocation(new Location(x, y));
-				}
+				DrawingUtils.actionMove(field, playerIndex, x, y);
 				invalidate(); // redraw
 				break;
 			default:

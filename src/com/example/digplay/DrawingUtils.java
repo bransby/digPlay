@@ -2,6 +2,7 @@ package com.example.digplay;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
 
@@ -223,6 +224,114 @@ public class DrawingUtils {
 	{
 		Route[] routes = Route.values();
 		return routes[value];
+	}
+	
+	public static void actionMove(Field field, int playerIndex, int x, int y)
+	{
+		if (playerIndex != -1)
+		{
+			field.getAllPlayers().get(playerIndex).setLocation(new Location(x, y));
+		}
+	}
+	
+	public static void actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
+			float RIGHT_MARGIN, float DENSITY, int x, int y)
+	{
+		if (playerIndex != -1)
+		{
+			// is player outside of the field?
+			if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS || y < 135*DENSITY || y > 660*DENSITY)
+			{
+				field.getAllPlayers().remove(playerIndex);
+				// disable route possibilities
+				EditorActivity.disableAll();
+				
+			}
+			else
+			{
+				Player tempPlayer = field.getAllPlayers().get(playerIndex);
+				int tempX = tempPlayer.getLocation().getX()-40;
+				int tempY = tempPlayer.getLocation().getY()-60;
+				// this is the grid
+				if(tempX % 25 >= 13)
+				{
+					tempX = tempX + (25 - tempX % 25);
+				}
+				else
+				{
+					tempX = tempX - (tempX % 25);
+				}
+				if(tempY % 25 >= 13)
+				{
+					tempY = tempY + (25 - tempY % 25);
+				}
+				else
+				{
+					tempY = tempY - (tempY % 25);
+				}
+				Location tempLocation = new Location(tempX+40, tempY+60);
+				tempPlayer.setLocation(tempLocation);
+			}
+		}
+	}
+	
+	public static void actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex)
+	{
+		int playerXPos = -1;
+		int playerYPos = -1;
+		
+		double playerIndexDistance = Float.MAX_VALUE;
+		
+		boolean staticPlayerSelected = false; 
+		// loop for selecting bottom 8 players
+		for (int i = 0; i < fieldForCreatePlayer.getAllPlayers().size(); i++)
+		{
+			playerXPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getX();
+			playerYPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getY();
+			// calculate distance between user click and this player
+			double dist = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
+					+ ((playerYPos-y)*(playerYPos-y)));
+			if (dist < TOUCH_SENSITIVITY)
+			{
+				// this player has been selected
+				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
+				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), Route.NO_ROUTE); // add to field
+				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
+				// player to be added to field
+				EditorActivity.enableAll();
+				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
+			}
+		}
+		if (!staticPlayerSelected)
+		{
+			boolean hasBeenSet = false;
+			// check if one of the players has been selected
+			for (int i = 0; i < field.getAllPlayers().size(); i++)
+			{
+				playerXPos = field.getAllPlayers().get(i).getLocation().getX();
+				playerYPos = field.getAllPlayers().get(i).getLocation().getY();
+				// calculate distance between user click and this player
+				double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
+						+ ((playerYPos-y)*(playerYPos-y)));
+				if (distance < TOUCH_SENSITIVITY)
+				{
+					if (distance < playerIndexDistance)
+					{
+						playerIndexDistance = distance;
+						// this player has been selected
+						playerIndex = i;
+						// routes can be changed for this player
+						EditorActivity.enableAll();
+						hasBeenSet = true;
+					}
+				}
+			}
+			// if not selected, disable the route spinner and reset player index
+			if (!hasBeenSet)
+			{
+				EditorActivity.disableAll();
+			}
+		}
 	}
 
 }
