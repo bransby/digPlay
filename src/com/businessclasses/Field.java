@@ -52,6 +52,11 @@ public class Field {
 			_playersOnField.get(i).clearRoute();
 		}
 	}
+	public void clearYardage(){
+		for(int i=0;i<_playersOnField.size();i++){
+			_playersOnField.get(i).setYardage(0);
+		}
+	}
 	public boolean removePlayer(Player p){
 		for(int i=0;i<_playersOnField.size();i++){
 			if(_playersOnField.get(i).equals(p)){

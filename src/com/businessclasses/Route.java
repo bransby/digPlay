@@ -3,6 +3,7 @@ package com.businessclasses;
 
 
 public enum Route {
+	NO_ROUTE,
 	FLY,
 	IN,
 	OUT,

@@ -4,11 +4,13 @@ public class Player {
 	private Position _position;
 	private Location _spotOnField;
 	private Route _route;
+	private int yardage;
 	
 	public Player(Location l, Position p){
 		_spotOnField = l;
 		_position = p;
-		_route = null;		
+		_route = Route.NO_ROUTE;		
+		yardage = 0;
 	}
 
 	//overloading constructor for db use
@@ -16,6 +18,17 @@ public class Player {
 		_position = p;
 		_spotOnField = l;
 		_route = r;
+		yardage = 0;
+	}
+	
+	public int getYardage()
+	{
+		return yardage;
+	}
+	
+	public void setYardage(int yardage)
+	{
+		this.yardage = yardage;
 	}
 	
 	public Position getPosition(){
@@ -37,6 +50,6 @@ public class Player {
 		_route = r;
 	}
 	public void clearRoute(){
-		_route = null;
+		_route = Route.NO_ROUTE;
 	}
 }
