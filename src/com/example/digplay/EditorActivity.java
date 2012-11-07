@@ -110,8 +110,9 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		routeDistance.setProgress(0);
 	}
 	
-	public static void enableAll()
+	public static void enableAll(int player_index)
 	{
+		playerIndex = player_index;
 		routeType.setEnabled(true);
 		routeType.setClickable(true);
 		routeDistance.setEnabled(true);
@@ -170,6 +171,8 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 					2*DENSITY, 18*DENSITY, canvas, paint);
 	
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, fieldForCreatePlayer, canvas, paint);
+			
+			DrawingUtils.drawRoutes(field, PIXELS_PER_YARD, canvas, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
@@ -183,7 +186,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_UP:
-				DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, DENSITY, x, y);
+				DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, TOP_ANDROID_BAR, x, y);
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:

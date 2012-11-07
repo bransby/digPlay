@@ -139,6 +139,17 @@ public class DrawingUtils {
 		canvas.drawText(value, xposition, yposition, paint);
 	}
 	
+	public static void drawRoutes(Field field, float PIXELS_PER_YARD, Canvas canvas, Paint paint)
+	{
+		for (int i = 0; i < field.getAllPlayers().size(); i++)
+		{
+			Player tempPlayer = field.getAllPlayers().get(i);
+			Position playerPosition = tempPlayer.getPosition();
+			Route playerRoute = tempPlayer.getRoute();
+			int yardage = tempPlayer.getYardage();
+		}
+	}
+	
 	public static void drawField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 
 			float BOTTOM_MARGIN, float DENSITY, float FIELD_LINE_WIDTHS, float PIXELS_PER_YARD, 
 			float outOfBoundsSpacing, float hashLength, Canvas canvas, Paint paint)
@@ -148,11 +159,6 @@ public class DrawingUtils {
 		
 		// draw the field
 		canvas.drawRect(LEFT_MARGIN, TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, paint);
-		
-		paint.setColor(Color.WHITE);
-		// draw a stroke, not a line
-		paint.setStyle(Paint.Style.STROKE);
-		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
 		// 2 = number of pixels between out of bounds and hash mark
 		// 18 = length of the hash mark
@@ -179,6 +185,11 @@ public class DrawingUtils {
 			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, float DENSITY, float outOfBoundsSpacing, 
 			float hashLength, Canvas canvas, Paint paint)
 	{
+		paint.setColor(Color.WHITE);
+		// draw a stroke, not a line
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
+		
 		float middleHashOffset = (450*DENSITY);
 		for (int i = 0; i < 45; i++)
 		{
@@ -202,6 +213,11 @@ public class DrawingUtils {
 	public static void drawFiveYardLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 
 			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, Canvas canvas, Paint paint)
 	{
+		paint.setColor(Color.WHITE);
+		// draw a stroke, not a line
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
+		
 		float pixelsPerFiveYards = PIXELS_PER_YARD*5;
 		float halfFieldLineWidths =  FIELD_LINE_WIDTHS/2;
 		for (int i = 0; i < 8; i++)
@@ -235,17 +251,18 @@ public class DrawingUtils {
 	}
 	
 	public static void actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
-			float RIGHT_MARGIN, float DENSITY, int x, int y)
+			float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float TOP_ANDROID_BAR, int x, int y)
 	{
 		if (playerIndex != -1)
 		{
 			// is player outside of the field?
-			if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS || y < 135*DENSITY || y > 660*DENSITY)
+			if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS 
+					|| y < TOP_MARGIN + TOP_ANDROID_BAR + PLAYER_ICON_RADIUS 
+					|| y > BOTTOM_MARGIN + TOP_ANDROID_BAR - PLAYER_ICON_RADIUS)
 			{
 				field.getAllPlayers().remove(playerIndex);
 				// disable route possibilities
 				EditorActivity.disableAll();
-				
 			}
 			else
 			{
@@ -298,7 +315,7 @@ public class DrawingUtils {
 				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), Route.NO_ROUTE); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
-				EditorActivity.enableAll();
+				EditorActivity.enableAll(playerIndex);
 				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
 			}
 		}
@@ -321,7 +338,7 @@ public class DrawingUtils {
 						// this player has been selected
 						playerIndex = i;
 						// routes can be changed for this player
-						EditorActivity.enableAll();
+						EditorActivity.enableAll(playerIndex);
 						hasBeenSet = true;
 					}
 				}
@@ -333,5 +350,4 @@ public class DrawingUtils {
 			}
 		}
 	}
-
 }
