@@ -9,6 +9,7 @@ import com.businessclasses.Sort;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener {
 	private ListView playList;
@@ -25,6 +27,9 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private Spinner gamePlans;
 	private Button refineSearch;
 	private PlayAdapter _adapter; 
+	private TextView title;
+	private TextView playTypeTitle;
+	private TextView gamePlanTitle;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,16 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setListView();
 	    setSpinners();
 	    setButtons();
+	    setText();
+	}
+	private void setText() {
+		title = (TextView)findViewById(R.id.pv_title);
+		playTypeTitle = (TextView)findViewById(R.id.pv_play_type_title);
+		gamePlanTitle = (TextView)findViewById(R.id.pv_gameplan_title);
+		title.setTextColor(Color.WHITE);
+		playTypeTitle.setTextColor(Color.WHITE);
+		gamePlanTitle.setTextColor(Color.WHITE);
+		
 	}
 	private void setSpinners() {
 		playSort = (Spinner)findViewById(R.id.playview_sort_by);

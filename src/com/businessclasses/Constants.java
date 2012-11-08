@@ -30,6 +30,6 @@ public class Constants {
 	}
 	
 	public static int getBackground(){
-		return R.drawable.football_background;
+		return R.drawable.brown_backgroud;
 	}
 }
