@@ -32,5 +32,11 @@
             <activity android:name="GameplanManagerActivity"
                 android:screenOrientation="landscape"></activity>
     </application>
-
+   
+   
+    <application
+		android:label="@string/app_name" 
+        android:name="DigPlayDBHelper">
+	</application>
+	
 </manifest>

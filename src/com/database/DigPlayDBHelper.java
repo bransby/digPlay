@@ -1,36 +1,107 @@
 package com.database;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import android.app.Application;
+import android.app.ListActivity;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.businessclasses.Field;
 import com.businessclasses.GamePlan;
 import com.businessclasses.Player;
-import com.db4o.Db4oEmbedded;
-import com.db4o.ObjectContainer;
-import com.db4o.ObjectSet;
+import com.db4o.*;
+import com.db4o.config.AndroidSupport;
+import com.db4o.config.EmbeddedConfiguration;
+import com.example.digplay.MainMenuActivity;
 
-public class DigPlayDBHelper {
-	String dpPath;
-	ObjectContainer playsDB;
-	ObjectContainer gamePlanDB;
 
+public class DigPlayDBHelper extends Application {
+	private static DigPlayDBHelper singleton;
+	
+	private volatile ObjectContainer playsDB;
+	private volatile ObjectContainer gamePlanDB;
+	String testing12 = "in db " + this.toString();
+	
+	
+	public DigPlayDBHelper getInstance(){
+		return singleton;
+	}
+	
+	public void onCreate(){
+		super.onCreate();
+		singleton = this;
+		
+		final EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+		config.common().add(new AndroidSupport());
+		this.playsDB = Db4oEmbedded.openFile(config, this.getFilesDir().getPath() + "PlaysDB.db4o");
+		
+		//new File(this.getFilesDir().getPath() + "GamePlanDB.db4o").delete();
+		
+		this.gamePlanDB = Db4oEmbedded.openFile(config, this.getFilesDir().getPath() + "GamePlanDB.db4o");
+			
+		if(this.playsDB == null){
+			Log.e("test", "playsDB is null");
+		}
+		
+		System.out.println("in db " + getApplicationInfo().toString());
+	}
+	
+	
+	public void onTerminate(){
+		super.onTerminate();
+		
+		playsDB.rollback();
+		gamePlanDB.rollback();
+		playsDB.close();
+		gamePlanDB.close();
+	}
+	
+	public ObjectContainer playsDB(){
+		return playsDB;
+	}
+	public ObjectContainer gamePlanDB(){
+		return gamePlanDB;
+	}
+	
+	//public String test = this.getDir("data", 0) + "/";
+	
+	//String test = this.getFilesDir().getPath();
+
+	/*
 	//opens the database
-	private boolean openDB(String name){
+	public boolean openDB(String name){
 		if(name != null){
-			playsDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), name);
+			if(this.getFilesDir().getPath() == null){
+				Log.d("db", "path is null scrub");
+			}
+			//String path = "/data/data/" + name + "/database/" + name + ".db4o";
+			
+			//new File(System.getProperty("user.home") + "/testing1.db4o").delete();
+			new File(this.getFilesDir().getPath() + name + ".db4o").delete();
+			
+			final EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+			config.common().add(new AndroidSupport());
+			
+			playsDB = Db4oEmbedded.openFile(config, this.getFilesDir().getPath() + name + ".db4o");
+			
+			//playsDB = Db4oEmbedded.openFile(config, System.getProperty("user.home") + "/testing1.db4o");
+			//playsDB = Db4oEmbedded.openFile(config, "/data/data/" + name + "/database/" + name + ".db4o");
 			return true;
 		}
 		return false;
 	}
-
+	
+	
+	
 	//closes the database
-	private void closeDB(){
+	public void closeDB(){
 		playsDB.close();
 	}
-
+*/
 	//completely empties the database
 	public void emptyDB(){
 		ObjectSet result = playsDB.queryByExample(new Object());
@@ -41,9 +112,17 @@ public class DigPlayDBHelper {
 
 	//Store a new play to the database
 	public void storePlay(Field field){
-		playsDB.store(field);
-		playsDB.commit();
-		Log.d("added play", "play added to db");	
+		if(field != null){
+			if(playsDB == null){
+				Log.d("db", "database is null");
+			}
+			playsDB.store(field);
+			playsDB.commit();
+			Log.d("added play", "play added to db");	
+		}
+		else{
+			Log.e("field input null", "play not added to db");
+		}
 	}
 
 	//Delete a play from the database
@@ -146,20 +225,28 @@ public class DigPlayDBHelper {
 	//game plan
 	///////////////////////////////////////////////
 	
+	/*
 	//open game play database
-	private boolean openGamePlanDB(String name){
+	public boolean openGamePlanDB(String name){
 		if(name != null){
-			gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), name);
+			//gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), name);
+			
+			new File(this.getFilesDir().getPath() + name + ".db4o").delete();
+			
+			final EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+			config.common().add(new AndroidSupport());
+			
+			playsDB = Db4oEmbedded.openFile(config, this.getFilesDir().getPath() + name + ".db4o");
 			return true;
 		}
 		return false;
 	}
 
 	//closes the database
-	private void closeGamePlanDB(){
+	public void closeGamePlanDB(){
 		gamePlanDB.close();
 	}
-
+*/
 	//completely empties the database
 	public void emptyGamePlanDB(){
 		ObjectSet result = gamePlanDB.queryByExample(new Object());
