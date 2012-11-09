@@ -140,40 +140,55 @@ public class DrawingUtils {
 		canvas.drawText(value, xposition, yposition, paint);
 	}
 	
-	public static void drawLeftArrow(Canvas canvas, Paint paint, float x, float y, float sinArrow)
+	public static void drawLeftArrow(Canvas canvas, Paint paint, float x, float y, float cosArrow)
 	{
-		canvas.drawLine(x, y, x + sinArrow, y + sinArrow, paint);
-		canvas.drawLine(x, y, x + sinArrow, y - sinArrow, paint);
+		canvas.drawLine(x, y, x + cosArrow, y + cosArrow, paint);
+		canvas.drawLine(x, y, x + cosArrow, y - cosArrow, paint);
 	}
 	
-	public static void drawUpLeftArrow(Canvas canvas, Paint paint, float x, float y, float doubleSinFortyFiveArrow)
+	public static void drawUpLeftArrow(Canvas canvas, Paint paint, float x, float y, float doublesinFortyFiveArrow)
 	{
-		canvas.drawLine(x, y, x, y + doubleSinFortyFiveArrow, paint);
-		canvas.drawLine(x, y, x + doubleSinFortyFiveArrow, y, paint);
+		canvas.drawLine(x, y, x, y + doublesinFortyFiveArrow, paint);
+		canvas.drawLine(x, y, x + doublesinFortyFiveArrow, y, paint);
 	}
 	
-	public static void drawRightArrow(Canvas canvas, Paint paint, float x, float y, float sinArrow)
+	public static void drawRightArrow(Canvas canvas, Paint paint, float x, float y, float cosArrow)
 	{
-		canvas.drawLine(x, y, x - sinArrow, y - sinArrow, paint);
-		canvas.drawLine(x, y, x - sinArrow, y + sinArrow, paint);
+		canvas.drawLine(x, y, x - cosArrow, y - cosArrow, paint);
+		canvas.drawLine(x, y, x - cosArrow, y + cosArrow, paint);
 	}
 	
-	public static void drawUpRightArrow(Canvas canvas, Paint paint, float x, float y, float doubleSinFortyFiveArrow)
+	public static void drawUpRightArrow(Canvas canvas, Paint paint, float x, float y, float doublesinFortyFiveArrow)
 	{
-		canvas.drawLine(x, y, x, y + doubleSinFortyFiveArrow, paint);
-		canvas.drawLine(x, y, x - doubleSinFortyFiveArrow, y, paint);
+		canvas.drawLine(x, y, x, y + doublesinFortyFiveArrow, paint);
+		canvas.drawLine(x, y, x - doublesinFortyFiveArrow, y, paint);
 	}
 	
-	public static void drawUpArrow(Canvas canvas, Paint paint, float x, float y, float sinArrow)
+	public static void drawUpArrow(Canvas canvas, Paint paint, float x, float y, float arrowLength, float FIELD_LINE_WIDTHS)
 	{
-		canvas.drawLine(x - sinArrow, y + sinArrow, x, y, paint);
-		canvas.drawLine(x, y, x + sinArrow, y + sinArrow, paint);
+		float temp = (arrowLength)/FloatMath.cos((float) (Math.PI/4)) - FIELD_LINE_WIDTHS;
+		canvas.drawLine(x - temp, y + temp, x- FIELD_LINE_WIDTHS, y- FIELD_LINE_WIDTHS, paint);
+		canvas.drawLine(x- FIELD_LINE_WIDTHS, y- FIELD_LINE_WIDTHS, x + temp, y + temp, paint);
 	}
 	
-	public static void drawRoutes(Field field, float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, 
+	public static void drawSeventyFiveUpRightArrow(Canvas canvas, Paint paint, float x, float y, float doublesinFortyFiveArrow)
+	{
+		canvas.rotate(-15);
+		canvas.drawLine(x, y, x, y + doublesinFortyFiveArrow, paint);
+		canvas.drawLine(x, y, x - doublesinFortyFiveArrow, y, paint);
+		canvas.restore();
+	}
+	
+	public static void drawSeventyFiveUpLeftArrow(Canvas canvas, Paint paint, float x, float y, float doublecosArrow)
+	{
+		canvas.drawLine(x, y, x, y + doublecosArrow, paint);
+		canvas.drawLine(x, y, x + doublecosArrow, y, paint);
+	}
+	
+	public static void drawRoutes(Field field, float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float PIXELS_PER_YARD, 
 			float PLAYER_ICON_RADIUS, float TOP_ANDROID_BAR, float FIELD_LINE_WIDTHS, Canvas canvas, Paint paint)
 	{
-		paint.setColor(Color.WHITE);
+		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
@@ -187,19 +202,20 @@ public class DrawingUtils {
 			int yardage = tempPlayer.getYardage();
 			
 			float topOfPlayer = playerY - PLAYER_ICON_RADIUS - TOP_ANDROID_BAR; // y value of the top of the player icon
-			float sinFortyFive = FloatMath.sin((float) (Math.PI/4)); // used for arrow hands
-			float sinArrow = PIXELS_PER_YARD / sinFortyFive; // for arrows that go up, left, or right (length of hands of arrow)
+			float sinFortyFive = FloatMath.cos((float) (Math.PI/4)); // used for arrow hands
+			float sinSeventyFive = FloatMath.sin((float) (75*Math.PI/180));
+			float cosArrow = PIXELS_PER_YARD / sinFortyFive; // for arrows that go up, left, or right (length of hands of arrow)
 			float lineWidthsDivTwo = (FIELD_LINE_WIDTHS/2); // used for getting middle of the line
 			float yardsPlusTopOfPlayer = topOfPlayer - PIXELS_PER_YARD * yardage; // y value of top of player with yardage offset
 			float endOfRouteYards = PIXELS_PER_YARD * 10; // 10 yards of pixels, needed for many routes
 			float xPlusEndOfRoute = playerX + endOfRouteYards; // needed for calculating routes that aren't fly routes.
 			float xMinusEndOfRoute = playerX - endOfRouteYards; // needed for calculating routes that aren't fly routes.
 			float yardsPlusTopPlayerLineWidths = yardsPlusTopOfPlayer + lineWidthsDivTwo; // offset the drawing line width of the top of the player
-			float doubleSinArrow = sinArrow / sinFortyFive; // for arrows that go left up or right up.
+			float doublecosArrow = cosArrow / sinFortyFive; // for arrows that go left up or right up.
 			
 			float playerWithAngle = PLAYER_ICON_RADIUS * sinFortyFive; // used for getting X and Y values of top left or top right of icon
 			float yardageWithAngle = yardage*PIXELS_PER_YARD * sinFortyFive; // used for getting X and Y values of yardage
-			float endOfRouteYardsWithAngle = endOfRouteYards * sinFortyFive; // for post and flag.
+			float endOfRouteYardsFortyFiveAngle = endOfRouteYards * sinFortyFive; // for post and flag.
 			float topLeftPlayerX = playerX - playerWithAngle; // top left of player icon X value
 			float topLeftPlayerY = playerY - TOP_ANDROID_BAR - playerWithAngle; // top left of player icon Y value
 			float topLeftPlayerXMinusYardage = topLeftPlayerX - yardageWithAngle; // top right of player icon X value
@@ -217,7 +233,7 @@ public class DrawingUtils {
 					{
 						canvas.drawLine(playerX, topOfPlayer, playerX, 
 								yardsPlusTopOfPlayer, paint);
-						drawUpArrow(canvas, paint, playerX, yardsPlusTopOfPlayer, sinArrow);
+						drawUpArrow(canvas, paint, playerX, yardsPlusTopOfPlayer, cosArrow, FIELD_LINE_WIDTHS);
 					}
 					break;
 				case IN:
@@ -231,14 +247,14 @@ public class DrawingUtils {
 							canvas.drawLine(xMinusEndOfRoute, yardsPlusTopPlayerLineWidths, playerX, 
 									yardsPlusTopPlayerLineWidths, paint);
 
-							drawLeftArrow(canvas, paint, xMinusEndOfRoute, yardsPlusTopPlayerLineWidths, sinArrow);
+							drawLeftArrow(canvas, paint, xMinusEndOfRoute, yardsPlusTopPlayerLineWidths, cosArrow);
 						}
 						else
 						{
 							canvas.drawLine(xPlusEndOfRoute, yardsPlusTopPlayerLineWidths, 
 									playerX, yardsPlusTopPlayerLineWidths, paint);
 							
-							drawRightArrow(canvas, paint, xPlusEndOfRoute, yardsPlusTopPlayerLineWidths, sinArrow);
+							drawRightArrow(canvas, paint, xPlusEndOfRoute, yardsPlusTopPlayerLineWidths, cosArrow);
 						}
 					}
 					break;
@@ -256,7 +272,7 @@ public class DrawingUtils {
 									canvas.drawLine(RIGHT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, playerX, 
 											yardsPlusTopOfPlayer + lineWidthsDivTwo, paint);
 									
-									drawRightArrow(canvas, paint, RIGHT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, sinArrow);
+									drawRightArrow(canvas, paint, RIGHT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, cosArrow);
 								}
 							}
 							else
@@ -264,7 +280,7 @@ public class DrawingUtils {
 								canvas.drawLine(xPlusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, playerX, 
 										yardsPlusTopOfPlayer + lineWidthsDivTwo, paint);
 									
-								drawRightArrow(canvas, paint, xPlusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, sinArrow);
+								drawRightArrow(canvas, paint, xPlusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, cosArrow);
 							}
 						}
 						else
@@ -276,7 +292,7 @@ public class DrawingUtils {
 									canvas.drawLine(LEFT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, playerX, 
 											yardsPlusTopOfPlayer + lineWidthsDivTwo, paint);
 									
-									drawLeftArrow(canvas, paint, LEFT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, sinArrow);
+									drawLeftArrow(canvas, paint, LEFT_MARGIN, yardsPlusTopOfPlayer + lineWidthsDivTwo, cosArrow);
 								}
 							}
 							else
@@ -284,7 +300,7 @@ public class DrawingUtils {
 								canvas.drawLine(xMinusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, playerX, 
 										yardsPlusTopOfPlayer + lineWidthsDivTwo, paint);
 								
-								drawLeftArrow(canvas, paint, xMinusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, sinArrow);
+								drawLeftArrow(canvas, paint, xMinusEndOfRoute, yardsPlusTopOfPlayer + lineWidthsDivTwo, cosArrow);
 							}
 						}
 					}
@@ -297,7 +313,7 @@ public class DrawingUtils {
 							canvas.drawLine(topLeftPlayerX, topLeftPlayerY, 
 									topLeftPlayerXMinusYardage, 
 									topLeftPlayerYMinusYardage, paint);
-							drawUpLeftArrow(canvas, paint, topLeftPlayerXMinusYardage, topLeftPlayerYMinusYardage, doubleSinArrow);
+							drawUpLeftArrow(canvas, paint, topLeftPlayerXMinusYardage, topLeftPlayerYMinusYardage, doublecosArrow);
 						}
 						else
 						{
@@ -308,16 +324,15 @@ public class DrawingUtils {
 							canvas.drawLine(topRightPlayerX, topRightPlayerY, 
 									topRightPlayerXPlusYardage, 
 									topRightPlayerYMinusYardage, paint);
-							drawUpRightArrow(canvas, paint, topRightPlayerXPlusYardage, topRightPlayerYMinusYardage, doubleSinArrow);
+							drawUpRightArrow(canvas, paint, topRightPlayerXPlusYardage, topRightPlayerYMinusYardage, doublecosArrow);
 						}
 					}
 					break;
 				case POST:
 					if (yardage > 0)
 					{
-						canvas.drawLine(playerX, topOfPlayer, playerX, 
-								yardsPlusTopOfPlayer, paint);
-						float topOfArrow = yardsPlusTopOfPlayer - endOfRouteYardsWithAngle;
+						drawStraightLine(canvas, paint, playerX, topOfPlayer, yardsPlusTopOfPlayer);
+						float topOfArrow = yardsPlusTopOfPlayer - endOfRouteYardsFortyFiveAngle;
 						if (playerX >= (RIGHT_MARGIN + LEFT_MARGIN)/2)
 						{
 							if (topOfArrow < TOP_MARGIN)
@@ -326,32 +341,31 @@ public class DrawingUtils {
 								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX - temp, 
 										TOP_MARGIN, paint);
 								drawUpLeftArrow(canvas, paint, playerX - temp, 
-										TOP_MARGIN, doubleSinArrow);
+										TOP_MARGIN, doublecosArrow);
 							}
 							else
 							{
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX - endOfRouteYardsWithAngle, 
+								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX - endOfRouteYardsFortyFiveAngle, 
 										topOfArrow, paint);
-								drawUpLeftArrow(canvas, paint, playerX - endOfRouteYardsWithAngle, 
-										topOfArrow, doubleSinArrow);
+								drawUpLeftArrow(canvas, paint, playerX - endOfRouteYardsFortyFiveAngle, 
+										topOfArrow, doublecosArrow);
 							}
 						}
 						else
 						{
-							if (topOfArrow < TOP_MARGIN)
+							float diff = topOfPlayer - PIXELS_PER_YARD * yardage - (endOfRouteYards*sinFortyFive);
+							if (playerX - endOfRouteYards*sinFortyFive < LEFT_MARGIN)
 							{
-								float temp = yardsPlusTopOfPlayer - TOP_MARGIN;
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX + temp, 
-										TOP_MARGIN, paint);
-								drawUpRightArrow(canvas, paint, playerX + temp, 
-										TOP_MARGIN, doubleSinArrow);
+								
+								drawPost(canvas, paint, 45, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+							}
+							else if (diff < TOP_MARGIN)
+							{
+								drawPost(canvas, paint, 45, -(topOfPlayer - PIXELS_PER_YARD * yardage - TOP_MARGIN)/sinFortyFive, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
 							}
 							else
 							{
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX + endOfRouteYardsWithAngle, 
-										topOfArrow, paint);
-								drawUpRightArrow(canvas, paint, playerX + endOfRouteYardsWithAngle, 
-										topOfArrow, doubleSinArrow);
+								drawPost(canvas, paint, 45, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
 							}
 						}
 					}
@@ -359,20 +373,18 @@ public class DrawingUtils {
 				case FLAG:
 					if (yardage > 0)
 					{
-						canvas.drawLine(playerX, topOfPlayer, playerX, 
-								yardsPlusTopOfPlayer, paint);
-						float topOfArrow = yardsPlusTopOfPlayer - endOfRouteYardsWithAngle;
-						float XOfArrow = playerX;
+						drawStraightLine(canvas, paint, playerX, topOfPlayer, yardsPlusTopOfPlayer);
+						float topOfArrow = yardsPlusTopOfPlayer - endOfRouteYardsFortyFiveAngle;
 						if (playerX >= (RIGHT_MARGIN + LEFT_MARGIN)/2)
 						{
-							XOfArrow += endOfRouteYardsWithAngle;
-							if (XOfArrow > RIGHT_MARGIN)
+							/*
+							if (playerX - endOfRouteYards*sinFortyFive > RIGHT_MARGIN)
 							{
 								float temp = RIGHT_MARGIN - playerX;
 								canvas.drawLine(playerX, yardsPlusTopOfPlayer, RIGHT_MARGIN, 
 										yardsPlusTopOfPlayer - temp, paint);
 								drawUpRightArrow(canvas, paint, RIGHT_MARGIN, 
-										yardsPlusTopOfPlayer - temp, doubleSinArrow);
+										yardsPlusTopOfPlayer - temp, doublecosArrow);
 							}
 							else if (topOfArrow < TOP_MARGIN)
 							{
@@ -380,41 +392,69 @@ public class DrawingUtils {
 								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX + temp, 
 										TOP_MARGIN, paint);
 									drawUpRightArrow(canvas, paint,  playerX + temp, 
-										TOP_MARGIN, doubleSinArrow);
+										TOP_MARGIN, doublecosArrow);
 							}
 							else
 							{
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX + endOfRouteYardsWithAngle, 
+								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX + endOfRouteYardsFortyFiveAngle, 
 									topOfArrow, paint);
-								drawUpRightArrow(canvas, paint, playerX + endOfRouteYardsWithAngle, 
-									topOfArrow, doubleSinArrow);
+								drawUpRightArrow(canvas, paint, playerX + endOfRouteYardsFortyFiveAngle, 
+									topOfArrow, doublecosArrow);
 							}
+							*/
 						}
 						else
 						{
-							XOfArrow -= endOfRouteYardsWithAngle;
-							if (XOfArrow < LEFT_MARGIN)
+							float diff = topOfPlayer - PIXELS_PER_YARD * yardage - (endOfRouteYards*sinFortyFive);
+							if (playerX - endOfRouteYards*sinFortyFive < LEFT_MARGIN)
 							{
+								
+								drawPost(canvas, paint, -45, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+								/*
 								float temp = playerX - LEFT_MARGIN;
 								canvas.drawLine(playerX, yardsPlusTopOfPlayer, LEFT_MARGIN, 
 										yardsPlusTopOfPlayer - temp, paint);
 								drawUpLeftArrow(canvas, paint, LEFT_MARGIN, 
-										yardsPlusTopOfPlayer - temp, doubleSinArrow);
+										yardsPlusTopOfPlayer - temp, doublecosArrow);
+										*/
 							}
-							else if (topOfArrow < TOP_MARGIN)
+							else if (diff < TOP_MARGIN)
 							{
-								float temp = yardsPlusTopOfPlayer - TOP_MARGIN;
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX - temp, 
-										TOP_MARGIN, paint);
-								drawUpLeftArrow(canvas, paint,  playerX - temp, 
-										TOP_MARGIN, doubleSinArrow);
+								drawPost(canvas, paint, -45, -(topOfPlayer - PIXELS_PER_YARD * yardage - TOP_MARGIN)/sinFortyFive, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
 							}
 							else
 							{
-								canvas.drawLine(playerX, yardsPlusTopOfPlayer, playerX - endOfRouteYardsWithAngle, 
-									topOfArrow, paint);
-								drawUpLeftArrow(canvas, paint, playerX - endOfRouteYardsWithAngle, 
-									topOfArrow, doubleSinArrow);
+								drawPost(canvas, paint, -45, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+							}
+						}
+					}
+					break;
+				case SKINNY_POST:
+					if (yardage > 0)
+					{
+						drawStraightLine(canvas, paint, playerX, topOfPlayer, yardsPlusTopOfPlayer);
+						if (playerX >= (RIGHT_MARGIN + LEFT_MARGIN)/2)
+						{
+							float diff = topOfPlayer - PIXELS_PER_YARD * yardage - (endOfRouteYards*sinSeventyFive);
+							if (diff < TOP_MARGIN)
+							{
+								drawPost(canvas, paint, -15, -(topOfPlayer - PIXELS_PER_YARD * yardage - TOP_MARGIN)/sinSeventyFive, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+							}
+							else
+							{
+								drawPost(canvas, paint, -15, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+							}
+						}
+						else
+						{
+							float diff = topOfPlayer - PIXELS_PER_YARD * yardage - (endOfRouteYards*sinSeventyFive);
+							if (diff < TOP_MARGIN)
+							{
+								drawPost(canvas, paint, 15, -(topOfPlayer - PIXELS_PER_YARD * yardage - TOP_MARGIN)/sinSeventyFive, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
+							}
+							else
+							{
+								drawPost(canvas, paint, 15, -endOfRouteYards, PIXELS_PER_YARD, playerX, yardsPlusTopOfPlayer, FIELD_LINE_WIDTHS);
 							}
 						}
 					}
@@ -439,9 +479,24 @@ public class DrawingUtils {
 				break;
 			}
 		}
-		
 		// orangish color
 		paint.setColor(0xFFFF8000);
+	}
+	
+	public static void drawPost(Canvas canvas, Paint paint, float degrees, 
+			float height, float arrowLength, float xTranslate, float yTranslate, float FIELD_LINE_WIDTHS)
+	{
+		canvas.save();
+			canvas.translate(xTranslate, yTranslate);
+			canvas.rotate(degrees);
+			drawUpArrow(canvas, paint, 0, height, arrowLength, FIELD_LINE_WIDTHS);
+			drawStraightLine(canvas, paint, 0, 0, height);
+		canvas.restore();
+	}
+	
+	public static void drawStraightLine(Canvas canvas, Paint paint, float x, float y1, float y2)
+	{
+		canvas.drawLine(x, y1, x, y2, paint);
 	}
 	
 	public static void drawField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 

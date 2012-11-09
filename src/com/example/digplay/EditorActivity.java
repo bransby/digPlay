@@ -172,13 +172,14 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, fieldForCreatePlayer, canvas, paint);
 			
-			DrawingUtils.drawRoutes(field, LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, PLAYER_ICON_RADIUS, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, canvas, paint);
+			DrawingUtils.drawRoutes(field, LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, PIXELS_PER_YARD, PLAYER_ICON_RADIUS, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, canvas, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
 
 			x = (int) (event.getRawX()*DENSITY);
 			y = (int) (event.getRawY()*DENSITY);
+			System.out.println(y);
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
