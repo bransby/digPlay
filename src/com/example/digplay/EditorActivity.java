@@ -172,7 +172,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, fieldForCreatePlayer, canvas, paint);
 			
-			DrawingUtils.drawRoutes(field, PIXELS_PER_YARD, canvas, paint);
+			DrawingUtils.drawRoutes(field, LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, PLAYER_ICON_RADIUS, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, canvas, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
@@ -212,6 +212,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		{
 			field.getAllPlayers().get(playerIndex).setYardage(arg1);
 		}
+		drawView.invalidate();
 	}
 
 	public void onClick(View v) {
@@ -227,6 +228,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		{
 			field.getAllPlayers().get(playerIndex).changeRoute(DrawingUtils.LookupRoute(arg2));
 		}
+		drawView.invalidate();
 	}
 
 	public void onNothingSelected(AdapterView<?> arg0) {
