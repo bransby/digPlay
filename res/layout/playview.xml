@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/brown_backgroud" >
 
     <ListView
         android:id="@+id/playviewlist"
@@ -14,7 +15,7 @@
     </ListView>
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/pv_title"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -30,7 +31,8 @@
         android:layout_width="175dip"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5dip" />
 
     <Button
         android:id="@+id/playview_refine_search"
@@ -38,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/playview_sort_by"
+        android:layout_marginLeft="5dip"
         android:layout_marginTop="27dp"
         android:text="Refine Search" />
 
@@ -47,23 +50,26 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/playview_sort_by"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="36dp"/>
+        android:layout_marginBottom="36dp"
+        android:layout_marginLeft="5dip" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/pv_play_type_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/playview_sort_by"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dip"
         android:text="PLAY TYPE"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/pv_gameplan_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/playview_gameplan"
         android:layout_alignParentLeft="true"
+        android:layout_marginLeft="5dip"
         android:text="GAMEPLAN"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
