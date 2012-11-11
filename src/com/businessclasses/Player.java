@@ -1,16 +1,18 @@
 package com.businessclasses;
 
+import java.util.ArrayList;
+
 public class Player {
 	private Position _position;
+	private ArrayList<Location> routeLocations;
 	private Location _spotOnField;
 	private Route _route;
-	private int yardage;
 	
 	public Player(Location l, Position p){
 		_spotOnField = l;
 		_position = p;
-		_route = Route.NO_ROUTE;		
-		yardage = 0;
+		_route = Route.NO_ROUTE;
+		routeLocations = new ArrayList<Location>();
 	}
 
 	//overloading constructor for db use
@@ -18,17 +20,22 @@ public class Player {
 		_position = p;
 		_spotOnField = l;
 		_route = r;
-		yardage = 0;
+		routeLocations = new ArrayList<Location>();
 	}
 	
-	public int getYardage()
+	public void addRouteLocation(Location temp)
 	{
-		return yardage;
+		routeLocations.add(temp);
 	}
 	
-	public void setYardage(int yardage)
+	public ArrayList<Location> getRouteLocations()
 	{
-		this.yardage = yardage;
+		return routeLocations;
+	}
+	
+	public void clearRouteLocations()
+	{
+		routeLocations.clear();
 	}
 	
 	public Position getPosition(){

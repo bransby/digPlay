@@ -49,12 +49,7 @@ public class Field {
 	}
 	public void clearRoutes(){
 		for(int i=0;i<_playersOnField.size();i++){
-			_playersOnField.get(i).clearRoute();
-		}
-	}
-	public void clearYardage(){
-		for(int i=0;i<_playersOnField.size();i++){
-			_playersOnField.get(i).setYardage(0);
+			_playersOnField.get(i).clearRouteLocations();
 		}
 	}
 	public boolean removePlayer(Player p){
