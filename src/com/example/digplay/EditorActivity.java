@@ -8,6 +8,7 @@ import java.io.IOException;
 import com.businessclasses.Field;
 import com.businessclasses.Location;
 import com.businessclasses.Player;
+import com.businessclasses.Route;
 
 import android.app.Activity;
 import android.content.Context;
@@ -206,7 +207,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				selectedNewPlayer = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex);
+				selectedNewPlayer = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, blockRoute);
 				if (playerIndex != -1)
 				{
 					lastPlayerX = field.getAllPlayers().get(playerIndex).getLocation().getX();
@@ -344,6 +345,18 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 				blockRoute = false;
 				arrowButton.setBackgroundResource(R.drawable.right_arrow);
 			}
+			if (playerIndex != -1)
+			{
+				if (blockRoute)
+				{
+					field.getPlayer(playerIndex).changeRoute(Route.BLOCK);
+				}
+				else
+				{
+					field.getPlayer(playerIndex).changeRoute(Route.ARROW);
+				}
+				drawView.invalidate();
+			}
 		}else if(v.getId() == dashButton.getId()){
 			if(dashLine == false){
 				dashLine = true;
@@ -354,9 +367,12 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 				dashButton.setText("Solid Line");
 			}
 		}else if(v.getId() == clearPlayerRoute.getId()){
-			Player selectedPlayer = field.getPlayer(playerIndex);
-			selectedPlayer.clearRoute();
-			drawView.invalidate();
+			if (playerIndex != -1)
+			{
+				Player selectedPlayer = field.getPlayer(playerIndex);
+				selectedPlayer.clearRoute();
+				drawView.invalidate();
+			}
 		}
 	}
 

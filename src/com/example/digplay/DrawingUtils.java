@@ -367,7 +367,7 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static boolean actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex)
+	public static boolean actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, boolean blockRoute)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
@@ -387,7 +387,16 @@ public class DrawingUtils {
 			{
 				// this player has been selected
 				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-				field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
+				Route tempRoute;
+				if (blockRoute)
+				{
+					tempRoute = Route.BLOCK;
+				}
+				else
+				{
+					tempRoute = Route.ARROW;
+				}
+				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), tempRoute); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				EditorActivity.enableAll(playerIndex);
