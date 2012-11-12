@@ -158,7 +158,42 @@ public class DrawingUtils {
 		canvas.drawText(value, xposition, yposition, paint);
 	}
 	
-	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, Paint paint, float LEFT_MARGIN, float TOP_MARGIN)
+	public static void drawArrow(Canvas canvas, Paint paint, float PIXELS_PER_YARD)
+	{
+		float temp = (int)(Math.cos(Math.PI/4)*PIXELS_PER_YARD)*2;
+		canvas.drawLine(0, 0, -temp, temp, paint);
+		canvas.drawLine(0, 0, temp, temp, paint);
+	}
+	
+	public static void drawBlock(Canvas canvas, Paint paint, float PIXELS_PER_YARD)
+	{
+		canvas.drawLine(0, 0, -PIXELS_PER_YARD*2, 0, paint);
+		canvas.drawLine(0, 0, PIXELS_PER_YARD*2, 0, paint);
+	}
+	
+	public static void drawEndOfRoute(Canvas canvas, Paint paint, int x, int y, float PIXELS_PER_YARD, float differenceAngle, Route route)
+	{
+		if (route == Route.ARROW)
+		{
+			canvas.save();
+				canvas.translate(x, y);
+				canvas.rotate(differenceAngle-90);
+				drawArrow(canvas, paint, PIXELS_PER_YARD);
+			canvas.restore();
+		}
+		// draw block
+		else
+		{
+			canvas.save();
+				canvas.translate(x, y);
+				canvas.rotate(differenceAngle-90);
+				drawBlock(canvas, paint, PIXELS_PER_YARD);
+				canvas.restore();
+		}
+	}
+	
+	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
+			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD)
 	{
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
@@ -172,8 +207,17 @@ public class DrawingUtils {
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
 				canvas.drawLine(playerX, playerY, tempLocation.getX() - LEFT_MARGIN, tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN, paint);
-				playerX = (int) (tempLocation.getX() - LEFT_MARGIN);
-				playerY = (int) (tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN);
+				int tempX = (int) (tempLocation.getX() - LEFT_MARGIN);
+				int tempY = (int) (tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN);
+				if (j == tempPlayer.getRouteLocations().size()-1)
+				{
+					int deltaX = playerX - tempX;
+					int deltaY = playerY - tempY;
+					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
+				}
+				playerX = tempX;
+				playerY = tempY;
 			}
 		}
 		// orangish color
@@ -343,7 +387,7 @@ public class DrawingUtils {
 			{
 				// this player has been selected
 				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), Route.NO_ROUTE); // add to field
+				field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				EditorActivity.enableAll(playerIndex);

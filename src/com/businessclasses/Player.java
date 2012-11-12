@@ -11,7 +11,7 @@ public class Player {
 	public Player(Location l, Position p){
 		_spotOnField = l;
 		_position = p;
-		_route = Route.NO_ROUTE;
+		_route = Route.ARROW;
 		routeLocations = new ArrayList<Location>();
 	}
 
@@ -55,9 +55,6 @@ public class Player {
 	}
 	public void changeRoute(Route r){
 		_route = r;
-	}
-	public void clearRoute(){
-		_route = Route.NO_ROUTE;
 	}
 	public void flipLocation(){
 		Location l = this._spotOnField;

@@ -166,8 +166,6 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		static final private float TOP_ANDROID_BAR = 50*DENSITY;
 		static final private float TOUCH_SENSITIVITY = 35*DENSITY;
 		
-		private Context contxt;
-		
 		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 		static private Canvas bitmapCanvas;
 
@@ -205,7 +203,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD);
 	
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, 
 					fieldForCreatePlayer, c, bitmapCanvas, paint, selectionColor, LEFT_MARGIN, TOP_MARGIN);
