@@ -348,11 +348,11 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		}else if(v.getId() == dashButton.getId()){
 			if(dashLine == false){
 				dashLine = true;
-				dashButton.setText("Dashed Line");
+				dashButton.setBackgroundResource(R.drawable.dotted_line);
 			}
 			else {
 				dashLine = false;
-				dashButton.setText("Solid Line");
+				dashButton.setBackgroundResource(R.drawable.line);
 			}
 		}else if(v.getId() == clearPlayerRoute.getId()){
 			Player selectedPlayer = field.getPlayer(playerIndex);
