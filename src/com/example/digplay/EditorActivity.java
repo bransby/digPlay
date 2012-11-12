@@ -88,6 +88,8 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	public void onBtnClicked(View v) {
 		switch(v.getId()) {
 			case R.id.save:
+				//sets the bitmap variable in the field object to the current view.
+				field.setImage(drawView.getDrawingCache());
 				break;
 			case R.id.clear_routes:
 				field.clearRoutes();
@@ -439,6 +441,13 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		// TODO Auto-generated method stub
 		
 	}
+	
+	//used for database to get the field object.
+	public static Field getField(){
+		return field;
+	}
+	
+	
 	
 	public String[] getRoutes(){
 		Route[] routes = Route.values();

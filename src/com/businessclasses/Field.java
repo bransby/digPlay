@@ -9,6 +9,7 @@ public class Field {
 	private boolean _run;
 	private String _playName;
 	private String _playType;
+	private String _playFormation;
 	private Bitmap _bitmap;
 
 	public String getPlayName(){
@@ -36,6 +37,10 @@ public class Field {
 	public void addPlayerAndRoute(Location l, Position p, Route r){
 		Player player = new Player(l,p,r);
 		_playersOnField.add(player);
+	}
+	
+	public void addPlayers(ArrayList<Player> newPlayers){
+		this._playersOnField = newPlayers;
 	}
 	
 	public Bitmap getImage(){
@@ -78,5 +83,11 @@ public class Field {
 	}
 	public void setPlayType(String _playType) {
 		this._playType = _playType;
+	}
+	public void setPlayFormation(String _playFormation){
+		this._playFormation = _playFormation;
+	}
+	public String getPlayFormation(){
+		return this._playFormation;
 	}
 }

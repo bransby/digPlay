@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
-import com.database.DigPlayDBHelper;
-import com.database.anotherTest;
-import com.database.testingClass;
+import com.database.DigPlayDB;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -56,33 +55,18 @@ public class SaveActivity extends Activity implements OnClickListener {
 		String type = playType.getSelectedItem().toString();
 		//TODO:send to database
 		
-		Field newField = new Field();
+		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
 		newField.setPlayType(type);
+		newField.setPlayFormation(formation);
 		
-		System.out.println(newField.getPlayName());
-		System.out.println(newField.getPlayType());
-		/*
-		//DigPlayDBHelper app = (DigPlayDBHelper)getApplicationContext();
-		DigPlayDBHelper test = new DigPlayDBHelper();
 		
-		//System.out.println("in save " + getApplication().toString());
-		DigPlayDBHelper app = (DigPlayDBHelper) test.getInstance().getApplicationContext();
-       
-		ObjectContainer PlaysDB = app.playsDB();
-        app.getInstance().storePlay(newField);
-        
-        ObjectContainer GamePlanDB = app.gamePlanDB();
+		DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
 		
-		//MainMenuActivity.db.storePlay(newField);
+		//System.out.println(AnotherTest.getInstance(getBaseContext()).getPlayByName(newField.getPlayName()).getPlayName());
+		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getPlayName());
+		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getAllPlayers().toString());
 		
-		//DigPlayDBHelper testing = new DigPlayDBHelper();
-		//testing.openDB("testing");
-		//testing.storePlay(newField);
-		 */
-		//testingClass.storePlay(newField);
-		
-		anotherTest.getInstance().storePlay(newField);
 	}
 
 }
