@@ -93,4 +93,7 @@ public class Field {
 			thePlayer.flipLocation();
 		}
 	}
+	public Player getPlayer(int num){
+		return _playersOnField.get(num);
+	}
 }

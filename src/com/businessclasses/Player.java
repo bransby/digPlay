@@ -57,7 +57,7 @@ public class Player {
 		_route = r;
 	}
 	public void clearRoute(){
-		_route = Route.NO_ROUTE;
+		this.clearRouteLocations();
 	}
 	public void flipLocation(){
 		Location l = this._spotOnField;

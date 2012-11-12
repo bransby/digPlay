@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Player;
 
 import android.app.Activity;
 import android.content.Context;
@@ -31,8 +32,11 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
-public class EditorActivity extends Activity implements OnSeekBarChangeListener, OnClickListener, OnItemSelectedListener  {
+import android.widget.Toast;
+public class EditorActivity extends Activity implements OnClickListener, OnItemSelectedListener  {
 
+	private static boolean blockRoute;
+	private static boolean dashLine;
 	private static boolean movePlayer;
 	private static int selectionColor;
 	private static boolean drawingRoute;
@@ -55,12 +59,11 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	private static Button save;
 	private static Button clearRoutes;
 	private static Button clearField;
-
-	private static Spinner routeType;
 	
-	private static SeekBar routeDistance;
-	private static int routeYardage;
-	private static TextView routeYardageTV;
+	private Button arrowButton;
+	private Button dashButton;
+	private Button clearPlayerRoute;
+	
 	private static Button trashCan;
 	
 	private static float DENSITY; // DENSITY coefficient
@@ -82,25 +85,21 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		clearRoutes = (Button) findViewById(R.id.clear_routes);
 		clearField = (Button) findViewById(R.id.clear_field);
 		trashCan = (Button) findViewById(R.id.editor_trash_can);
+		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
+		dashButton = (Button)findViewById(R.id.edi_dash_button);
+		clearPlayerRoute = (Button)findViewById(R.id.edi_clear_player_route);
 
-		routeType = (Spinner) findViewById(R.id.route_type);
-		routeDistance = (SeekBar)findViewById(R.id.seekBar1);
-		routeYardageTV = (TextView)findViewById(R.id.editor_route_yardage);
-		
-		routeType.setOnItemSelectedListener(this);
-		routeDistance.setOnSeekBarChangeListener(this);
 		trashCan.setOnClickListener(this);
 		save.setOnClickListener(this);
+		arrowButton.setOnClickListener(this);
+		dashButton.setOnClickListener(this);
+		clearPlayerRoute.setOnClickListener(this);
 		
 		disableAll();
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
-		routeDistance.setMax(20);
-		routeYardageTV.setText("0 yds");
-
-		ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, DrawingUtils.getRoutes());
- 		routeType.setAdapter(rtAdapter);
+		
 	}
 	
 	public void onBtnClicked(View v) {
@@ -126,23 +125,12 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	
 	public static void disableAll()
 	{
-		routeType.setEnabled(false);
-		routeType.setClickable(false);
-		routeDistance.setEnabled(false);
-		routeDistance.setClickable(false);
 		playerIndex = -1;
-		routeType.setSelection(0);
-		routeDistance.setProgress(0);
 	}
 	
 	public static void enableAll(int player_index)
 	{
 		playerIndex = player_index;
-		routeType.setEnabled(true);
-		routeType.setClickable(true);
-		routeDistance.setEnabled(true);
-		routeDistance.setClickable(true);
-		routeType.setSelection(field.getAllPlayers().get(playerIndex).getRoute().ordinal());
 	}
 	
 	public static class DrawView extends View implements OnTouchListener {
@@ -165,8 +153,6 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		static final private float PLAYER_ICON_RADIUS = 25*DENSITY;
 		static final private float TOP_ANDROID_BAR = 50*DENSITY;
 		static final private float TOUCH_SENSITIVITY = 35*DENSITY;
-		
-		private Context contxt;
 		
 		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 		static private Canvas bitmapCanvas;
@@ -345,17 +331,33 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		}
 	}
 
-	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-		routeYardage = routeDistance.getProgress();
-		routeYardageTV.setText("" + routeYardage + " yds");
-		drawView.invalidate();
-	}
-
 	public void onClick(View v) {
 		Intent intent = null;
 		if(v.getId() == save.getId()){
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
+		}else if(v.getId() == arrowButton.getId()){
+			if(blockRoute == false){
+				blockRoute = true;
+				arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
+			}
+			else {
+				blockRoute = false;
+				arrowButton.setBackgroundResource(R.drawable.right_arrow);
+			}
+		}else if(v.getId() == dashButton.getId()){
+			if(dashLine == false){
+				dashLine = true;
+				dashButton.setText("Dashed Line");
+			}
+			else {
+				dashLine = false;
+				dashButton.setText("Solid Line");
+			}
+		}else if(v.getId() == clearPlayerRoute.getId()){
+			Player selectedPlayer = field.getPlayer(playerIndex);
+			selectedPlayer.clearRoute();
+			drawView.invalidate();
 		}
 	}
 
