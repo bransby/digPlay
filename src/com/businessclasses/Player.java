@@ -56,6 +56,9 @@ public class Player {
 	public void changeRoute(Route r){
 		_route = r;
 	}
+	public void clearRoute(){
+		this.clearRouteLocations();
+	}
 	public void flipLocation(){
 		Location l = this._spotOnField;
 		int newX = 1280 - l._x;
