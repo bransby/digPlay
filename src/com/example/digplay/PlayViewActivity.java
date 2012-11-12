@@ -6,6 +6,7 @@ import com.businessclasses.Constants;
 import com.businessclasses.Field;
 import com.businessclasses.PlayAdapter;
 import com.businessclasses.Sort;
+import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -80,7 +81,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void onClick(View v) {
 		Sort s = new Sort();
-		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,getDummyPlays());
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
+		//PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,getDummyPlays());
 		String playType = (String)playSort.getSelectedItem();
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		playList.setAdapter(adapter);

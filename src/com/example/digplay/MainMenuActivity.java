@@ -1,6 +1,6 @@
 package com.example.digplay;
 
-import com.database.DigPlayDBHelper;
+import com.database.DigPlayDB;
 import com.db4o.*;
 
 import android.os.Bundle;

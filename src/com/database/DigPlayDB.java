@@ -37,8 +37,8 @@ public final class DigPlayDB extends Application{
 		//config.common().add(new AndroidSupport());
 		
 		//creates and deletes the database files (checks location)
-		new File(context.getFilesDir().getAbsolutePath(), "/PlaysDB.db4o").delete();
-		new File(context.getFilesDir().getAbsolutePath(), "/GamePlansDB.db4o").delete();
+		//new File(context.getFilesDir().getAbsolutePath(), "/PlaysDB.db4o").delete();
+		//new File(context.getFilesDir().getAbsolutePath(), "/GamePlansDB.db4o").delete();
 
 		//logs the databases paths
 		Log.d("db",	"" + context.getFilesDir().getAbsolutePath());
@@ -114,6 +114,18 @@ public final class DigPlayDB extends Application{
 			return (Field) result.next();
 		}
 		return null;
+	}
+	
+	public ArrayList<Field> getAllPlays(){
+		ArrayList<Field> temp = new ArrayList<Field>();
+		Field obj = new Field();
+		
+		ObjectSet result = playsDB.queryByExample(obj);
+		
+		while(result.hasNext()){
+			temp.add((Field)result.next());
+		}
+		return temp;		
 	}
 
 	//takes the old name and new name as arguments and changes the play to newName

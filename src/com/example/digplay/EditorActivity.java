@@ -88,7 +88,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 	public void onBtnClicked(View v) {
 		switch(v.getId()) {
 			case R.id.save:
-				//sets the bitmap variable in the field object to the current view.
+				//sets the bitmap variable in the field object to the current view for database
 				field.setImage(drawView.getDrawingCache());
 				break;
 			case R.id.clear_routes:

@@ -13,6 +13,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainMenuActivity"
+            android:screenOrientation="landscape"
             android:label="@string/title_activity_main_menu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,9 +21,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="PlayViewActivity"></activity>
-        <activity android:name="BrowsingActivity"></activity>
-        <activity android:name="EditorActivity"></activity>
+        <activity android:name="PlayViewActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name="BrowsingActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name="EditorActivity"
+            android:screenOrientation="landscape"></activity>
+        <activity android:name="SaveActivity"
+            android:screenOrientation="landscape"></activity>        
+            <activity android:name="GameplanManagerActivity"
+                android:screenOrientation="landscape"></activity>
     </application>
-
 </manifest>
