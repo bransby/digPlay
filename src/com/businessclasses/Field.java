@@ -79,4 +79,18 @@ public class Field {
 	public void setPlayType(String _playType) {
 		this._playType = _playType;
 	}
+	public Field clone(){
+		try {
+			return (Field)super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public void flip(){
+		for(int i = 0;i< _playersOnField.size();i++){
+			Player thePlayer = _playersOnField.get(i);
+			thePlayer.flipLocation();
+		}
+	}
 }

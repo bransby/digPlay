@@ -31,6 +31,7 @@
             android:screenOrientation="landscape"></activity>        
             <activity android:name="GameplanManagerActivity"
                 android:screenOrientation="landscape"></activity>
+            <activity android:name="FormationManagerActivity"></activity>
     </application>
 
 </manifest>

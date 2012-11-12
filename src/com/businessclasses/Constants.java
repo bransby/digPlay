@@ -29,6 +29,21 @@ public class Constants {
 		return gameplans;
 	}
 	
+	public static ArrayList<String>getFormations(){
+		ArrayList<String> formations = new ArrayList<String>();
+		formations.add("I");
+		formations.add("Power I");
+		formations.add("Ace");
+		formations.add("4 Wide");
+		formations.add("5 Wide");
+		formations.add("Wishbone");
+		formations.add("Strong I");
+		formations.add("Weak I");
+		formations.add("Wing T");
+		formations.add("Pro");
+		return formations;
+	}
+	
 	public static int getBackground(){
 		return R.drawable.brown_backgroud;
 	}
