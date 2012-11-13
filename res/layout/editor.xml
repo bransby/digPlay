@@ -54,15 +54,15 @@
         android:layout_marginLeft="181dp"
         android:layout_marginTop="7dip"
         android:background="@android:color/transparent" />
-
+
     <Button
         android:id="@+id/edi_dash_button"
         android:layout_width="150dip"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginRight="300dip"
-        android:text="Dashed Line" />
+        android:background="@drawable/line" />
 
     <Button
         android:id="@+id/edi_arrow_button"
@@ -80,6 +80,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="Clear Player Route" />
+
+    <Button
+        android:id="@+id/edi_test_button"
+        android:layout_width="150dip"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/edi_dash_button"
+        android:background="@drawable/flip"
+        android:text="Flip play" />
 
 </RelativeLayout>
 

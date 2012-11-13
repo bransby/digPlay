@@ -54,6 +54,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private Button arrowButton;
 	private Button dashButton;
 	private Button clearPlayerRoute;
+	private Button testButton;
 	
 	private static Button trashCan;
 	
@@ -79,18 +80,42 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
 		dashButton = (Button)findViewById(R.id.edi_dash_button);
 		clearPlayerRoute = (Button)findViewById(R.id.edi_clear_player_route);
+		testButton = (Button)findViewById(R.id.edi_test_button);
 
 		trashCan.setOnClickListener(this);
 		save.setOnClickListener(this);
 		arrowButton.setOnClickListener(this);
 		dashButton.setOnClickListener(this);
 		clearPlayerRoute.setOnClickListener(this);
+		testButton.setOnClickListener(this);
 		
 		playerIndex = 1;
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
-		
+	}
+	
+	public void onBtnClicked(View v) {
+		switch(v.getId()) {
+			case R.id.save:
+				//sets the bitmap variable in the field object to the current view for database
+				field.setImage(drawView.getBitmap());
+				break;
+			case R.id.clear_routes:
+				field.clearRoutes();
+				disableAll();
+				previousPlayerIndex = -1;
+				drawView.invalidate(); // redraw the screen
+				break;
+			case R.id.clear_field:
+				field.clearField();
+				disableAll();
+				previousPlayerIndex = -1;
+				drawView.invalidate(); // redraw the screen
+				break;
+			default:
+				break;
+		}
 	}
 	
 	public static void disableAll()
@@ -133,6 +158,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
+		}
+
+		public Bitmap getBitmap() {
+			
+			return bitmap;
 		}
 
 		public void build(Context context, AttributeSet attrs) throws IOException
@@ -331,8 +361,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			}
 			return true;
 		}
+	}	
+	//used for database to get the field object.
+	public static Field getField(){
+		return field;
 	}
-
 	public void onClick(View v) {
 		Intent intent = null;
 		int id = v.getId();
@@ -363,11 +396,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}else if(id == dashButton.getId()){
 			if(dashLine == false){
 				dashLine = true;
-				dashButton.setText("Dashed Line");
+				dashButton.setBackgroundResource(R.drawable.dotted_line);
 			}
 			else {
 				dashLine = false;
-				dashButton.setText("Solid Line");
+				dashButton.setBackgroundResource(R.drawable.line);
 			}
 		}else if(id == clearPlayerRoute.getId()){
 			if (playerIndex != -1)
@@ -376,6 +409,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				selectedPlayer.clearRoute();
 				drawView.invalidate();
 			}
+		}else if(id== testButton.getId()){
+			field.flip();
+			drawView.invalidate();
 		}
 		else if (id == clearRoutes.getId())
 		{

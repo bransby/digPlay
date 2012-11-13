@@ -37,6 +37,9 @@ public class Field {
 		Player player = new Player(l,p,r);
 		_playersOnField.add(player);
 	}
+	public void addPlayers(ArrayList<Player> newPlayers){
+		this._playersOnField = newPlayers;
+	}
 	
 	public Bitmap getImage(){
 		return this._bitmap;
@@ -79,6 +82,12 @@ public class Field {
 	public void setPlayType(String _playType) {
 		this._playType = _playType;
 	}
+	/*public void setPlayFormation(String _playFormation){
+		this._playFormation = _playFordmation;
+	}
+	public String getPlayFormation(){
+		return this._playFormation;
+	}*/
 	public Field clone(){
 		try {
 			return (Field)super.clone();
@@ -96,4 +105,5 @@ public class Field {
 	public Player getPlayer(int num){
 		return _playersOnField.get(num);
 	}
+
 }

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
+import com.businessclasses.GamePlan;
 import com.businessclasses.PlayAdapter;
 import com.businessclasses.Sort;
+import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -20,6 +22,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.example.digplay.EmailPlaybook;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener {
 	private ListView playList;
@@ -39,6 +42,14 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setSpinners();
 	    setButtons();
 	    setText();
+	}
+	private void email() {
+		String emailText = "This email includes the following Play Types: " +(String)playSort.getSelectedItem() + 
+				"\nFrom the gameplan: ";
+		String subject = (String)playSort.getSelectedItem() + " from ";
+		//this currently returns a list of file names, not full paths...**
+		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
+		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
 	}
 	private void setText() {
 		title = (TextView)findViewById(R.id.pv_title);
@@ -65,23 +76,10 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private void setListView() {
 		playList = (ListView)findViewById(R.id.playviewlist);
 		ArrayList<Field> plays = new ArrayList<Field>();
-		plays = getDummyPlays();
-		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,plays);
+		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
 		_adapter = adapter;
 		playList.setAdapter(_adapter);
 		playList.setOnItemClickListener(this);
-	}
-	private ArrayList<Field> getDummyPlays() {
-		ArrayList<Field> plays = new ArrayList<Field>();
-		for(int i = 0;i < 15;i++){
-			Field newPlay = new Field();
-			newPlay.setPlayName("Play Number " + i);
-			if(i % 2 == 0){
-				newPlay.setPlayType("RUN");
-			}else newPlay.setPlayType("PASS");
-			plays.add(newPlay);
-		}
-		return plays;
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 		Field play = (Field) adapter.getItemAtPosition(position);
@@ -95,7 +93,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void onClick(View v) {
 		Sort s = new Sort();
-		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,getDummyPlays());
+		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
 		String playType = (String)playSort.getSelectedItem();
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		playList.setAdapter(adapter);

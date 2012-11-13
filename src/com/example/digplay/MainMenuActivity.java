@@ -1,8 +1,12 @@
 package com.example.digplay;
 
+import com.database.DigPlayDB;
+import com.db4o.*;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
@@ -15,7 +19,9 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 	private Button viewGameplan;
 	private Button createGameplan;
 	private Button lookAtPlaybook;
-
+	//public static DigPlayDBHelper db = new DigPlayDBHelper();
+	//public String test = this.getDir("data", 0) + "/";
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
