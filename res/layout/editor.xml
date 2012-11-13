@@ -81,6 +81,15 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="Clear Player Route" />
+
+    <Button
+        android:id="@+id/edi_test_button"
+        android:layout_width="150dip"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/edi_dash_button"
+        android:background="@drawable/flip"
+        android:text="Flip play" />
 
 </RelativeLayout>
 

@@ -63,6 +63,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 	private Button arrowButton;
 	private Button dashButton;
 	private Button clearPlayerRoute;
+	private Button testButton;
 	
 	private static Button trashCan;
 	
@@ -88,12 +89,14 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
 		dashButton = (Button)findViewById(R.id.edi_dash_button);
 		clearPlayerRoute = (Button)findViewById(R.id.edi_clear_player_route);
+		testButton = (Button)findViewById(R.id.edi_test_button);
 
 		trashCan.setOnClickListener(this);
 		save.setOnClickListener(this);
 		arrowButton.setOnClickListener(this);
 		dashButton.setOnClickListener(this);
 		clearPlayerRoute.setOnClickListener(this);
+		testButton.setOnClickListener(this);
 		
 		disableAll();
 		
@@ -367,6 +370,9 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		}else if(v.getId() == clearPlayerRoute.getId()){
 			Player selectedPlayer = field.getPlayer(playerIndex);
 			selectedPlayer.clearRoute();
+			drawView.invalidate();
+		}else if(v.getId() == testButton.getId()){
+			field.flip();
 			drawView.invalidate();
 		}
 	}
