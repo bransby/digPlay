@@ -23,7 +23,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.SeekBar;
 public class EditorActivity extends Activity implements OnClickListener  {
 
 	private static boolean blockRoute;
