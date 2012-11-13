@@ -1,8 +1,5 @@
 package com.example.digplay;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.businessclasses.Field;
@@ -14,10 +11,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -25,29 +22,22 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
-public class EditorActivity extends Activity implements OnClickListener, OnItemSelectedListener  {
+public class EditorActivity extends Activity implements OnClickListener  {
 
 	private static boolean blockRoute;
 	private static boolean dashLine;
 	private static boolean movePlayer;
 	private static int selectionColor;
 	private static boolean drawingRoute;
+	private static boolean drawCreatedPlayers;
 	
 	private static final int TAN_COLOR = 0xFFFF8000;
 
 	private static Field field; // the one field
 	private static int playerIndex = -1; // index of array for which player has been selected
 	private static int previousPlayerIndex = -1;
-	private static boolean selectedNewPlayer;
 	
 	private static int x; // for locating screen X value
 	private static int y; // for locating screen Y value
@@ -77,8 +67,8 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		setContentView(R.layout.editor);
 		
 		movePlayer = false;
-		selectedNewPlayer = false;
 		selectionColor = TAN_COLOR;
+		drawCreatedPlayers = true;
 
 		drawView = (DrawView) findViewById(R.id.DrawView);
 		
@@ -96,32 +86,11 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		dashButton.setOnClickListener(this);
 		clearPlayerRoute.setOnClickListener(this);
 		
-		disableAll();
+		playerIndex = 1;
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
 		
-	}
-	
-	public void onBtnClicked(View v) {
-		switch(v.getId()) {
-			case R.id.save:
-				break;
-			case R.id.clear_routes:
-				field.clearRoutes();
-				disableAll();
-				previousPlayerIndex = -1;
-				drawView.invalidate(); // redraw the screen
-				break;
-			case R.id.clear_field:
-				field.clearField();
-				disableAll();
-				previousPlayerIndex = -1;
-				drawView.invalidate(); // redraw the screen
-				break;
-			default:
-				break;
-		}
 	}
 	
 	public static void disableAll()
@@ -155,6 +124,9 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		static final private float TOP_ANDROID_BAR = 50*DENSITY;
 		static final private float TOUCH_SENSITIVITY = 35*DENSITY;
 		
+		Picture picture; 
+		Canvas tempCanvas;
+		
 		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 		static private Canvas bitmapCanvas;
 
@@ -165,6 +137,9 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 
 		public void build(Context context, AttributeSet attrs) throws IOException
 		{		
+			picture = new Picture();
+			tempCanvas = picture.beginRecording(1280, 800);
+			
 			bitmapCanvas = new Canvas(bitmap);
 			
 			fieldForCreatePlayer = new Field();
@@ -190,12 +165,39 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
 			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
+					2*DENSITY, 18*DENSITY, c, paint);
+			
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, blockRoute, playerIndex);
+	
+			if (drawCreatedPlayers)
+			{
+				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, tempCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
+				picture.endRecording();
+				drawCreatedPlayers = false;
+			}
+			
+			c.drawPicture(picture);
+			
+			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
+					c, paint, selectionColor);
+		}
+		
+		private void drawToBitmap(Canvas canvas)
+		{
+			paint.setColor(Color.BLACK);
+			
+			c = canvas;
+			
+			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
+			// 18 = length of the hash marks in pixels 
+			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, blockRoute, playerIndex);
 	
-			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, 
-					fieldForCreatePlayer, c, bitmapCanvas, paint, selectionColor, LEFT_MARGIN, TOP_MARGIN);
+			DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, canvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
+			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
+					bitmapCanvas, paint, selectionColor);
 			
 			c.drawBitmap(bitmap, LEFT_MARGIN, TOP_MARGIN, paint);
 		}
@@ -207,12 +209,12 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				selectedNewPlayer = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, blockRoute);
+				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, blockRoute);
 				if (playerIndex != -1)
 				{
 					lastPlayerX = field.getAllPlayers().get(playerIndex).getLocation().getX();
 					lastPlayerY = field.getAllPlayers().get(playerIndex).getLocation().getY();
-					if (selectionColor == TAN_COLOR || selectedNewPlayer || previousPlayerIndex != playerIndex)
+					if (selectionColor == TAN_COLOR || previousPlayerIndex != playerIndex)
 					{
 						selectionColor = Color.RED;
 					}
@@ -226,7 +228,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 			case MotionEvent.ACTION_UP:
 				if (movePlayer)
 				{
-					DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, TOP_ANDROID_BAR, x, y);
+					playerIndex = DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, TOP_ANDROID_BAR, x, y);
 					selectionColor = Color.RED;	
 				}
 				else if (!movePlayer && previousPlayerIndex == playerIndex)
@@ -333,10 +335,11 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 
 	public void onClick(View v) {
 		Intent intent = null;
-		if(v.getId() == save.getId()){
+		int id = v.getId();
+		if(id == save.getId()){
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
-		}else if(v.getId() == arrowButton.getId()){
+		}else if(id == arrowButton.getId()){
 			if(blockRoute == false){
 				blockRoute = true;
 				arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
@@ -357,7 +360,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 				}
 				drawView.invalidate();
 			}
-		}else if(v.getId() == dashButton.getId()){
+		}else if(id == dashButton.getId()){
 			if(dashLine == false){
 				dashLine = true;
 				dashButton.setText("Dashed Line");
@@ -366,7 +369,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 				dashLine = false;
 				dashButton.setText("Solid Line");
 			}
-		}else if(v.getId() == clearPlayerRoute.getId()){
+		}else if(id == clearPlayerRoute.getId()){
 			if (playerIndex != -1)
 			{
 				Player selectedPlayer = field.getPlayer(playerIndex);
@@ -374,25 +377,19 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 				drawView.invalidate();
 			}
 		}
-	}
-
-	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		if (playerIndex != -1)
+		else if (id == clearRoutes.getId())
 		{
-			field.getAllPlayers().get(playerIndex).changeRoute(DrawingUtils.LookupRoute(arg2));
+			field.clearRoutes();
+			playerIndex = -1;
+			previousPlayerIndex = -1;
+			drawView.invalidate(); // redraw the screen
 		}
-		drawView.invalidate();
-	}
-
-	public void onNothingSelected(AdapterView<?> arg0) {
-		
-	}
-
-	public void onStartTrackingTouch(SeekBar seekBar) {
-		
-	}
-
-	public void onStopTrackingTouch(SeekBar seekBar) {
-		
+		else if (id == clearField.getId())
+		{
+			field.clearField();
+			playerIndex = -1;
+			previousPlayerIndex = -1;
+			drawView.invalidate(); // redraw the screen
+		}
 	}
 }

@@ -19,7 +19,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="15dip"
         android:layout_marginTop="7dip"
-        android:onClick="onBtnClicked"
         android:textSize="30dp" />
      
     <Button
@@ -30,7 +29,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="420dp"
         android:layout_marginTop="3dip"
-        android:onClick="onBtnClicked"
+        android:onClick="onClick"
         android:text="Clear Routes"
         android:textSize="30dp" />
 
@@ -42,7 +41,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="160dp"
         android:layout_marginTop="3dip"
-        android:onClick="onBtnClicked"
+        android:onClick="onClick"
         android:text="Clear Field"
         android:textSize="30dp" />
 
