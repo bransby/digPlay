@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
+import com.businessclasses.GamePlan;
 import com.businessclasses.PlayAdapter;
 import com.businessclasses.Sort;
 import com.database.DigPlayDB;
@@ -21,6 +22,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import com.example.digplay.EmailPlaybook;
 
 public class PlayViewActivity extends Activity implements OnItemClickListener, OnClickListener {
 	private ListView playList;
@@ -40,6 +42,14 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setSpinners();
 	    setButtons();
 	    setText();
+	}
+	private void email() {
+		String emailText = "This email includes the following Play Types: " +(String)playSort.getSelectedItem() + 
+				"\nFrom the gameplan: ";
+		String subject = (String)playSort.getSelectedItem() + " from ";
+		//this currently returns a list of file names, not full paths...**
+		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
+		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
 	}
 	private void setText() {
 		title = (TextView)findViewById(R.id.pv_title);

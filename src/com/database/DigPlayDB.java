@@ -127,6 +127,18 @@ public final class DigPlayDB extends Application{
 		}
 		return temp;		
 	}
+	
+	public ArrayList<String> getAllPlayNames(){
+		ArrayList<String> temp = new ArrayList<String>();
+		Field obj = new Field();
+		
+		ObjectSet result = playsDB.queryByExample(obj);
+		
+		while(result.hasNext()){
+			temp.add(((Field)result.next()).toString());
+		}
+		return temp;		
+	}
 
 	//takes the old name and new name as arguments and changes the play to newName
 	public boolean changePlayName(String oldName, String newName){
