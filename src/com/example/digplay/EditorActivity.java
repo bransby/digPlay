@@ -106,7 +106,7 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		switch(v.getId()) {
 			case R.id.save:
 				//sets the bitmap variable in the field object to the current view for database
-				field.setImage(drawView.getDrawingCache());
+				field.setImage(drawView.getBitmap());
 				break;
 			case R.id.clear_routes:
 				field.clearRoutes();
@@ -162,6 +162,11 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
+		}
+
+		public Bitmap getBitmap() {
+			
+			return bitmap;
 		}
 
 		public void build(Context context, AttributeSet attrs) throws IOException
