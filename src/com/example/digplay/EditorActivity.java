@@ -1,12 +1,13 @@
 package com.example.digplay;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
 import com.businessclasses.Player;
-import com.businessclasses.Position;
-import com.businessclasses.Route;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,47 +17,67 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Align;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Spinner;
 import android.widget.TextView;
-public class EditorActivity extends Activity implements OnSeekBarChangeListener, OnClickListener {
+import android.widget.Toast;
+public class EditorActivity extends Activity implements OnClickListener, OnItemSelectedListener  {
+
+	private static boolean blockRoute;
+	private static boolean dashLine;
+	private static boolean movePlayer;
+	private static int selectionColor;
+	private static boolean drawingRoute;
+	
+	private static final int TAN_COLOR = 0xFFFF8000;
 
 	private static Field field; // the one field
-	private static Location playerLoc; // location of player
-	private static float density; // density coefficient
 	private static int playerIndex = -1; // index of array for which player has been selected
+	private static int previousPlayerIndex = -1;
+	private static boolean selectedNewPlayer;
 	
 	private static int x; // for locating screen X value
 	private static int y; // for locating screen Y value
+	
+	private static int lastPlayerX;
+	private static int lastPlayerY;
 	
 	private static DrawView drawView; // custom view
 	
 	private static Button save;
 	private static Button clearRoutes;
 	private static Button clearField;
-
-	private static Spinner routeType;
 	
-	private static SeekBar routeDistance;
-	private static int routeYardage;
-	private static TextView routeYardageTV;
+	private Button arrowButton;
+	private Button dashButton;
+	private Button clearPlayerRoute;
+	
 	private static Button trashCan;
+	
+	private static float DENSITY; // DENSITY coefficient
 	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		DENSITY = getResources().getDisplayMetrics().density;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
+		
+		movePlayer = false;
+		selectedNewPlayer = false;
+		selectionColor = TAN_COLOR;
 
 		drawView = (DrawView) findViewById(R.id.DrawView);
 		
@@ -64,25 +85,21 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		clearRoutes = (Button) findViewById(R.id.clear_routes);
 		clearField = (Button) findViewById(R.id.clear_field);
 		trashCan = (Button) findViewById(R.id.editor_trash_can);
+		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
+		dashButton = (Button)findViewById(R.id.edi_dash_button);
+		clearPlayerRoute = (Button)findViewById(R.id.edi_clear_player_route);
 
-		routeType = (Spinner) findViewById(R.id.route_type);
-		routeDistance = (SeekBar)findViewById(R.id.seekBar1);
-		routeYardageTV = (TextView)findViewById(R.id.editor_route_yardage);
-		
-		routeType.setEnabled(false);
-		routeType.setClickable(false);
-		routeDistance.setOnSeekBarChangeListener(this);
 		trashCan.setOnClickListener(this);
 		save.setOnClickListener(this);
+		arrowButton.setOnClickListener(this);
+		dashButton.setOnClickListener(this);
+		clearPlayerRoute.setOnClickListener(this);
+		
+		disableAll();
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
-		routeDistance.setMax(20);
-		routeDistance.setProgress(10);
-		routeYardageTV.setText("10 yds");
-
-		ArrayAdapter<String> rtAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,this.getRoutes());
- 		routeType.setAdapter(rtAdapter);
+		
 	}
 	
 	public void onBtnClicked(View v) {
@@ -93,12 +110,14 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 				break;
 			case R.id.clear_routes:
 				field.clearRoutes();
-				playerIndex = -1; // reset player selection index
+				disableAll();
+				previousPlayerIndex = -1;
 				drawView.invalidate(); // redraw the screen
 				break;
 			case R.id.clear_field:
 				field.clearField();
-				playerIndex = -1; // reset player selection index
+				disableAll();
+				previousPlayerIndex = -1;
 				drawView.invalidate(); // redraw the screen
 				break;
 			default:
@@ -106,77 +125,57 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		}
 	}
 	
+	public static void disableAll()
+	{
+		playerIndex = -1;
+	}
+	
+	public static void enableAll(int player_index)
+	{
+		playerIndex = player_index;
+	}
+	
 	public static class DrawView extends View implements OnTouchListener {
-
-		private Bitmap fieldBitmap;
+		
 		private Canvas c;
 		private Paint paint;
-		private int createdPlayerIndex; // this is the index of the 8 players on the
-								// bottom of the stuff
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
 		private Field fieldForCreatePlayer;
 		
-		// locations of the 8 players
-		private Location playerLocQB;
-		private Location playerLocWR;
-		private Location playerLocRB;
-		private Location playerLocFB;
-		private Location playerLocTE;
-		private Location playerLocC;
-		private Location playerLocG;
-		private Location playerLocT;
+		// static final values
+		static final private float FIELD_HEIGHT = 575*DENSITY;
+		static final private float LEFT_MARGIN = 40*DENSITY;
+		static final private float RIGHT_MARGIN = 1240*DENSITY;
+		static final private float TOP_MARGIN = 60*DENSITY;
+		static final private float BOTTOM_MARGIN = TOP_MARGIN+FIELD_HEIGHT;
+		static final private float PIXELS_PER_YARD = 13*DENSITY;
+		static final private float FIELD_LINE_WIDTHS = 4*DENSITY;
+		static final private float PLAYER_ICON_RADIUS = 25*DENSITY;
+		static final private float TOP_ANDROID_BAR = 50*DENSITY;
+		static final private float TOUCH_SENSITIVITY = 35*DENSITY;
+		
+		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
+		static private Canvas bitmapCanvas;
 
-		public DrawView(Context context, AttributeSet attrs) {
+		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
 		}
 
-		public void build(Context context, AttributeSet attrs)
-		{
-			// this gets the density coefficient.
-			density = getResources().getDisplayMetrics().density;
-						
+		public void build(Context context, AttributeSet attrs) throws IOException
+		{		
+			bitmapCanvas = new Canvas(bitmap);
+			
 			fieldForCreatePlayer = new Field();
-			
-			short adjustedHeight = 670+50; // pixel location we want to draw the 8
-										   // created players at. 50 pixels is used
-										   // at the top for all android devices
-			
-			// add players at bottom of screen, 75dp width between each of them
-			playerLocQB = new Location((int)(75*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocQB, Position.QUARTERBACK);
-			
-			playerLocWR = new Location((int)(150*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocWR, Position.WIDE_RECIEVER);
-			
-			playerLocRB = new Location((int)(225*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocRB, Position.RUNNING_BACK);
-			
-			playerLocFB = new Location((int)(300*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocFB, Position.FULLBACK);
-			
-			playerLocTE = new Location((int)(375*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocTE, Position.TIGHT_END);
-			
-			playerLocC = new Location((int)(450*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocC, Position.CENTER);
-			
-			playerLocG = new Location((int)(525*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocG, Position.GUARD);
-			
-			playerLocT = new Location((int)(600*density), (int)(adjustedHeight*density));
-			fieldForCreatePlayer.addPlayer(playerLocT, Position.TACKLE);
-			
-			createdPlayerIndex = -1; // index of which of the 8 players has been selected
 			
 			// the main field
 			field = new Field();
-
-			// the field picture
-			fieldBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.field, null);
+			
 			paint = new Paint();
+			
+			c = new Canvas();
 
 			this.setOnTouchListener(this);
 		}
@@ -184,229 +183,68 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		@Override 
 		protected void onDraw(Canvas canvas) {
 			super.onDraw(c);
-
+			
 			paint.setColor(Color.BLACK);
 			
 			c = canvas;
-			c.drawBitmap(fieldBitmap, 50*density,
-					60*density, null);
 			
-			// blue color
-			paint.setColor(0xFF000080);
-			// 5 pixel line width
-			paint.setStyle(Paint.Style.STROKE);
-			paint.setStrokeWidth(5*density);
-			// draw line of scrimmage
-			canvas.drawLine(51*density, 363*density, 1230*density, 363*density, paint);
-			// fill = fill enclosed shapes with the color, like a circle with the middle one color
-			paint.setStyle(Paint.Style.FILL);
-
-			// orangish color
-			paint.setColor(0xFFFF8000);
-
-			// y values are all the same, so just reuse one
-			float eightPlayerY = playerLocQB.getY()-(50*density);
+			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
+			// 18 = length of the hash marks in pixels 
+			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
+					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			// the canvas does is not exactly the same as the real pixels, because
-			// the canvas is drawn at 50 pixels down from the top of the screen
-			c.drawCircle(playerLocQB.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocWR.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocRB.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocFB.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocTE.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocC.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocG.getX(), eightPlayerY, 25*density, paint);
-			c.drawCircle(playerLocT.getX(), eightPlayerY, 25*density, paint);
-						
-			paint.setColor(Color.BLACK);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN);
+	
+			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, DENSITY, playerIndex, 
+					fieldForCreatePlayer, c, bitmapCanvas, paint, selectionColor, LEFT_MARGIN, TOP_MARGIN);
 			
-			paint.setTextAlign(Align.CENTER);
-			paint.setTextSize(25*density);
-			
-			// descent and ascent are used for centering text vertically
-			float height = (playerLocQB.getY()-50*density)-((paint.descent() + paint.ascent()) / 2);
-			
-			c.drawText("QB", playerLocQB.getX(), height, paint);
-			c.drawText("WR", playerLocWR.getX(), height, paint);
-			c.drawText("RB", playerLocRB.getX(), height, paint);
-			c.drawText("FB", playerLocFB.getX(), height, paint);
-			c.drawText("TE", playerLocTE.getX(), height, paint);
-			c.drawText("C", playerLocC.getX(), height, paint);
-			c.drawText("G", playerLocG.getX(), height, paint);
-			c.drawText("T", playerLocT.getX(), height, paint);
-			
-			// orangish color
-			paint.setColor(0xFFFF8000);
-			
-			int xpos = -1;
-			int ypos = -1;
-			
-			for (int i = 0; i < field.getAllPlayers().size(); i++)
-			{
-				xpos = field.getAllPlayers().get(i).getLocation().getX();
-				// -50, because 50 pixels are used at the top of the screen on all android devices
-				// for the time and app name
-				ypos = field.getAllPlayers().get(i).getLocation().getY()-50;
-				// this is the selected player
-				if (playerIndex == i)
-				{
-					paint.setColor(Color.RED);
-				}
-				// draw the play again, but red this time
-				c.drawCircle(xpos, ypos, 25*density, paint);
-				// descent and ascent are used for centering text vertically
-				height = ypos-((paint.descent() + paint.ascent()) / 2);
-				paint.setColor(Color.BLACK);
-				switch(field.getAllPlayers().get(i).getPosition()) {
-				case QUARTERBACK:
-					drawCenteredText("QB", xpos, height);
-					break;
-				case WIDE_RECIEVER:
-					drawCenteredText("WR", xpos, height);
-					break;
-				case RUNNING_BACK:
-					drawCenteredText("RB", xpos, height);
-					break;
-				case FULLBACK:
-					drawCenteredText("FB", xpos, height);
-					break;
-				case TIGHT_END:
-					drawCenteredText("TE", xpos, height);
-					break;
-				case CENTER:
-					drawCenteredText("C", xpos, height);
-					break;
-				case GUARD:
-					drawCenteredText("G", xpos, height);
-					break;
-				case TACKLE:
-					drawCenteredText("T", xpos, height);
-					break;
-				default:
-					break;
-				}
-				// reset to orangish color
-				paint.setColor(0xFFFF8000);
-			}
-		}
-
-		// for drawing the positions on players
-		public void drawCenteredText(String value, int x, float height)
-		{
-			c.drawText(value, x, height, paint);
+			c.drawBitmap(bitmap, LEFT_MARGIN, TOP_MARGIN, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
 
-			x = (int) (event.getRawX()*density);
-			y = (int) (event.getRawY()*density);
-			int playerXPos = -1;
-			int playerYPos = -1;
-			
-			double playerIndexDistance = Float.MAX_VALUE;
+			x = (int) (event.getRawX()*DENSITY);
+			y = (int) (event.getRawY()*DENSITY);
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				boolean staticPlayerSelected = false;
-				// loop for selecting bottom 8 players
-				for (int i = 0; i < fieldForCreatePlayer.getAllPlayers().size(); i++)
+				selectedNewPlayer = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex);
+				if (playerIndex != -1)
 				{
-					playerXPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getX();
-					playerYPos = fieldForCreatePlayer.getAllPlayers().get(i).getLocation().getY();
-					// calculate distance between user click and this player
-					double dist = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
-							+ ((playerYPos-y)*(playerYPos-y)));
-					if (dist < 35)
+					lastPlayerX = field.getAllPlayers().get(playerIndex).getLocation().getX();
+					lastPlayerY = field.getAllPlayers().get(playerIndex).getLocation().getY();
+					if (selectionColor == TAN_COLOR || selectedNewPlayer || previousPlayerIndex != playerIndex)
 					{
-						// this player has been selected
-						Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-						createdPlayerIndex = i; // save location of player in array
-						field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
-						playerIndex = field.getAllPlayers().size()-1; // this player is the last 
-						// player to be added to field
-						routeType.setEnabled(true);
-						routeType.setClickable(true);
-						staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
+						selectionColor = Color.RED;
 					}
 				}
-				if (!staticPlayerSelected)
+				else
 				{
-					boolean hasBeenSet = false;
-					// check if one of the players has been selected
-					for (int i = 0; i < field.getAllPlayers().size(); i++)
-					{
-						playerXPos = field.getAllPlayers().get(i).getLocation().getX();
-						playerYPos = field.getAllPlayers().get(i).getLocation().getY();
-						// calculate distance between user click and this player
-						double distance = Math.sqrt(((playerXPos-x)*(playerXPos-x)) 
-								+ ((playerYPos-y)*(playerYPos-y)));
-						if (distance < 35)
-						{
-							if (distance < playerIndexDistance)
-							{
-								playerIndexDistance = distance;
-								// this player has been selected
-								playerIndex = i;
-								// routes can be changed for this player
-								routeType.setEnabled(true);
-								routeType.setClickable(true);
-								hasBeenSet = true;
-							}
-						}
-					}
-					// if not selected, disable the route spinner and reset player index
-					if (!hasBeenSet)
-					{
-						playerIndex = -1;
-						routeType.setEnabled(false);
-						routeType.setClickable(false);
-					}
+					selectionColor = TAN_COLOR;
 				}
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_UP:
-				if (playerIndex != -1)
+				if (movePlayer)
 				{
-					// is player outside of the field?
-					if (x < 75*density || x > 1205*density || y < 135*density || y > 655*density)
+					DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, TOP_ANDROID_BAR, x, y);
+					selectionColor = Color.RED;	
+				}
+				else if (!movePlayer && previousPlayerIndex == playerIndex)
+				{
+					if (selectionColor == Color.RED)
 					{
-						field.getAllPlayers().remove(playerIndex);
-						playerIndex = -1; // reset selection
-						// disable route possibilities
-						routeType.setEnabled(false);
-						routeType.setClickable(false);
-						invalidate(); // redraw
+						selectionColor = Color.BLUE;
 					}
-					else
+					else if (selectionColor == Color.BLUE && !drawingRoute)
 					{
-						Player tempPlayer = field.getAllPlayers().get(playerIndex);
-						int tempX = tempPlayer.getLocation().getX();
-						int tempY = tempPlayer.getLocation().getY();
-						System.out.println(tempX);
-						System.out.println(tempY);
-						if(tempX % 25 >= 13)
-						{
-							tempX = tempX + (25 - tempX % 25);
-						}
-						else
-						{
-							tempX = tempX - (tempX % 25);
-						}
-						if(tempY % 25 >= 13)
-						{
-							tempY = tempY + (25 - tempY % 25);
-						}
-						else
-						{
-							tempY = tempY - (tempY % 25);
-						}
-						Location tempLocation = new Location(tempX, tempY);
-						tempPlayer.setLocation(tempLocation);
-						System.out.println(tempX);
-						System.out.println(tempY);
-						invalidate(); // redrew
+						selectionColor = Color.RED;
 					}
 				}
+				previousPlayerIndex = playerIndex;
+				drawingRoute = false;
+				movePlayer = false;
+				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:
 				break;
@@ -414,9 +252,77 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 				break;
 			case MotionEvent.ACTION_MOVE:
 				// update the player location when dragging
-				if (playerIndex != -1)
+				if (!movePlayer)
 				{
-					field.getAllPlayers().get(playerIndex).setLocation(new Location(x, y));
+					float dist = -1;
+					if (selectionColor == Color.RED)
+					{
+						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
+						if (dist > PLAYER_ICON_RADIUS)
+						{
+							movePlayer = true;
+							DrawingUtils.actionMove(field, playerIndex, x, y);
+						}
+					}
+					else if (selectionColor == Color.BLUE)
+					{
+						if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
+						{
+							x = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
+						}
+						else if (x > RIGHT_MARGIN - FIELD_LINE_WIDTHS/2)
+						{
+							x = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
+						}
+						if (y < TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2)
+						{
+							y = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
+						}
+						
+						else if (y > BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2)
+						{
+							y = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
+						}
+						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
+						if (dist > PLAYER_ICON_RADIUS)
+						{
+							drawingRoute = true;
+							if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
+							{
+								lastPlayerX = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
+							}
+							else if (x > RIGHT_MARGIN - FIELD_LINE_WIDTHS/2)
+							{
+								lastPlayerX = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
+							}
+							else
+							{
+								lastPlayerX = x;
+							}
+							if (y < TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2)
+							{
+								lastPlayerY = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
+							}
+							
+							else if (y > BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2)
+							{
+								lastPlayerY = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
+							}
+							else
+							{
+								lastPlayerY = y;
+							}
+							Location temp = new Location(lastPlayerX, lastPlayerY);
+							field.getAllPlayers().get(playerIndex).addRouteLocation(temp);
+						}
+					}
+				}
+				else
+				{
+					if (selectionColor == Color.RED)
+					{
+						DrawingUtils.actionMove(field, playerIndex, x, y);
+					}
 				}
 				invalidate(); // redraw
 				break;
@@ -427,6 +333,7 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		}
 	}
 
+<<<<<<< HEAD
 	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
 		routeYardage = routeDistance.getProgress();
 		routeYardageTV.setText("" + routeYardage + " yds");
@@ -459,11 +366,55 @@ public class EditorActivity extends Activity implements OnSeekBarChangeListener,
 		return stringRoutes;
 	}
 
+=======
+>>>>>>> branch 'master' of https://github.com/bransby/digPlay.git
 	public void onClick(View v) {
 		Intent intent = null;
 		if(v.getId() == save.getId()){
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
+		}else if(v.getId() == arrowButton.getId()){
+			if(blockRoute == false){
+				blockRoute = true;
+				arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
+			}
+			else {
+				blockRoute = false;
+				arrowButton.setBackgroundResource(R.drawable.right_arrow);
+			}
+		}else if(v.getId() == dashButton.getId()){
+			if(dashLine == false){
+				dashLine = true;
+				dashButton.setBackgroundResource(R.drawable.dotted_line);
+			}
+			else {
+				dashLine = false;
+				dashButton.setBackgroundResource(R.drawable.line);
+			}
+		}else if(v.getId() == clearPlayerRoute.getId()){
+			Player selectedPlayer = field.getPlayer(playerIndex);
+			selectedPlayer.clearRoute();
+			drawView.invalidate();
 		}
+	}
+
+	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+		if (playerIndex != -1)
+		{
+			field.getAllPlayers().get(playerIndex).changeRoute(DrawingUtils.LookupRoute(arg2));
+		}
+		drawView.invalidate();
+	}
+
+	public void onNothingSelected(AdapterView<?> arg0) {
+		
+	}
+
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		
+	}
+
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		
 	}
 }

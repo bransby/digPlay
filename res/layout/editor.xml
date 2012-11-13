@@ -45,33 +45,6 @@
         android:onClick="onBtnClicked"
         android:text="Clear Field"
         android:textSize="30dp" />
-    
-    <Spinner android:id="@+id/route_type"
-        android:layout_width="240dp"
-        android:layout_height="60dp"
-        android:layout_alignParentTop="true"
-      	android:layout_alignParentLeft="true"
-      	android:layout_marginLeft="995dp"
-      	android:layout_marginTop="640dp"
-        android:prompt="@string/route_type" />
-
-    <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="150dip"
-        android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/clear_field"
-        android:layout_alignTop="@+id/route_type"
-        android:layout_marginRight="140dp" />
-
-    <TextView
-        android:id="@+id/editor_route_yardage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/seekBar1"
-        android:layout_marginRight="40dp"
-        android:layout_toLeftOf="@+id/seekBar1"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/editor_trash_can"
@@ -82,6 +55,32 @@
         android:layout_marginLeft="181dp"
         android:layout_marginTop="7dip"
         android:background="@android:color/transparent" />
+
+    <Button
+        android:id="@+id/edi_dash_button"
+        android:layout_width="150dip"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="300dip"
+        android:background="@drawable/line" />
+
+    <Button
+        android:id="@+id/edi_arrow_button"
+        android:layout_width="150dip"
+        android:layout_height="50dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="150dip"
+        android:background="@drawable/right_arrow" />
+
+    <Button
+        android:id="@+id/edi_clear_player_route"
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Clear Player Route" />
 
 </RelativeLayout>
 

@@ -9,7 +9,6 @@ public class Field {
 	private boolean _run;
 	private String _playName;
 	private String _playType;
-	private String _playFormation;
 	private Bitmap _bitmap;
 
 	public String getPlayName(){
@@ -38,7 +37,6 @@ public class Field {
 		Player player = new Player(l,p,r);
 		_playersOnField.add(player);
 	}
-	
 	public void addPlayers(ArrayList<Player> newPlayers){
 		this._playersOnField = newPlayers;
 	}
@@ -54,7 +52,7 @@ public class Field {
 	}
 	public void clearRoutes(){
 		for(int i=0;i<_playersOnField.size();i++){
-			_playersOnField.get(i).clearRoute();
+			_playersOnField.get(i).clearRouteLocations();
 		}
 	}
 	public boolean removePlayer(Player p){
@@ -85,9 +83,42 @@ public class Field {
 		this._playType = _playType;
 	}
 	public void setPlayFormation(String _playFormation){
-		this._playFormation = _playFormation;
+		this._playFormation = _playFordmation;
 	}
 	public String getPlayFormation(){
 		return this._playFormation;
+	public Field clone(){
+		try {
+			return (Field)super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public void flip(){
+		for(int i = 0;i< _playersOnField.size();i++){
+			Player thePlayer = _playersOnField.get(i);
+			thePlayer.flipLocation();
+		}
+	}
+	public Player getPlayer(int num){
+		return _playersOnField.get(num);
+	}
+	public Field clone(){
+		try {
+			return (Field)super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	public void flip(){
+		for(int i = 0;i< _playersOnField.size();i++){
+			Player thePlayer = _playersOnField.get(i);
+			thePlayer.flipLocation();
+		}
+	}
+	public Player getPlayer(int num){
+		return _playersOnField.get(num);
 	}
 }
