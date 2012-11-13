@@ -66,23 +66,10 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private void setListView() {
 		playList = (ListView)findViewById(R.id.playviewlist);
 		ArrayList<Field> plays = new ArrayList<Field>();
-		plays = getDummyPlays();
-		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,plays);
+		PlayAdapter adapter = new PlayAdapter (this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
 		_adapter = adapter;
 		playList.setAdapter(_adapter);
 		playList.setOnItemClickListener(this);
-	}
-	private ArrayList<Field> getDummyPlays() {
-		ArrayList<Field> plays = new ArrayList<Field>();
-		for(int i = 0;i < 15;i++){
-			Field newPlay = new Field();
-			newPlay.setPlayName("Play Number " + i);
-			if(i % 2 == 0){
-				newPlay.setPlayType("RUN");
-			}else newPlay.setPlayType("PASS");
-			plays.add(newPlay);
-		}
-		return plays;
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 		Field play = (Field) adapter.getItemAtPosition(position);
@@ -97,7 +84,6 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	public void onClick(View v) {
 		Sort s = new Sort();
 		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
-		//PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,getDummyPlays());
 		String playType = (String)playSort.getSelectedItem();
 		adapter = s.sortPlaysByRunPass(adapter, playType);
 		playList.setAdapter(adapter);

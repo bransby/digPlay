@@ -32,18 +32,21 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.browsing);
 		setTextView();
+		setImageView();
 		setButtons();
-		
+	}
+
+	private void setImageView() {
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
 		for(int i=0;i<pics.length;i++)
-		   {
-		   //  This will create dynamic image view and add them to ViewFlipper
-		       setFlipperImage(pics[i]);
-		   }
-		    animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
-		    animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
-		    animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
-		    animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
+		{
+	     //  This will create dynamic image view and add them to ViewFlipper
+			setFlipperImage(pics[i]);
+	    }
+	    animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
+	    animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
+	    animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
+	    animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 	}
 
 	private void setButtons() {
