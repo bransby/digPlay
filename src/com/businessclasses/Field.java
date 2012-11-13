@@ -82,11 +82,12 @@ public class Field {
 	public void setPlayType(String _playType) {
 		this._playType = _playType;
 	}
-	public void setPlayFormation(String _playFormation){
+	/*public void setPlayFormation(String _playFormation){
 		this._playFormation = _playFordmation;
 	}
 	public String getPlayFormation(){
 		return this._playFormation;
+	}*/
 	public Field clone(){
 		try {
 			return (Field)super.clone();
@@ -104,21 +105,5 @@ public class Field {
 	public Player getPlayer(int num){
 		return _playersOnField.get(num);
 	}
-	public Field clone(){
-		try {
-			return (Field)super.clone();
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	public void flip(){
-		for(int i = 0;i< _playersOnField.size();i++){
-			Player thePlayer = _playersOnField.get(i);
-			thePlayer.flipLocation();
-		}
-	}
-	public Player getPlayer(int num){
-		return _playersOnField.get(num);
-	}
+
 }

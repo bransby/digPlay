@@ -58,7 +58,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
 		newField.setPlayType(type);
-		newField.setPlayFormation(formation);
+		//newField.setPlayFormation(formation);
 		
 		
 		DigPlayDB.getInstance(getBaseContext()).storePlay(newField);

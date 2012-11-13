@@ -331,43 +331,11 @@ public class EditorActivity extends Activity implements OnClickListener, OnItemS
 			}
 			return true;
 		}
-	}
-
-<<<<<<< HEAD
-	public void onProgressChanged(SeekBar arg0, int arg1, boolean arg2) {
-		routeYardage = routeDistance.getProgress();
-		routeYardageTV.setText("" + routeYardage + " yds");
-	}
-
-	public void onStartTrackingTouch(SeekBar arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void onStopTrackingTouch(SeekBar arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-	
+	}	
 	//used for database to get the field object.
 	public static Field getField(){
 		return field;
 	}
-	
-	
-	
-	public String[] getRoutes(){
-		Route[] routes = Route.values();
-		String[] stringRoutes = new String[routes.length + 1];
-		for(int i = 0;i < routes.length;i++){
-			stringRoutes[i + 1] = routes[i].toString();
-		}
-		stringRoutes[0] = "No Route";
-		return stringRoutes;
-	}
-
-=======
->>>>>>> branch 'master' of https://github.com/bransby/digPlay.git
 	public void onClick(View v) {
 		Intent intent = null;
 		if(v.getId() == save.getId()){
