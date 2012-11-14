@@ -67,10 +67,18 @@ public final class DigPlayDB extends Application{
 		while(result.hasNext()){
 			playsDB.delete(result.next());
 		}
+		playsDB.commit();
+	}
+	
+	public int getPlaysDBSize(){
+		return this.getAllPlays().size();
+	}
+	public Field getPlayByInt(int x){
+		return this.getAllPlays().get(x);
 	}
 
 	//stores the play given the field
-	public void storePlay(Field field){
+	public boolean storePlay(Field field){
 		if(field != null){
 			if(playsDB == null){
 				Log.d("db", "database is null");
@@ -78,9 +86,11 @@ public final class DigPlayDB extends Application{
 			playsDB.store(field);
 			playsDB.commit();
 			Log.d("added play", "play added to db");	
+			return true;
 		}
 		else{
 			Log.e("field input null", "play not added to db");
+			return false;
 		}
 	}	
 
@@ -222,6 +232,26 @@ public final class DigPlayDB extends Application{
 		gamePlanDB.store(gamePlan);
 		gamePlanDB.commit();
 		Log.d("added game plan", "game plan added to db");	
+	}
+
+	//takes gameplan name as input and return an arraylist of the images of the plays in the gameplan
+	public ArrayList<Bitmap> getImagesOfGameplan(String gp){
+		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+		GamePlan found = null;
+
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gp);
+
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+
+		if(result.hasNext()){
+			found = result.next();
+
+			for(int i = 0; i < found.getGamePlan().size(); i++){
+				images.add(this.getPlayByName(found.getGamePlan().get(i)).getImage());
+			}
+		}
+		return images;
 	}
 
 	//delete game play from database

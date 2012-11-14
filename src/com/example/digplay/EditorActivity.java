@@ -19,6 +19,7 @@ import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,6 +60,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private Button testButton;
 	
 	private static Button trashCan;
+	
+	public static Bitmap testingImage;
 	
 	private static float DENSITY; // DENSITY coefficient
 	
@@ -387,6 +390,18 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Intent intent = null;
 		int id = v.getId();
 		if(id == save.getId()){
+			
+			
+			Bitmap b = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);                
+		    Canvas c = new Canvas(b);
+		    drawView.layout(0, 0, drawView.getWidth(), drawView.getHeight());
+		    drawView.draw(c);
+		    testingImage = b;
+		   
+		    //testingImage = this.drawView.getBitmap();
+		    
+		    Log.d("db stuffz", "" + testingImage);
+		    
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
 		}else if(id == arrowButton.getId()){
