@@ -9,6 +9,7 @@ import com.database.DigPlayDB;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -54,15 +55,19 @@ public class SaveActivity extends Activity implements OnClickListener {
 		String name = playName.getText().toString();
 		String type = playType.getSelectedItem().toString();
 		//TODO:send to database
-		
+
 		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
 		newField.setPlayType(type);
+		newField.setImage(EditorActivity.testingImage);
 		//newField.setPlayFormation(formation);
-		
-		
+
+
+		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
+
+
 		DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
-		
+
 		//System.out.println(AnotherTest.getInstance(getBaseContext()).getPlayByName(newField.getPlayName()).getPlayName());
 		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getPlayName());
 		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getAllPlayers().toString());
