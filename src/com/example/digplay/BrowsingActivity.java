@@ -23,7 +23,6 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
 	private Button editPlay;
-	private int[] pics = {R.drawable.seq1, R.drawable.seq2, R.drawable.seq3};
 
 	ViewFlipper page;
 

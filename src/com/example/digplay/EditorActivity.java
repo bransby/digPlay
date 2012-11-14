@@ -15,7 +15,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -391,14 +390,12 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		int id = v.getId();
 		if(id == save.getId()){
 			
-			
+			System.out.println(drawView.getBitmap());
 			Bitmap b = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);                
 		    Canvas c = new Canvas(b);
 		    drawView.layout(0, 0, drawView.getWidth(), drawView.getHeight());
 		    drawView.draw(c);
 		    testingImage = b;
-		   
-		    //testingImage = this.drawView.getBitmap();
 		    
 		    Log.d("db stuffz", "" + testingImage);
 		    
