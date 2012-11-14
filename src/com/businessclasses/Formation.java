@@ -5,7 +5,7 @@ public class Formation {
 	String formationName;
 	public Formation(String name, Field f){
 		theField = f.clone();
-		theField.clearRoutes();
+		theField.clearRouteLocations();
 		formationName = name;
 	}
 	public String getName(){
@@ -17,7 +17,7 @@ public class Formation {
 	public Field getFormation(){
 		return theField;
 	}
-	public void flipFormation(){
-		theField.flip();
+	public void flipFormation(int width){
+		theField.flip(width);
 	}
 }

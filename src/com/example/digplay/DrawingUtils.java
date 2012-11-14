@@ -368,7 +368,7 @@ public class DrawingUtils {
 	}
 	
 	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
-			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, boolean blockRoute, int playerIndex)
+			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, int playerIndex)
 	{
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
@@ -386,22 +386,6 @@ public class DrawingUtils {
 				int tempY = (int) (tempLocation.getY() - TOP_ANDROID_BAR);
 				if (j == tempPlayer.getRouteLocations().size()-1)
 				{
-					if (j == playerIndex)
-					{
-						Route tempRoute;
-						if (blockRoute)
-						{
-							tempRoute = Route.BLOCK;
-						}
-						else
-						{
-							tempRoute = Route.ARROW;
-						}
-						if (tempPlayer.getRoute() != tempRoute)
-						{
-							tempPlayer.changeRoute(tempRoute);
-						}
-					}
 					int deltaX = playerX - tempX;
 					int deltaY = playerY - tempY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
@@ -544,7 +528,16 @@ public class DrawingUtils {
 	{
 		if (playerIndex != -1)
 		{
-			field.getAllPlayers().get(playerIndex).setLocation(new Location(x, y));
+			Player thisPlayer =  field.getPlayer(playerIndex);
+			Location thisLocation = thisPlayer.getLocation();
+			int deltaX = x - thisLocation.getX();
+			int deltaY = y - thisLocation.getY();
+			for (int i = 0; i < thisPlayer.getRouteLocations().size(); i++)
+			{
+				Location routeLocation = thisPlayer.getRouteLocations().get(i);
+				routeLocation.changeLocation(routeLocation.getX() + deltaX, routeLocation.getY() + deltaY);
+			}
+			field.getPlayer(playerIndex).setLocation(new Location(x, y));
 		}
 	}
 	
@@ -592,7 +585,7 @@ public class DrawingUtils {
 		return -1;
 	}
 	
-	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, boolean blockRoute)
+	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
@@ -612,7 +605,7 @@ public class DrawingUtils {
 			{
 				// this player has been selected
 				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-				field.addPlayer(temp.getLocation(), temp.getPosition()); // add to field
+				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), route); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected

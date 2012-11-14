@@ -50,9 +50,15 @@ public class Field {
 	public void clearField(){
 		_playersOnField.clear();
 	}
-	public void clearRoutes(){
+	public void clearRouteLocations(){
 		for(int i=0;i<_playersOnField.size();i++){
 			_playersOnField.get(i).clearRouteLocations();
+		}
+	}
+	public void clearRoutes(Route route)
+	{
+		for(int i=0;i<_playersOnField.size();i++){
+			_playersOnField.get(i).changeRoute(route);
 		}
 	}
 	public boolean removePlayer(Player p){
@@ -96,10 +102,10 @@ public class Field {
 			return null;
 		}
 	}
-	public void flip(){
+	public void flip(int width){
 		for(int i = 0;i< _playersOnField.size();i++){
 			Player thePlayer = _playersOnField.get(i);
-			thePlayer.flipLocation();
+			thePlayer.flipLocation(width);
 		}
 	}
 	public Player getPlayer(int num){

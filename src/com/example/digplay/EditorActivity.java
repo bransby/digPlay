@@ -15,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -31,6 +32,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static int selectionColor;
 	private static boolean drawingRoute;
 	private static boolean drawCreatedPlayers;
+	
+	private static Route arrowRoute;
 	
 	private static final int TAN_COLOR = 0xFFFF8000;
 
@@ -50,7 +53,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button clearRoutes;
 	private static Button clearField;
 	
-	private Button arrowButton;
+	private static Button arrowButton;
 	private Button dashButton;
 	private Button clearPlayerRoute;
 	private Button testButton;
@@ -69,6 +72,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		movePlayer = false;
 		selectionColor = TAN_COLOR;
 		drawCreatedPlayers = true;
+		arrowRoute = Route.ARROW;
 
 		drawView = (DrawView) findViewById(R.id.DrawView);
 		
@@ -92,39 +96,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
-	}
-	
-	public void onBtnClicked(View v) {
-		switch(v.getId()) {
-			case R.id.save:
-				//sets the bitmap variable in the field object to the current view for database
-				field.setImage(drawView.getBitmap());
-				break;
-			case R.id.clear_routes:
-				field.clearRoutes();
-				disableAll();
-				previousPlayerIndex = -1;
-				drawView.invalidate(); // redraw the screen
-				break;
-			case R.id.clear_field:
-				field.clearField();
-				disableAll();
-				previousPlayerIndex = -1;
-				drawView.invalidate(); // redraw the screen
-				break;
-			default:
-				break;
-		}
-	}
-	
-	public static void disableAll()
-	{
-		playerIndex = -1;
-	}
-	
-	public static void enableAll(int player_index)
-	{
-		playerIndex = player_index;
 	}
 	
 	public static class DrawView extends View implements OnTouchListener {
@@ -185,7 +156,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		@Override 
 		protected void onDraw(Canvas canvas) {
-			super.onDraw(c);
+			
 			
 			paint.setColor(Color.BLACK);
 			
@@ -196,7 +167,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, c, paint);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, blockRoute, playerIndex);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
 	
 			if (drawCreatedPlayers)
 			{
@@ -204,9 +175,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				picture.endRecording();
 				drawCreatedPlayers = false;
 			}
-			
+	
 			c.drawPicture(picture);
-			
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
 					c, paint, selectionColor);
 		}
@@ -222,7 +192,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, blockRoute, playerIndex);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
 	
 			DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, canvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
@@ -238,11 +208,41 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, blockRoute);
+				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, arrowRoute);
 				if (playerIndex != -1)
 				{
-					lastPlayerX = field.getAllPlayers().get(playerIndex).getLocation().getX();
-					lastPlayerY = field.getAllPlayers().get(playerIndex).getLocation().getY();
+					Player selectedPlayer = field.getPlayer(playerIndex);
+					boolean blockRouteForPlayer;
+					if (selectedPlayer.getRoute() == Route.ARROW)
+					{
+						blockRouteForPlayer = false;
+					}
+					// block route
+					else
+					{
+						blockRouteForPlayer = true;
+					}
+					
+					if (field.getPlayer(playerIndex).getRouteLocations().size() != 0)
+					{
+						if (!blockRouteForPlayer && blockRoute || blockRouteForPlayer && !blockRoute)
+						{
+							blockRoute = EditorActivity.toggleArrowButton(blockRoute);
+						}
+					}
+					else
+					{
+						if (blockRoute)
+						{
+							field.getPlayer(playerIndex).changeRoute(Route.BLOCK);
+						}
+						else
+						{
+							field.getPlayer(playerIndex).changeRoute(Route.ARROW);
+						}
+					}
+					lastPlayerX = selectedPlayer.getLocation().getX();
+					lastPlayerY = selectedPlayer.getLocation().getY();
 					if (selectionColor == TAN_COLOR || previousPlayerIndex != playerIndex)
 					{
 						selectionColor = Color.RED;
@@ -342,7 +342,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 								lastPlayerY = y;
 							}
 							Location temp = new Location(lastPlayerX, lastPlayerY);
-							field.getAllPlayers().get(playerIndex).addRouteLocation(temp);
+							field.getPlayer(playerIndex).addRouteLocation(temp);
 						}
 					}
 				}
@@ -360,10 +360,28 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			}
 			return true;
 		}
+
+		public static void flipField() {
+			field.flip((int)(LEFT_MARGIN+RIGHT_MARGIN));
+		}
 	}	
 	//used for database to get the field object.
 	public static Field getField(){
 		return field;
+	}
+	
+	public static boolean toggleArrowButton(boolean blockRoute)
+	{
+		if(blockRoute == false){
+			arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
+			arrowRoute = Route.BLOCK;
+			return true;
+		}
+		else {
+			arrowButton.setBackgroundResource(R.drawable.right_arrow);
+			arrowRoute = Route.ARROW;
+			return false;
+		}
 	}
 	public void onClick(View v) {
 		Intent intent = null;
@@ -372,24 +390,10 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
 		}else if(id == arrowButton.getId()){
-			if(blockRoute == false){
-				blockRoute = true;
-				arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
-			}
-			else {
-				blockRoute = false;
-				arrowButton.setBackgroundResource(R.drawable.right_arrow);
-			}
+			blockRoute = toggleArrowButton(blockRoute);
 			if (playerIndex != -1)
 			{
-				if (blockRoute)
-				{
-					field.getPlayer(playerIndex).changeRoute(Route.BLOCK);
-				}
-				else
-				{
-					field.getPlayer(playerIndex).changeRoute(Route.ARROW);
-				}
+				field.getPlayer(playerIndex).changeRoute(arrowRoute);
 				drawView.invalidate();
 			}
 		}else if(id == dashButton.getId()){
@@ -409,12 +413,13 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				drawView.invalidate();
 			}
 		}else if(id== testButton.getId()){
-			field.flip();
+			DrawView.flipField();
 			drawView.invalidate();
 		}
 		else if (id == clearRoutes.getId())
 		{
-			field.clearRoutes();
+			field.clearRoutes(arrowRoute);
+			field.clearRouteLocations();
 			playerIndex = -1;
 			previousPlayerIndex = -1;
 			drawView.invalidate(); // redraw the screen
