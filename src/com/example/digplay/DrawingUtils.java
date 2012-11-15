@@ -14,144 +14,6 @@ import android.util.FloatMath;
 
 public class DrawingUtils {
 	
-	public static void drawBitmapPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float DENSITY, 
-			int playerIndex, Field fieldForCreatePlayer, Canvas canvas, Canvas bitmapCanvas, Paint paint, int color, float LEFT_MARGIN, float TOP_MARGIN)
-	{
-		float adjustedHeight = (670*DENSITY)+TOP_ANDROID_BAR; // pixel location we want to draw the 8
-		   // created players at. 50 pixels is used
-		   // at the top for all android devices
-
-		// add players at bottom of screen, 75dp width between each of them
-		Location playerLocQB = new Location((int)(75*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QUARTERBACK);
-		
-		Location playerLocWR = new Location((int)(150*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WIDE_RECIEVER);
-		
-		Location playerLocRB = new Location((int)(225*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RUNNING_BACK);
-		
-		Location playerLocFB = new Location((int)(300*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FULLBACK);
-		
-		Location playerLocTE = new Location((int)(375*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TIGHT_END);
-		
-		Location playerLocC = new Location((int)(450*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocC, Position.CENTER);
-		
-		Location playerLocG = new Location((int)(525*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocG, Position.GUARD);
-		
-		Location playerLocT = new Location((int)(600*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocT, Position.TACKLE);
-
-		// orangish color
-		paint.setColor(0xFFFF8000);
-
-		// y values are all the same, so just reuse one
-		float eightPlayerY = playerLocQB.getY() - TOP_ANDROID_BAR;
-		
-		// the c does is not exactly the same as the real pixels, because
-		// the c is drawn at 50 pixels down from the top of the screen
-		canvas.drawCircle(playerLocQB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocWR.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocRB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocFB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocTE.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocC.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocG.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocT.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-					
-		paint.setColor(Color.BLACK);
-		
-		paint.setTextAlign(Align.CENTER);
-		paint.setTextSize(PLAYER_ICON_RADIUS);
-		
-		// descent and ascent are used for centering text vertically
-		float height = (playerLocQB.getY()-TOP_ANDROID_BAR)-((paint.descent() + paint.ascent()) / 2);
-		
-		canvas.drawText("QB", playerLocQB.getX(), height, paint);
-		canvas.drawText("WR", playerLocWR.getX(), height, paint);
-		canvas.drawText("RB", playerLocRB.getX(), height, paint);
-		canvas.drawText("FB", playerLocFB.getX(), height, paint);
-		canvas.drawText("TE", playerLocTE.getX(), height, paint);
-		canvas.drawText("C", playerLocC.getX(), height, paint);
-		canvas.drawText("G", playerLocG.getX(), height, paint);
-		canvas.drawText("T", playerLocT.getX(), height, paint);
-
-		// orangish color
-		paint.setColor(0xFFFF8000);
-
-		int xposBitmap = -1;
-		int xposReal = -1;
-		int yposBitmap = -1;
-		int yposReal = -1;
-		float bitmapHeight = -1;
-		float realHeight = -1;
-		
-		for (int i = 0; i < field.getAllPlayers().size(); i++)
-		{
-			xposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getX() - LEFT_MARGIN);
-			xposReal = (int) (field.getAllPlayers().get(i).getLocation().getX());
-			// -50, because 50 pixels are used at the top of the screen on all android devices
-			// for the time and app name
-			yposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getY() - TOP_ANDROID_BAR - TOP_MARGIN);
-			yposReal = (int) (field.getAllPlayers().get(i).getLocation().getY() - TOP_ANDROID_BAR);
-			// this is the selected player
-			if (playerIndex == i)
-			{
-				paint.setColor(color);
-			}
-			// draw the player again, but red this time
-			bitmapCanvas.drawCircle(xposBitmap, yposBitmap, PLAYER_ICON_RADIUS, paint);
-			canvas.drawCircle(xposReal, yposReal, PLAYER_ICON_RADIUS, paint);
-			// descent and ascent are used for centering text vertically
-			bitmapHeight = yposBitmap-((paint.descent() + paint.ascent()) / 2);
-			realHeight = yposReal-((paint.descent() + paint.ascent()) / 2);
-			
-			paint.setColor(Color.BLACK);
-			switch(field.getAllPlayers().get(i).getPosition()) {
-			case QUARTERBACK:
-				drawCenteredText("QB", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("QB", xposReal, realHeight, canvas, paint);
-				break;
-			case WIDE_RECIEVER:
-				drawCenteredText("WR", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("WR", xposReal, realHeight, canvas, paint);
-				break;
-			case RUNNING_BACK:
-				drawCenteredText("RB", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("RB", xposReal, realHeight, canvas, paint);
-				break;
-			case FULLBACK:
-				drawCenteredText("FB", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("FB", xposReal, realHeight, canvas, paint);
-				break;
-			case TIGHT_END:
-				drawCenteredText("TE", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("TE", xposReal, realHeight, canvas, paint);
-				break;
-			case CENTER:
-				drawCenteredText("C", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("C", xposReal, realHeight, canvas, paint);
-				break;
-			case GUARD:
-				drawCenteredText("G", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("G", xposReal, realHeight, canvas, paint);
-				break;
-			case TACKLE:
-				drawCenteredText("T", xposBitmap, bitmapHeight, bitmapCanvas, paint);
-				drawCenteredText("T", xposReal, realHeight, canvas, paint);
-				break;
-			default:
-				break;
-			}
-			// reset to orangish color
-			paint.setColor(0xFFFF8000);
-		}
-	}
-	
 	public static void drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
 			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS)
 	{
@@ -217,6 +79,66 @@ public class DrawingUtils {
 		canvas.drawText("C", playerLocC.getX(), height, paint);
 		canvas.drawText("G", playerLocG.getX(), height, paint);
 		canvas.drawText("T", playerLocT.getX(), height, paint);
+	}
+	
+	public static void drawBitmapPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
+			int playerIndex, Canvas canvas, Paint paint, int color, float LEFT_MARGIN, float TOP_MARGIN)
+	{
+		// orangish color
+		paint.setColor(0xFFFF8000);
+
+		int xposBitmap = -1;
+		int yposBitmap = -1;
+		float bitmapHeight = -1;
+		
+		for (int i = 0; i < field.getAllPlayers().size(); i++)
+		{
+			xposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getX() - LEFT_MARGIN);
+			// -50, because 50 pixels are used at the top of the screen on all android devices
+			// for the time and app name
+			yposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getY() - TOP_MARGIN - TOP_ANDROID_BAR);
+			// this is the selected player
+			if (playerIndex == i)
+			{
+				paint.setColor(color);
+			}
+			// draw the player again, but red this time
+			canvas.drawCircle(xposBitmap, yposBitmap, PLAYER_ICON_RADIUS, paint);
+			// descent and ascent are used for centering text vertically
+			bitmapHeight = yposBitmap-((paint.descent() + paint.ascent()) / 2);
+			
+			paint.setColor(Color.BLACK);
+			switch(field.getAllPlayers().get(i).getPosition()) {
+			case QUARTERBACK:
+				drawCenteredText("QB", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case WIDE_RECIEVER:
+				drawCenteredText("WR", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case RUNNING_BACK:
+				drawCenteredText("RB", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case FULLBACK:
+				drawCenteredText("FB", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case TIGHT_END:
+				drawCenteredText("TE", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case CENTER:
+				drawCenteredText("C", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case GUARD:
+				drawCenteredText("G", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			case TACKLE:
+				drawCenteredText("T", xposBitmap, bitmapHeight, canvas, paint);
+				break;
+			default:
+				break;
+			}
+			// reset to orangish color
+			paint.setColor(0xFFFF8000);
+		}
 	}
 	
 	public static void drawPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
@@ -320,8 +242,10 @@ public class DrawingUtils {
 	}
 	
 	public static void drawBitmapRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
-			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, boolean blockRoute, int playerIndex)
+			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, int playerIndex)
 	{
+		paint.setColor(0xFFFF8000);
+		
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
@@ -338,22 +262,6 @@ public class DrawingUtils {
 				int tempY = (int) (tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN);
 				if (j == tempPlayer.getRouteLocations().size()-1)
 				{
-					if (j == playerIndex)
-					{
-						Route tempRoute;
-						if (blockRoute)
-						{
-							tempRoute = Route.BLOCK;
-						}
-						else
-						{
-							tempRoute = Route.ARROW;
-						}
-						if (tempPlayer.getRoute() != tempRoute)
-						{
-							tempPlayer.changeRoute(tempRoute);
-						}
-					}
 					int deltaX = playerX - tempX;
 					int deltaY = playerY - tempY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
@@ -407,8 +315,9 @@ public class DrawingUtils {
 		paint.setColor(0xFF007900);
 
 		// draw the field
-		canvas.drawRect(LEFT_MARGIN, TOP_MARGIN, RIGHT_MARGIN, BOTTOM_MARGIN, paint);
+		canvas.drawRect(0, 0, RIGHT_MARGIN-LEFT_MARGIN, BOTTOM_MARGIN-TOP_MARGIN, paint);
 
+		
 		// 2 = number of pixels between out of bounds and hash mark
 		// 18 = length of the hash mark
 		drawHashLines(0, RIGHT_MARGIN-LEFT_MARGIN, BOTTOM_MARGIN-TOP_MARGIN, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, 
@@ -461,6 +370,35 @@ public class DrawingUtils {
 		
 		// fill = fill enclosed shapes with the color, like a circle with the middle one color
 		paint.setStyle(Paint.Style.FILL);
+	}
+	
+	public static void drawBitmapHashLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 
+			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, float DENSITY, float outOfBoundsSpacing, 
+			float hashLength, Canvas canvas, Paint paint)
+	{
+		paint.setColor(Color.WHITE);
+		// draw a stroke, not a line
+		paint.setStyle(Paint.Style.STROKE);
+		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
+		
+		float middleHashOffset = (450*DENSITY);
+		for (int i = 0; i < 45; i++)
+		{
+			if (!(i % 5 == 0))
+			{
+				float temp = BOTTOM_MARGIN - (PIXELS_PER_YARD*i) + (FIELD_LINE_WIDTHS/2);
+				float leftMarginPlusOutOfBounds = LEFT_MARGIN + outOfBoundsSpacing;
+				float rightMarginPlusHashLength = RIGHT_MARGIN - middleHashOffset;
+				float leftMarginPlusHashLength = LEFT_MARGIN + middleHashOffset;
+				canvas.drawLine(leftMarginPlusOutOfBounds, temp, 
+						leftMarginPlusOutOfBounds + hashLength, temp, paint);
+				canvas.drawLine(RIGHT_MARGIN - hashLength, temp, RIGHT_MARGIN-outOfBoundsSpacing, temp, paint);
+				canvas.drawLine(leftMarginPlusHashLength - hashLength/2, temp, 
+						leftMarginPlusHashLength + hashLength/2, temp, paint);
+				canvas.drawLine(rightMarginPlusHashLength - hashLength/2, temp, 
+						rightMarginPlusHashLength + hashLength/2, temp, paint);
+			}
+		}
 	}
 	
 	public static void drawHashLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 

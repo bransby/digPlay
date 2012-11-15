@@ -61,8 +61,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 	private static Button trashCan;
 	
-	public static Bitmap testingImage;
-	
 	private static float DENSITY; // DENSITY coefficient
 	
 	/** Called when the activity is first created. */
@@ -101,7 +99,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		save.setBackgroundResource(R.drawable.floppy_disk);
 	}
 	
-	public Bitmap getBitmap()
+	public static Bitmap getBitmap()
 	{
 		return drawView.getBitmap();
 	}
@@ -136,7 +134,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
-			System.out.println("hi");
 		}
 
 		public Bitmap getBitmap() {
@@ -192,24 +189,21 @@ public class EditorActivity extends Activity implements OnClickListener  {
 					c, paint, selectionColor);
 		}
 		
-		private void drawToBitmap(Canvas canvas)
+		private void drawToBitmap()
 		{
 			paint.setColor(Color.BLACK);
 			
-			c = canvas;
-			
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
-			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
+			DrawingUtils.drawBitmapField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
+			DrawingUtils.drawBitmapRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
 	
-			DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, canvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
-			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
-					bitmapCanvas, paint, selectionColor);
+			DrawingUtils.drawBitmapPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
+					bitmapCanvas, paint, selectionColor, LEFT_MARGIN, TOP_MARGIN);
 			
-			c.drawBitmap(bitmap, LEFT_MARGIN, TOP_MARGIN, paint);
+			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
 		
 		public boolean onTouch(View v, MotionEvent event) {
@@ -398,18 +392,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Intent intent = null;
 		int id = v.getId();
 		if(id == save.getId()){
-			/*
-			Bitmap b = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);                
-		    Canvas c = new Canvas(b);
-		    drawView.layout(0, 0, drawView.getWidth(), drawView.getHeight());
-		    drawView.draw(c);
-		    testingImage = b;
-		    */
-		   
-		    testingImage = drawView.getBitmap();
-		    
-		    Log.d("db stuffz", "" + testingImage);
-		    
+			drawView.drawToBitmap();
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
 		}else if(id == arrowButton.getId()){

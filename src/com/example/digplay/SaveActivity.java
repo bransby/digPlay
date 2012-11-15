@@ -59,7 +59,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
 		newField.setPlayType(type);
-		newField.setImage(EditorActivity.testingImage);
+		newField.setImage(EditorActivity.getBitmap());
 		//newField.setPlayFormation(formation);
 
 
