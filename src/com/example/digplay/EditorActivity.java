@@ -15,6 +15,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
+import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
@@ -100,6 +101,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		save.setBackgroundResource(R.drawable.floppy_disk);
 	}
 	
+	public Bitmap getBitmap()
+	{
+		return drawView.getBitmap();
+	}
+	
 	public static class DrawView extends View implements OnTouchListener {
 		
 		private Canvas c;
@@ -130,6 +136,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
+			System.out.println("hi");
 		}
 
 		public Bitmap getBitmap() {
@@ -139,8 +146,10 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		public void build(Context context, AttributeSet attrs) throws IOException
 		{		
+			
 			picture = new Picture();
-			tempCanvas = picture.beginRecording(1280, 800);
+			
+			tempCanvas = picture.beginRecording((int)(LEFT_MARGIN + RIGHT_MARGIN), (int)(800));
 			
 			bitmapCanvas = new Canvas(bitmap);
 			
@@ -364,7 +373,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 
 		public static void flipField() {
-			field.flip((int)(LEFT_MARGIN+RIGHT_MARGIN));
+			field.flip((int)(LEFT_MARGIN + RIGHT_MARGIN));
 		}
 	}	
 	//used for database to get the field object.
@@ -389,13 +398,15 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Intent intent = null;
 		int id = v.getId();
 		if(id == save.getId()){
-			
-			System.out.println(drawView.getBitmap());
+			/*
 			Bitmap b = Bitmap.createBitmap(drawView.getWidth(), drawView.getHeight(), Bitmap.Config.ARGB_8888);                
 		    Canvas c = new Canvas(b);
 		    drawView.layout(0, 0, drawView.getWidth(), drawView.getHeight());
 		    drawView.draw(c);
 		    testingImage = b;
+		    */
+		   
+		    testingImage = drawView.getBitmap();
 		    
 		    Log.d("db stuffz", "" + testingImage);
 		    

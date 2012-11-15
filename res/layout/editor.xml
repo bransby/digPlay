@@ -19,7 +19,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="15dip"
         android:layout_marginTop="7dip"
-        android:textSize="30dp" />
+        android:textSize="30dp"
+        android:onClick="onClick" />
      
     <Button
         android:id="@+id/clear_routes"
