@@ -6,8 +6,9 @@
     android:orientation="horizontal" >
 
     <LinearLayout
-        android:layout_width="668dp"
+        android:layout_width="match_parent"
         android:layout_height="fill_parent"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <TextView
@@ -29,6 +30,53 @@
             android:dividerHeight="5dip" >
 
         </ListView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/gm_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dip"
+            android:text="Gameplan Manager"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="46dip" />
+
+        <Button
+            android:id="@+id/gm_create_gp"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="100dip"
+            android:text="Create new gameplan" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip" />
+
+        <Button
+            android:id="@+id/gm_delete"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:layout_gravity="center"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip"
+            android:text="Click to enable deleting" />
 
     </LinearLayout>
 
@@ -57,14 +105,6 @@
             android:dividerHeight="5dip" >
 
         </ListView>
-
-        <Button
-            android:id="@+id/gm_delete"
-            android:layout_width="200dip"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="30dip"
-            android:text="Click to delete play" />
 
     </LinearLayout>
 

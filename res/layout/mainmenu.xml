@@ -24,11 +24,11 @@
 
     <Button
         android:id="@+id/maincreategameplan"
-        android:layout_width="600dp" 
-		android:layout_height="100dp"
-        android:layout_marginTop="350dp"
+        android:layout_width="600dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:text="CREATE GAME PLAN"
+        android:layout_marginTop="350dp"
+        android:text="GAMEPLAN MANAGER"
         android:textSize="50dp" />
 
     <Button

@@ -13,14 +13,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GameplanManagerActivity extends Activity implements OnItemClickListener, OnClickListener {
+public class GameplanManagerActivity extends Activity implements OnItemClickListener, OnClickListener{
 	private ListView gameplanLV;
 	private ListView playbookLV;
 	private ArrayList<String> playbookPlays;
@@ -29,8 +32,11 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	private boolean deletePressed;
 	private TextView gpHeader;
 	private TextView pbHeader;
+	private TextView gmTitle;
 	private int positionSelected;
 	private Context deleteContext;
+	private Button createNewGameplan;
+	private String gameplanName;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,8 +53,11 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	    deletePressed = false;
 	    startNotification();
 	}
+	
 	private void setButton() {
 		delete = (Button) findViewById(R.id.gm_delete);
+		createNewGameplan = (Button)findViewById(R.id.gm_create_gp);
+		createNewGameplan.setOnClickListener(this);
 	    delete.setOnClickListener(this);
 	    delete.setBackgroundColor(Color.LTGRAY);
 	}
@@ -59,8 +68,10 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	private void setTexts() {
 		gpHeader = (TextView)findViewById(R.id.gp_manager_gp_text);
 		pbHeader = (TextView)findViewById(R.id.gp_manager_pb_text);
+		gmTitle = (TextView)findViewById(R.id.gm_title);
 		gpHeader.setTextColor(Color.WHITE);
 		pbHeader.setTextColor(Color.WHITE);
+		gmTitle.setTextColor(Color.WHITE);
 	}
 	private void setListViews() {
 		gameplanLV = (ListView) findViewById(R.id.gm_gameplan);
@@ -114,14 +125,40 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		alert.show();
 	}
 	public void onClick(View v) {
-		if(!deletePressed){
-			delete.setBackgroundColor(Color.YELLOW);
-			delete.setText("Tap play to delete");
-			deletePressed = true;
-		}else{
-			delete.setBackgroundColor(Color.LTGRAY);
-			delete.setText("Select to delete Play");
-			deletePressed = false;
+		if(v.getId() == delete.getId()){
+			if(!deletePressed){
+				delete.setBackgroundColor(Color.YELLOW);
+				delete.setText("Tap play to delete");
+				deletePressed = true;
+			}else{
+				delete.setBackgroundColor(Color.LTGRAY);
+				delete.setText("Select to delete Play");
+				deletePressed = false;
+			}
+		}else if(v.getId() == createNewGameplan.getId()){
+			popupForName();
 		}
+	}
+
+	private void popupForName() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Add Gameplan");
+		alert.setMessage("Type in name of gameplan to add");
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int whichButton) {
+		  gameplanName = input.getText().toString();
+		  }
+		});
+
+		alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		  public void onClick(DialogInterface dialog, int whichButton) {
+		  }
+		});
+
+		alert.show();
+		
 	}
 }

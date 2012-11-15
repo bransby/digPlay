@@ -4,13 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dip"
+        android:text="Select formation to place on field"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
     <ListView
         android:id="@+id/formations_list"
         android:layout_width="fill_parent"
         android:layout_height="528dp"
         android:layout_marginLeft="150dip"
         android:layout_marginRight="150dip"
-        android:layout_marginTop="100dip" >
+        android:layout_marginTop="70dip" >
 
     </ListView>
 
@@ -20,6 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="150dip"
         android:layout_marginTop="30dip"
-        android:text="Add new formation" />
+        android:text="I don&apos;t see my formation here!" />
 
 </LinearLayout>
