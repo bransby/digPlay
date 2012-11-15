@@ -39,6 +39,7 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 	private void setListView() {
 		formationsList = (ListView)findViewById(R.id.formations_list);
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
+		if(formations.isEmpty())formations.add("There are no saved formations");
 		formationsList.setAdapter(adapter);
 		formationsList.setOnItemClickListener(this);
 	}
