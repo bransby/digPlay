@@ -32,7 +32,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static boolean movePlayer;
 	private static int selectionColor;
 	private static boolean drawingRoute;
-	private static boolean drawCreatedPlayers;
 	
 	private static Route arrowRoute;
 	
@@ -72,7 +71,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		
 		movePlayer = false;
 		selectionColor = TAN_COLOR;
-		drawCreatedPlayers = true;
 		arrowRoute = Route.ARROW;
 
 		drawView = (DrawView) findViewById(R.id.DrawView);
@@ -109,6 +107,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		private Canvas c;
 		private Paint paint;
 		
+		private boolean drawCreatedPlayers;
+		private boolean drawField;
+		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
 		private Field fieldForCreatePlayer;
@@ -125,10 +126,13 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		static final private float TOP_ANDROID_BAR = 50*DENSITY;
 		static final private float TOUCH_SENSITIVITY = 35*DENSITY;
 		
-		Picture picture; 
-		Canvas tempCanvas;
+		Picture createdPlayersPicture; 
+		Picture fieldPicture;
 		
-		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
+		Canvas createdPlayersCanvas;
+		Canvas fieldCanvas;
+		
+		static private Bitmap bitmap;
 		static private Canvas bitmapCanvas;
 
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
@@ -143,11 +147,15 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		public void build(Context context, AttributeSet attrs) throws IOException
 		{		
+			drawField = true;
+			drawCreatedPlayers = true;
+			createdPlayersPicture = new Picture();
+			fieldPicture = new Picture();
 			
-			picture = new Picture();
+			createdPlayersCanvas = createdPlayersPicture.beginRecording((int)(LEFT_MARGIN + RIGHT_MARGIN), (int)(800));
+			fieldCanvas = fieldPicture.beginRecording((int)(LEFT_MARGIN + RIGHT_MARGIN), (int)(800));
 			
-			tempCanvas = picture.beginRecording((int)(LEFT_MARGIN + RIGHT_MARGIN), (int)(800));
-			
+			bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 			bitmapCanvas = new Canvas(bitmap);
 			
 			fieldForCreatePlayer = new Field();
@@ -170,21 +178,27 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			c = canvas;
 			
-			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
-			// 18 = length of the hash marks in pixels 
-			DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
-					2*DENSITY, 18*DENSITY, c, paint);
+			if (drawField)
+			{
+				// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
+				// 18 = length of the hash marks in pixels 
+				DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
+						2*DENSITY, 18*DENSITY, fieldCanvas, paint);
+				fieldPicture.endRecording();
+				drawField = false;
+			}
+			c.drawPicture(fieldPicture);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, PIXELS_PER_YARD, playerIndex);
 	
 			if (drawCreatedPlayers)
 			{
-				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, tempCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
-				picture.endRecording();
+				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
+				createdPlayersPicture.endRecording();
 				drawCreatedPlayers = false;
 			}
-	
-			c.drawPicture(picture);
+			c.drawPicture(createdPlayersPicture);
+			
 			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
 					c, paint, selectionColor);
 		}
@@ -195,13 +209,13 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
-			DrawingUtils.drawBitmapField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
+			DrawingUtils.drawField(0, RIGHT_MARGIN-LEFT_MARGIN, 0, BOTTOM_MARGIN-TOP_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
 			DrawingUtils.drawBitmapRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
 	
 			DrawingUtils.drawBitmapPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
-					bitmapCanvas, paint, selectionColor, LEFT_MARGIN, TOP_MARGIN);
+					bitmapCanvas, paint, TAN_COLOR, LEFT_MARGIN, TOP_MARGIN);
 			
 			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
