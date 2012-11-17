@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Path;
 import com.businessclasses.Player;
 import com.businessclasses.Route;
 
@@ -15,25 +16,26 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Picture;
-import android.opengl.Matrix;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
+
 public class EditorActivity extends Activity implements OnClickListener  {
 
-	private static boolean blockRoute;
-	private static boolean dashLine;
+	private static boolean arrowRoute;
+	private static boolean solidPath;
+	
 	private static boolean movePlayer;
 	private static int selectionColor;
 	private static boolean drawingRoute;
 	
-	private static Route arrowRoute;
+	private static Route playerRoute;
+	private static Path playerPath;
 	
 	private static final int TAN_COLOR = 0xFFFF8000;
 
@@ -54,7 +56,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button clearField;
 	
 	private static Button arrowButton;
-	private Button dashButton;
+	private static Button dashButton;
 	private Button clearPlayerRoute;
 	private Button testButton;
 	
@@ -69,9 +71,14 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
 		
+		arrowRoute = true;
+		solidPath = true;
+		
 		movePlayer = false;
 		selectionColor = TAN_COLOR;
-		arrowRoute = Route.ARROW;
+		
+		playerRoute = Route.ARROW;
+		playerPath = Path.SOLID;
 
 		drawView = (DrawView) findViewById(R.id.DrawView);
 		
@@ -149,6 +156,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		{		
 			drawField = true;
 			drawCreatedPlayers = true;
+			
 			createdPlayersPicture = new Picture();
 			fieldPicture = new Picture();
 			
@@ -227,37 +235,58 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, arrowRoute);
+				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
 				if (playerIndex != -1)
 				{
 					Player selectedPlayer = field.getPlayer(playerIndex);
-					boolean blockRouteForPlayer;
+					boolean arrowRouteForPlayer;
 					if (selectedPlayer.getRoute() == Route.ARROW)
 					{
-						blockRouteForPlayer = false;
+						arrowRouteForPlayer = true;
 					}
 					// block route
 					else
 					{
-						blockRouteForPlayer = true;
+						arrowRouteForPlayer = false;
 					}
-					
-					if (field.getPlayer(playerIndex).getRouteLocations().size() != 0)
+					boolean solidPathForPlayer;
+					if (selectedPlayer.getPath() == Path.SOLID)
 					{
-						if (!blockRouteForPlayer && blockRoute || blockRouteForPlayer && !blockRoute)
+						solidPathForPlayer = true;
+					}
+					// dashed path
+					else
+					{
+						solidPathForPlayer = false;
+					}
+					if (selectedPlayer.getRouteLocations().size() != 0)
+					{
+						if (!arrowRouteForPlayer && arrowRoute || arrowRouteForPlayer && !arrowRoute)
 						{
-							blockRoute = EditorActivity.toggleArrowButton(blockRoute);
+							arrowRoute = EditorActivity.toggleArrowButton(arrowRoute);
+						}
+						if (!solidPathForPlayer && solidPath || solidPathForPlayer && !solidPath)
+						{
+							solidPath = EditorActivity.toggleSolidButton(solidPath);
 						}
 					}
 					else
 					{
-						if (blockRoute)
+						if (arrowRoute)
 						{
-							field.getPlayer(playerIndex).changeRoute(Route.BLOCK);
+							selectedPlayer.changeRoute(Route.ARROW);
 						}
 						else
 						{
-							field.getPlayer(playerIndex).changeRoute(Route.ARROW);
+							selectedPlayer.changeRoute(Route.BLOCK);
+						}
+						if (solidPath)
+						{
+							selectedPlayer.changePath(Path.SOLID);
+						}
+						else
+						{
+							selectedPlayer.changePath(Path.DOTTED);
 						}
 					}
 					lastPlayerX = selectedPlayer.getLocation().getX();
@@ -334,7 +363,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
 						if (dist > PLAYER_ICON_RADIUS)
 						{
-							drawingRoute = true;
 							if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
 							{
 								lastPlayerX = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
@@ -360,8 +388,13 @@ public class EditorActivity extends Activity implements OnClickListener  {
 							{
 								lastPlayerY = y;
 							}
+							if (!drawingRoute)
+							{
+								field.getPlayer(playerIndex).clearRouteLocations();
+							}
 							Location temp = new Location(lastPlayerX, lastPlayerY);
 							field.getPlayer(playerIndex).addRouteLocation(temp);
+							drawingRoute = true;
 						}
 					}
 				}
@@ -389,17 +422,31 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		return field;
 	}
 	
-	public static boolean toggleArrowButton(boolean blockRoute)
+	public static boolean toggleArrowButton(boolean arrowRoute)
 	{
-		if(blockRoute == false){
+		if(arrowRoute){
 			arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
-			arrowRoute = Route.BLOCK;
-			return true;
+			playerRoute = Route.BLOCK;
+			return false;
 		}
 		else {
 			arrowButton.setBackgroundResource(R.drawable.right_arrow);
-			arrowRoute = Route.ARROW;
+			playerRoute = Route.ARROW;
+			return true;
+		}
+	}
+	
+	public static boolean toggleSolidButton(boolean solidPath)
+	{
+		if(solidPath){
+			dashButton.setBackgroundResource(R.drawable.dotted_line);
+			playerPath = Path.DOTTED;
 			return false;
+		}
+		else {
+			dashButton.setBackgroundResource(R.drawable.line);
+			playerPath = Path.SOLID;
+			return true;
 		}
 	}
 	public void onClick(View v) {
@@ -410,20 +457,18 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
 		}else if(id == arrowButton.getId()){
-			blockRoute = toggleArrowButton(blockRoute);
+			arrowRoute = toggleArrowButton(arrowRoute);
 			if (playerIndex != -1)
 			{
-				field.getPlayer(playerIndex).changeRoute(arrowRoute);
+				field.getPlayer(playerIndex).changeRoute(playerRoute);
 				drawView.invalidate();
 			}
 		}else if(id == dashButton.getId()){
-			if(dashLine == false){
-				dashLine = true;
-				dashButton.setBackgroundResource(R.drawable.dotted_line);
-			}
-			else {
-				dashLine = false;
-				dashButton.setBackgroundResource(R.drawable.line);
+			solidPath = toggleSolidButton(solidPath);
+			if (playerIndex != -1)
+			{
+				field.getPlayer(playerIndex).changePath(playerPath);
+				drawView.invalidate();
 			}
 		}else if(id == clearPlayerRoute.getId()){
 			if (playerIndex != -1)
@@ -438,7 +483,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 		else if (id == clearRoutes.getId())
 		{
-			field.clearRoutes(arrowRoute);
+			field.clearRoutes(playerRoute);
+			field.clearPaths(playerPath);
 			field.clearRouteLocations();
 			playerIndex = -1;
 			previousPlayerIndex = -1;

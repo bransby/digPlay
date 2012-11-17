@@ -2,12 +2,14 @@ package com.example.digplay;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Path;
 import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.util.FloatMath;
@@ -242,6 +244,10 @@ public class DrawingUtils {
 			Player tempPlayer = field.getAllPlayers().get(i);
 			int playerX = (int) (tempPlayer.getLocation().getX());
 			int playerY = (int) (tempPlayer.getLocation().getY() - TOP_ANDROID_BAR);
+			if (tempPlayer.getPath() == Path.DOTTED)
+			{
+				paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
+			}
 			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
@@ -253,6 +259,8 @@ public class DrawingUtils {
 					int deltaX = playerX - tempX;
 					int deltaY = playerY - tempY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+					// solid line
+					paint.setPathEffect(null);
 					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
 				}
 				playerX = tempX;
@@ -261,6 +269,8 @@ public class DrawingUtils {
 		}
 		// orangish color
 		paint.setColor(0xFFFF8000);
+		// solid line
+		paint.setPathEffect(null);
 	}
 	
 	public static void drawField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 
@@ -370,21 +380,6 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static String[] getRoutes(){
-		Route[] routes = Route.values();
-		String[] stringRoutes = new String[routes.length];
-		for(int i = 0;i < routes.length;i++){
-			stringRoutes[i] = routes[i].toString();
-		}
-		return stringRoutes;
-	}
-	
-	public static Route LookupRoute(int value)
-	{
-		Route[] routes = Route.values();
-		return routes[value];
-	}
-	
 	public static void actionMove(Field field, int playerIndex, int x, int y)
 	{
 		if (playerIndex != -1)
@@ -446,7 +441,7 @@ public class DrawingUtils {
 		return -1;
 	}
 	
-	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route)
+	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
@@ -466,7 +461,7 @@ public class DrawingUtils {
 			{
 				// this player has been selected
 				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), route); // add to field
+				field.addPlayer(temp.getLocation(), temp.getPosition(), route, path); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected

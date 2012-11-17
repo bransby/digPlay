@@ -7,19 +7,22 @@ public class Player {
 	private ArrayList<Location> routeLocations;
 	private Location _spotOnField;
 	private Route _route;
+	private Path _path;
 	
 	public Player(Location l, Position p){
 		_spotOnField = l;
 		_position = p;
 		_route = Route.ARROW;
+		_path = Path.SOLID;
 		routeLocations = new ArrayList<Location>();
 	}
 
 	//overloading constructor for db use
-	public Player(Location l, Position p, Route r){
+	public Player(Location l, Position p, Route r, Path path){
 		_position = p;
 		_spotOnField = l;
 		_route = r;
+		_path = path;
 		routeLocations = new ArrayList<Location>();
 	}
 	
@@ -63,5 +66,13 @@ public class Player {
 		Location l = this._spotOnField;
 		int newX = (int) (width - l._x);
 		l._x = newX;	
+	}
+	public Path getPath()
+	{
+		return _path;
+	}
+	public void changePath(Path p)
+	{
+		_path = p;
 	}
 }
