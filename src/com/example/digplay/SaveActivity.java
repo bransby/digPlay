@@ -7,15 +7,18 @@ import com.businessclasses.Field;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.*;
+import android.widget.LinearLayout.LayoutParams;
+
 import com.db4o.*;
 
 
@@ -24,6 +27,16 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private EditText playName;
 	private Button submit;
 	private Spinner playType;
+	private String formation;
+	private String name;
+	private String type;
+	
+	private PopupWindow popUp;
+	private TextView text;
+	private Button button;
+	private LinearLayout layout;
+	private LayoutParams params;
+	boolean click = true;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -31,6 +44,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.save);
 	    setControls();
+	    
 	}
 
 	private void setControls() {
@@ -51,26 +65,32 @@ public class SaveActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
-		String formation = playFormation.getText().toString();
-		String name = playName.getText().toString();
-		String type = playType.getSelectedItem().toString();
-		//TODO:send to database
-
+		
+		name = playName.getText().toString();
 		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
-		newField.setPlayType(type);
+		newField.setPlayType(playType.getSelectedItem().toString());
 		newField.setImage(EditorActivity.getBitmap());
-		//newField.setPlayFormation(formation);
+		//newField.setPlayFormation(playFormation.getText().toString());
+
+		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false && DigPlayDB.getInstance(getBaseContext()).storePlay(newField) == true){
+			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", null).show(); 
+
+			Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+			startActivity(intent);
+		}
+		else{
+			new AlertDialog.Builder(this).setMessage("Play name already used in playbook!").setNegativeButton("Cancel", null).setPositiveButton("OK", null).show(); 
+			playName.setText("");
+		}
+
 
 
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
 
-		DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
-
 		//System.out.println(AnotherTest.getInstance(getBaseContext()).getPlayByName(newField.getPlayName()).getPlayName());
 		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getPlayName());
 		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getAllPlayers().toString());
-		
-	}
 
+	}
 }
