@@ -1,15 +1,18 @@
 package com.businessclasses;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Field {
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	private String _playName;
 	private String _playType;
-	private Bitmap _bitmap;
+	private byte[] _image;
 
 	public String getPlayName(){
 		return _playName;
@@ -42,10 +45,12 @@ public class Field {
 	}
 	
 	public Bitmap getImage(){
-		return this._bitmap;
+	       return BitmapFactory.decodeByteArray(this._image, 0, _image.length);
 	}
 	public void setImage(Bitmap image){
-		this._bitmap = image;
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		this._image = stream.toByteArray();
 	}
 	public void clearField(){
 		_playersOnField.clear();

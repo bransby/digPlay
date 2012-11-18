@@ -65,7 +65,6 @@ public class SaveActivity extends Activity implements OnClickListener {
 
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
 
-
 		DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
 
 		//System.out.println(AnotherTest.getInstance(getBaseContext()).getPlayByName(newField.getPlayName()).getPlayName());

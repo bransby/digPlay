@@ -128,7 +128,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Picture picture; 
 		Canvas tempCanvas;
 		
-		static private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
+		private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 		static private Canvas bitmapCanvas;
 
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
