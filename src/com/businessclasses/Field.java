@@ -36,8 +36,8 @@ public class Field {
 	}
 
 	//overloading method for DB use
-	public void addPlayerAndRoute(Location l, Position p, Route r){
-		Player player = new Player(l,p,r);
+	public void addPlayer(Location l, Position p, Route r, Path path){
+		Player player = new Player(l,p,r, path);
 		_playersOnField.add(player);
 	}
 	public void addPlayers(ArrayList<Player> newPlayers){
@@ -64,6 +64,13 @@ public class Field {
 	{
 		for(int i=0;i<_playersOnField.size();i++){
 			_playersOnField.get(i).changeRoute(route);
+		}
+	}
+	public void clearPaths(Path path)
+	{
+		for (int i = 0; i < _playersOnField.size(); i++)
+		{
+			_playersOnField.get(i).changePath(path);
 		}
 	}
 	public boolean removePlayer(Player p){
@@ -111,6 +118,7 @@ public class Field {
 		for(int i = 0;i< _playersOnField.size();i++){
 			Player thePlayer = _playersOnField.get(i);
 			thePlayer.flipLocation(width);
+			thePlayer.flipRouteLocations(width);
 		}
 	}
 	public Player getPlayer(int num){

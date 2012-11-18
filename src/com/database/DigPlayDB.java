@@ -181,7 +181,7 @@ public final class DigPlayDB extends Application{
 			found.removeAllPlayers();
 
 			for(int i = 0; i < newPlayers.size(); ++i){		
-				found.addPlayerAndRoute(newPlayers.get(i).getLocation(), newPlayers.get(i).getPosition(), newPlayers.get(i).getRoute());
+				found.addPlayer(newPlayers.get(i).getLocation(), newPlayers.get(i).getPosition(), newPlayers.get(i).getRoute(), newPlayers.get(i).getPath());
 				playsDB.store(found);
 				playsDB.commit();
 			}
