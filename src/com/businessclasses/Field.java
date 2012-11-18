@@ -113,6 +113,7 @@ public class Field {
 		for(int i = 0;i< _playersOnField.size();i++){
 			Player thePlayer = _playersOnField.get(i);
 			thePlayer.flipLocation(width);
+			thePlayer.flipRouteLocations(width);
 		}
 	}
 	public Player getPlayer(int num){

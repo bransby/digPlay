@@ -67,6 +67,15 @@ public class Player {
 		int newX = (int) (width - l._x);
 		l._x = newX;	
 	}
+	public void flipRouteLocations(int width)
+	{
+		for (int i = 0; i < routeLocations.size(); i++)
+		{
+			Location thisLoc = routeLocations.get(i);
+			int newX = (int) (width - thisLoc.getX());
+			thisLoc.changeLocation(newX, thisLoc.getY());
+		}
+	}
 	public Path getPath()
 	{
 		return _path;

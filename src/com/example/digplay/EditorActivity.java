@@ -181,7 +181,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		@Override 
 		protected void onDraw(Canvas canvas) {
 			
-			
 			paint.setColor(Color.BLACK);
 			
 			c = canvas;
@@ -197,7 +196,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			}
 			c.drawPicture(fieldPicture);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, PIXELS_PER_YARD, playerIndex);
+			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, PIXELS_PER_YARD);
 	
 			if (drawCreatedPlayers)
 			{
@@ -338,6 +337,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
 						if (dist > PLAYER_ICON_RADIUS)
 						{
+							field.getPlayer(playerIndex).clearRouteLocations();
 							movePlayer = true;
 							DrawingUtils.actionMove(field, playerIndex, x, y);
 						}

@@ -7,6 +7,7 @@ import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
 
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -96,8 +97,6 @@ public class DrawingUtils {
 			// for the time and app name
 			ypos = (int) (field.getAllPlayers().get(i).getLocation().getY() - yOffset);
 			// this is the selected player
-			System.out.println(playerIndex);
-			System.out.println(i);
 			if (playerIndex == i)
 			{
 				paint.setColor(color);
@@ -234,7 +233,7 @@ public class DrawingUtils {
 	}
 	
 	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
-			Paint paint, float PIXELS_PER_YARD, int playerIndex)
+			Paint paint, float PIXELS_PER_YARD)
 	{
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
@@ -266,6 +265,8 @@ public class DrawingUtils {
 				playerX = tempX;
 				playerY = tempY;
 			}
+			// solid line
+			paint.setPathEffect(null);
 		}
 		// orangish color
 		paint.setColor(0xFFFF8000);
