@@ -1,6 +1,7 @@
 package com.example.digplay;
 
 import java.util.ArrayList;
+import java.util.Timer;
 
 import com.database.DigPlayDB;
 
@@ -24,16 +25,20 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
-	private Button editPlay;
-	
+	private Button editPlay;	
 	ArrayList<String> playNameList = new ArrayList<String>();
 	ArrayList<String> playFormationList = new ArrayList<String>();
+	//ArrayList<String> test1 = new ArrayList<String>();
+	ArrayList<Bitmap> test = new ArrayList<Bitmap>();
 	ViewFlipper page;
 
 	Animation animFlipInForeward;
 	Animation animFlipOutForeward;
 	Animation animFlipInBackward;
 	Animation animFlipOutBackward;
+	
+	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -49,12 +54,27 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
 		
 		int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();
-		for(int i=0;i<temp; i++)
-		{
+
+		
+		/*
+		for(int j = 0; j < temp; ++j){
+			test.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(j).getImage());
+			//test1.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(j).getPlayName());
+		}
+		*/
+		Long start = System.nanoTime();
+		
+		for(int i=0;i<temp; i++){
+			//  This will create dynamic image view and add them to ViewFlipper	
+			//setFlipperImage(test.get(i), test1.get(i));
+			//setFlipperImage(test.get(i));
 			setFlipperImage(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage());
 			playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 		}
 		page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
+		Long end = System.nanoTime();
+		Log.d("db load time", "" + ((end - start)/1000000000));
+
 		animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
 		animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
 		animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
@@ -68,7 +88,8 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 
 	private void setTextView() {
 		playName = (TextView)findViewById(R.id.browsing_play_name);
-		String thePlayer = getIntent().getExtras().getString("playName");
+		//String thePlayer = getIntent().getExtras().getString("playName");
+		String thePlayer = "";
 		playName.setText(thePlayer);
 	}
 	@Override
@@ -111,7 +132,6 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			}else if((e2.getX() - e1.getX()) > sensitvity){
 				SwipeRight();
 			}
-
 			return true;
 		}
 
@@ -119,11 +139,12 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	GestureDetector gestureDetector= new GestureDetector(simpleOnGestureListener);
 	
 	private void setFlipperImage(Bitmap image){
-		Log.d("db", "" + image);
 		ImageView _image = new ImageView(getApplicationContext());
-		//ImageView testing = (ImageView)findViewById(R.id.imageView);
-		_image.setImageDrawable(new BitmapDrawable(image));
+		//_image.setBackgroundDrawable(new BitmapDrawable(getResources(), image));
+		//image.prepareToDraw();
+		_image.setImageBitmap(image);
 		page.addView(_image);
+		Log.d("db", "" + image);
 	}
 }
 

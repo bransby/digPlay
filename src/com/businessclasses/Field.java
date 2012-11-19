@@ -1,8 +1,11 @@
 package com.businessclasses;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 
 public class Field {
 	private ArrayList<Player> _playersOnField;
@@ -11,6 +14,8 @@ public class Field {
 	private String _playType;
 	private Bitmap _bitmap;
 	private String _playFormation;
+	private byte[] _image;
+
 	public String getPlayName(){
 		return _playName;
 	}
@@ -33,8 +38,8 @@ public class Field {
 	}
 
 	//overloading method for DB use
-	public void addPlayerAndRoute(Location l, Position p, Route r){
-		Player player = new Player(l,p,r);
+	public void addPlayer(Location l, Position p, Route r, Path path){
+		Player player = new Player(l,p,r, path);
 		_playersOnField.add(player);
 	}
 	public void addPlayers(ArrayList<Player> newPlayers){
@@ -42,10 +47,12 @@ public class Field {
 	}
 	
 	public Bitmap getImage(){
-		return this._bitmap;
+	       return BitmapFactory.decodeByteArray(this._image, 0, _image.length);
 	}
 	public void setImage(Bitmap image){
-		this._bitmap = image;
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		this._image = stream.toByteArray();
 	}
 	public void clearField(){
 		_playersOnField.clear();
@@ -59,6 +66,13 @@ public class Field {
 	{
 		for(int i=0;i<_playersOnField.size();i++){
 			_playersOnField.get(i).changeRoute(route);
+		}
+	}
+	public void clearPaths(Path path)
+	{
+		for (int i = 0; i < _playersOnField.size(); i++)
+		{
+			_playersOnField.get(i).changePath(path);
 		}
 	}
 	public boolean removePlayer(Player p){
@@ -106,6 +120,7 @@ public class Field {
 		for(int i = 0;i< _playersOnField.size();i++){
 			Player thePlayer = _playersOnField.get(i);
 			thePlayer.flipLocation(width);
+			thePlayer.flipRouteLocations(width);
 		}
 	}
 	public Player getPlayer(int num){

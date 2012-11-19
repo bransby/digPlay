@@ -21,6 +21,7 @@ import com.db4o.ObjectSet;
 import com.db4o.config.AndroidSupport;
 import com.db4o.config.Configuration;
 import com.db4o.config.EmbeddedConfiguration;
+import com.db4o.query.Query;
 
 public final class DigPlayDB extends Application{
 	private static ObjectContainer playsDB;
@@ -44,8 +45,13 @@ public final class DigPlayDB extends Application{
 		Log.d("db",	"" + context.getFilesDir().getAbsolutePath());
 
 		//creates and/or loads the databases
-		playsDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
+		EmbeddedConfiguration config =  Db4oEmbedded.newConfiguration();
+		config.common().objectClass(Field.class).objectField("_playName").indexed(true);
+		config.common().objectClass(Field.class).objectField("_image").indexed(true);
+		
+		playsDB = Db4oEmbedded.openFile(config, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
 		gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/GamePlansDB.db4o");
+	
 	}
 
 	//gets the instance of this class if it is null, otherwise returns this instance.
@@ -85,9 +91,6 @@ public final class DigPlayDB extends Application{
 	//stores the play given the field
 	public boolean storePlay(Field field){
 		if(field != null){
-			if(playsDB == null){
-				Log.d("db", "database is null");
-			}
 			playsDB.store(field);
 			playsDB.commit();
 			Log.d("added play", "play added to db");	
@@ -119,6 +122,7 @@ public final class DigPlayDB extends Application{
 	}
 
 	//gets the play from the database by the given play name
+	
 	public Field getPlayByName(String name){
 		Field obj = new Field();
 		obj.setPlayName(name);
@@ -128,6 +132,20 @@ public final class DigPlayDB extends Application{
 			return (Field) result.next();
 		}
 		return null;
+	}
+	
+	
+	public boolean playNameExists(String name){
+		Field obj = new Field();
+		obj.setPlayName(name);
+		ObjectSet result = playsDB.queryByExample(obj);
+		
+		if(result.hasNext()){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 	public ArrayList<Field> getAllPlays(){
@@ -185,7 +203,7 @@ public final class DigPlayDB extends Application{
 			found.removeAllPlayers();
 
 			for(int i = 0; i < newPlayers.size(); ++i){		
-				found.addPlayerAndRoute(newPlayers.get(i).getLocation(), newPlayers.get(i).getPosition(), newPlayers.get(i).getRoute());
+				found.addPlayer(newPlayers.get(i).getLocation(), newPlayers.get(i).getPosition(), newPlayers.get(i).getRoute(), newPlayers.get(i).getPath());
 				playsDB.store(found);
 				playsDB.commit();
 			}

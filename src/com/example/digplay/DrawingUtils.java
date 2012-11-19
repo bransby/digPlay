@@ -2,12 +2,15 @@ package com.example.digplay;
 
 import com.businessclasses.Field;
 import com.businessclasses.Location;
+import com.businessclasses.Path;
 import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
 
+import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.util.FloatMath;
@@ -81,57 +84,53 @@ public class DrawingUtils {
 		canvas.drawText("T", playerLocT.getX(), height, paint);
 	}
 	
-	public static void drawBitmapPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
-			int playerIndex, Canvas canvas, Paint paint, int color, float LEFT_MARGIN, float TOP_MARGIN)
+	public static void drawPlayersWithOffset(Field field, float xOffset, float yOffset, Canvas canvas, Paint paint, int playerIndex, int color, float PLAYER_ICON_RADIUS)
 	{
-		// orangish color
-		paint.setColor(0xFFFF8000);
-
-		int xposBitmap = -1;
-		int yposBitmap = -1;
-		float bitmapHeight = -1;
+		int xpos = -1;
+		int ypos = -1;
+		float height = -1;
 		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
 		{
-			xposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getX() - LEFT_MARGIN);
+			xpos = (int) (field.getAllPlayers().get(i).getLocation().getX() - xOffset);
 			// -50, because 50 pixels are used at the top of the screen on all android devices
 			// for the time and app name
-			yposBitmap = (int) (field.getAllPlayers().get(i).getLocation().getY() - TOP_MARGIN - TOP_ANDROID_BAR);
+			ypos = (int) (field.getAllPlayers().get(i).getLocation().getY() - yOffset);
 			// this is the selected player
 			if (playerIndex == i)
 			{
 				paint.setColor(color);
 			}
 			// draw the player again, but red this time
-			canvas.drawCircle(xposBitmap, yposBitmap, PLAYER_ICON_RADIUS, paint);
+			canvas.drawCircle(xpos, ypos, PLAYER_ICON_RADIUS, paint);
 			// descent and ascent are used for centering text vertically
-			bitmapHeight = yposBitmap-((paint.descent() + paint.ascent()) / 2);
+			height = ypos-((paint.descent() + paint.ascent()) / 2);
 			
 			paint.setColor(Color.BLACK);
 			switch(field.getAllPlayers().get(i).getPosition()) {
 			case QUARTERBACK:
-				drawCenteredText("QB", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("QB", xpos, height, canvas, paint);
 				break;
 			case WIDE_RECIEVER:
-				drawCenteredText("WR", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("WR", xpos, height, canvas, paint);
 				break;
 			case RUNNING_BACK:
-				drawCenteredText("RB", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("RB", xpos, height, canvas, paint);
 				break;
 			case FULLBACK:
-				drawCenteredText("FB", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("FB", xpos, height, canvas, paint);
 				break;
 			case TIGHT_END:
-				drawCenteredText("TE", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("TE", xpos, height, canvas, paint);
 				break;
 			case CENTER:
-				drawCenteredText("C", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("C", xpos, height, canvas, paint);
 				break;
 			case GUARD:
-				drawCenteredText("G", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("G", xpos, height, canvas, paint);
 				break;
 			case TACKLE:
-				drawCenteredText("T", xposBitmap, bitmapHeight, canvas, paint);
+				drawCenteredText("T", xpos, height, canvas, paint);
 				break;
 			default:
 				break;
@@ -141,64 +140,22 @@ public class DrawingUtils {
 		}
 	}
 	
+	public static void drawBitmapPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
+			int playerIndex, Canvas canvas, Paint paint, int color, float LEFT_MARGIN, float TOP_MARGIN)
+	{
+		// orangish color
+		paint.setColor(0xFFFF8000);
+
+		drawPlayersWithOffset(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, canvas, paint, playerIndex, color, PLAYER_ICON_RADIUS);
+	}
+	
 	public static void drawPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
 			int playerIndex, Canvas canvas, Paint paint, int color)
 	{
 		// orangish color
 		paint.setColor(0xFFFF8000);
-
-		int xposReal = -1;
-		int yposReal = -1;
-		float realHeight = -1;
 		
-		for (int i = 0; i < field.getAllPlayers().size(); i++)
-		{
-			xposReal = (int) (field.getAllPlayers().get(i).getLocation().getX());
-			// -50, because 50 pixels are used at the top of the screen on all android devices
-			// for the time and app name
-			yposReal = (int) (field.getAllPlayers().get(i).getLocation().getY() - TOP_ANDROID_BAR);
-			// this is the selected player
-			if (playerIndex == i)
-			{
-				paint.setColor(color);
-			}
-			// draw the player again, but red this time
-			canvas.drawCircle(xposReal, yposReal, PLAYER_ICON_RADIUS, paint);
-			// descent and ascent are used for centering text vertically
-			realHeight = yposReal-((paint.descent() + paint.ascent()) / 2);
-			
-			paint.setColor(Color.BLACK);
-			switch(field.getAllPlayers().get(i).getPosition()) {
-			case QUARTERBACK:
-				drawCenteredText("QB", xposReal, realHeight, canvas, paint);
-				break;
-			case WIDE_RECIEVER:
-				drawCenteredText("WR", xposReal, realHeight, canvas, paint);
-				break;
-			case RUNNING_BACK:
-				drawCenteredText("RB", xposReal, realHeight, canvas, paint);
-				break;
-			case FULLBACK:
-				drawCenteredText("FB", xposReal, realHeight, canvas, paint);
-				break;
-			case TIGHT_END:
-				drawCenteredText("TE", xposReal, realHeight, canvas, paint);
-				break;
-			case CENTER:
-				drawCenteredText("C", xposReal, realHeight, canvas, paint);
-				break;
-			case GUARD:
-				drawCenteredText("G", xposReal, realHeight, canvas, paint);
-				break;
-			case TACKLE:
-				drawCenteredText("T", xposReal, realHeight, canvas, paint);
-				break;
-			default:
-				break;
-			}
-			// reset to orangish color
-			paint.setColor(0xFFFF8000);
-		}
+		drawPlayersWithOffset(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, color, PLAYER_ICON_RADIUS);
 	}
 	
 	// for drawing the positions on players
@@ -237,7 +194,7 @@ public class DrawingUtils {
 				canvas.translate(x, y);
 				canvas.rotate(differenceAngle-90);
 				drawBlock(canvas, paint, PIXELS_PER_YARD);
-				canvas.restore();
+			canvas.restore();
 		}
 	}
 	
@@ -276,7 +233,7 @@ public class DrawingUtils {
 	}
 	
 	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
-			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, int playerIndex)
+			Paint paint, float PIXELS_PER_YARD)
 	{
 		paint.setColor(Color.BLACK);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
@@ -286,6 +243,10 @@ public class DrawingUtils {
 			Player tempPlayer = field.getAllPlayers().get(i);
 			int playerX = (int) (tempPlayer.getLocation().getX());
 			int playerY = (int) (tempPlayer.getLocation().getY() - TOP_ANDROID_BAR);
+			if (tempPlayer.getPath() == Path.DOTTED)
+			{
+				paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
+			}
 			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
@@ -297,47 +258,20 @@ public class DrawingUtils {
 					int deltaX = playerX - tempX;
 					int deltaY = playerY - tempY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
+					// solid line
+					paint.setPathEffect(null);
 					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
 				}
 				playerX = tempX;
 				playerY = tempY;
 			}
+			// solid line
+			paint.setPathEffect(null);
 		}
 		// orangish color
 		paint.setColor(0xFFFF8000);
-	}
-	
-	public static void drawBitmapField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 
-			float BOTTOM_MARGIN, float DENSITY, float FIELD_LINE_WIDTHS, float PIXELS_PER_YARD, 
-			float outOfBoundsSpacing, float hashLength, Canvas canvas, Paint paint)
-	{
-		// green color
-		paint.setColor(0xFF007900);
-
-		// draw the field
-		canvas.drawRect(0, 0, RIGHT_MARGIN-LEFT_MARGIN, BOTTOM_MARGIN-TOP_MARGIN, paint);
-
-		
-		// 2 = number of pixels between out of bounds and hash mark
-		// 18 = length of the hash mark
-		drawHashLines(0, RIGHT_MARGIN-LEFT_MARGIN, BOTTOM_MARGIN-TOP_MARGIN, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, 
-				outOfBoundsSpacing, hashLength, canvas, paint);
-
-		// PIXELS_PER_YARD * 5, because we are drawing 5 yard lines
-		drawFiveYardLines(0, RIGHT_MARGIN-LEFT_MARGIN, BOTTOM_MARGIN-TOP_MARGIN, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, canvas, paint);
-
-		// blue color
-		paint.setColor(0xFF000080);
-
-		// draw line of scrimmage
-		paint.setStrokeWidth(6*DENSITY);
-
-		// want to draw line of scrimmage at 20 yard line
-		float lineOfScrimmageYValue = BOTTOM_MARGIN-TOP_MARGIN-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)*DENSITY;
-		canvas.drawLine(0, lineOfScrimmageYValue, RIGHT_MARGIN, lineOfScrimmageYValue, paint);
-
-		// fill = fill enclosed shapes with the color, like a circle with the middle one color
-		paint.setStyle(Paint.Style.FILL);
+		// solid line
+		paint.setPathEffect(null);
 	}
 	
 	public static void drawField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 
@@ -447,21 +381,6 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static String[] getRoutes(){
-		Route[] routes = Route.values();
-		String[] stringRoutes = new String[routes.length];
-		for(int i = 0;i < routes.length;i++){
-			stringRoutes[i] = routes[i].toString();
-		}
-		return stringRoutes;
-	}
-	
-	public static Route LookupRoute(int value)
-	{
-		Route[] routes = Route.values();
-		return routes[value];
-	}
-	
 	public static void actionMove(Field field, int playerIndex, int x, int y)
 	{
 		if (playerIndex != -1)
@@ -523,7 +442,7 @@ public class DrawingUtils {
 		return -1;
 	}
 	
-	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route)
+	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
@@ -543,7 +462,7 @@ public class DrawingUtils {
 			{
 				// this player has been selected
 				Player temp = fieldForCreatePlayer.getAllPlayers().get(i);
-				field.addPlayerAndRoute(temp.getLocation(), temp.getPosition(), route); // add to field
+				field.addPlayer(temp.getLocation(), temp.getPosition(), route, path); // add to field
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
