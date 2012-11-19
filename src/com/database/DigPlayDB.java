@@ -76,6 +76,11 @@ public final class DigPlayDB extends Application{
 	public Field getPlayByInt(int x){
 		return this.getAllPlays().get(x);
 	}
+	public int getIndexByPlayName(String playName){
+		Field obj = new Field();
+		obj.setPlayName(playName);
+		return playsDB.queryByExample(obj).indexOf(this);
+	}
 
 	//stores the play given the field
 	public boolean storePlay(Field field){
@@ -119,7 +124,6 @@ public final class DigPlayDB extends Application{
 		obj.setPlayName(name);
 
 		ObjectSet result = playsDB.queryByExample(obj);
-
 		if(result.hasNext()){
 			return (Field) result.next();
 		}

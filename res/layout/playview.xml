@@ -35,14 +35,14 @@
         android:layout_marginLeft="5dip" />
 
     <Button
-        android:id="@+id/playview_refine_search"
+        android:id="@+id/playview_email_current_selection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/playview_sort_by"
         android:layout_marginLeft="5dip"
         android:layout_marginTop="27dp"
-        android:text="Refine Search" />
+        android:text="Email" />
 
     <Spinner
         android:id="@+id/playview_gameplan"
@@ -72,15 +72,5 @@
         android:layout_marginLeft="5dip"
         android:text="GAMEPLAN"
         android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <Button
-        android:id="@+id/pv_email_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/playview_refine_search"
-        android:layout_alignRight="@+id/playview_sort_by"
-        android:layout_below="@+id/playview_refine_search"
-        android:layout_marginTop="24dp"
-        android:text="Email Current Results" />
 
 </RelativeLayout>

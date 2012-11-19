@@ -55,7 +55,7 @@ public class PlayAdapter extends ArrayAdapter<Field>{
         	holder.imgIcon.setImageResource(R.drawable.pass_pic);
         }
         holder.topTitle.setText(play.getPlayName());
-        holder.bottomTitle.setText(String.valueOf("Play Description"));
+        holder.bottomTitle.setText(String.valueOf(play.getPlayFormation()));
         row.setBackgroundColor(Color.WHITE);
         return row;
     }

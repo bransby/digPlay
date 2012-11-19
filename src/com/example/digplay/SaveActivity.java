@@ -60,7 +60,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 		newField.setPlayName(name);
 		newField.setPlayType(type);
 		newField.setImage(EditorActivity.getBitmap());
-		//newField.setPlayFormation(formation);
+		newField.setPlayFormation(formation);
 
 
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();

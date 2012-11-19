@@ -10,7 +10,7 @@ public class Field {
 	private String _playName;
 	private String _playType;
 	private Bitmap _bitmap;
-
+	private String _playFormation;
 	public String getPlayName(){
 		return _playName;
 	}
@@ -88,12 +88,12 @@ public class Field {
 	public void setPlayType(String _playType) {
 		this._playType = _playType;
 	}
-	/*public void setPlayFormation(String _playFormation){
-		this._playFormation = _playFordmation;
+	public void setPlayFormation(String _playFormation){
+		this._playFormation = _playFormation;
 	}
 	public String getPlayFormation(){
 		return this._playFormation;
-	}*/
+	}
 	public Field clone(){
 		try {
 			return (Field)super.clone();

@@ -1,5 +1,7 @@
 package com.example.digplay;
 
+import java.util.ArrayList;
+
 import com.database.DigPlayDB;
 
 import android.app.Activity;
@@ -23,7 +25,9 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
 	private Button editPlay;
-
+	
+	ArrayList<String> playNameList = new ArrayList<String>();
+	ArrayList<String> playFormationList = new ArrayList<String>();
 	ViewFlipper page;
 
 	Animation animFlipInForeward;
@@ -38,6 +42,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		setTextView();
 		setImageView();
 		setButtons();
+		
 	}
 
 	private void setImageView() {
@@ -46,18 +51,10 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();
 		for(int i=0;i<temp; i++)
 		{
-			//  This will create dynamic image view and add them to ViewFlipper
-			//Log.d("db", "" + DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 			setFlipperImage(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage());
+			playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 		}
-		/*
-		for(int i=0;i<pics.length;i++)
-		{
-	     //  This will create dynamic image view and add them to ViewFlipper
-			setFlipperImage(pics[i]);
-	    }
-		 */
-
+		page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
 		animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
 		animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
 		animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
@@ -76,7 +73,6 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		// TODO Auto-generated method stub
 		return gestureDetector.onTouchEvent(event);
 	}
 
@@ -89,12 +85,18 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
 		page.showPrevious();
+		// TODO update text UI
+		int currentIndex = page.getDisplayedChild();
+		((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
 	}
 
 	private void SwipeLeft(){
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
 		page.showNext();
+		// TODO update text UI
+		int currentIndex = page.getDisplayedChild();
+		((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
 	}
 	SimpleOnGestureListener simpleOnGestureListener 
 	= new SimpleOnGestureListener(){
@@ -115,14 +117,6 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 
 	};
 	GestureDetector gestureDetector= new GestureDetector(simpleOnGestureListener);
-	/*
-	private void setFlipperImage(int res) {
-		Log.i("Set Filpper Called", res+"");
-		ImageView image = new ImageView(getApplicationContext());
-		image.setBackgroundResource(res);
-		page.addView(image);
-	}
-	*/
 	
 	private void setFlipperImage(Bitmap image){
 		Log.d("db", "" + image);
