@@ -1,6 +1,8 @@
 package com.businessclasses;
 
-public enum Path {
+import java.io.Serializable;
+
+public enum Path implements Serializable{
 	SOLID,
 	DOTTED;
 }

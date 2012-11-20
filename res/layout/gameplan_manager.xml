@@ -60,10 +60,9 @@
             android:text="Create new gameplan" />
 
         <Spinner
-            android:id="@+id/spinner1"
+            android:id="@+id/gm_spinner"
             android:layout_width="fill_parent"
             android:layout_height="60dip"
-            android:layout_gravity="center"
             android:layout_marginLeft="50dip"
             android:layout_marginRight="50dip"
             android:layout_marginTop="30dip" />
@@ -77,6 +76,15 @@
             android:layout_marginRight="50dip"
             android:layout_marginTop="30dip"
             android:text="Click to enable deleting" />
+
+        <Button
+            android:id="@+id/gm_delete_gameplan"
+            android:layout_width="fill_parent"
+            android:layout_height="60dip"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip"
+            android:text="Delete this gameplan" />
 
     </LinearLayout>
 

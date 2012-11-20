@@ -2,6 +2,8 @@ package com.example.digplay;
 
 import java.util.ArrayList;
 
+import com.businessclasses.Constants;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -23,20 +25,24 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class GameplanManagerActivity extends Activity implements OnItemClickListener, OnClickListener{
+public class GameplanManagerActivity extends Activity implements OnItemClickListener, OnClickListener, OnItemSelectedListener{
 	private ListView gameplanLV;
 	private ListView playbookLV;
 	private ArrayList<String> playbookPlays;
 	private ArrayList<String> gameplanPlays;
+	private ArrayList<String> gameplans;
 	private Button delete;
+	private Button deleteGameplan;
 	private boolean deletePressed;
 	private TextView gpHeader;
 	private TextView pbHeader;
 	private TextView gmTitle;
 	private int positionSelected;
 	private Context deleteContext;
+	private Context gameplanDeleteContext;
 	private Button createNewGameplan;
 	private String gameplanName;
+	private Spinner gameplansSpinner;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -50,14 +56,25 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 	    playbookPlays.add("play 3");
 	    setListViews();
 	    setButton();
+	    setSpinner();
 	    deletePressed = false;
 	    startNotification();
 	}
 	
+	private void setSpinner() {
+		gameplansSpinner = (Spinner)findViewById(R.id.gm_spinner);
+		gameplans = Constants.getGamePlans();
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplans);
+		gameplansSpinner.setAdapter(adapter);
+		gameplansSpinner.setOnItemSelectedListener(this);
+	}
+
 	private void setButton() {
 		delete = (Button) findViewById(R.id.gm_delete);
+		deleteGameplan = (Button)findViewById(R.id.gm_delete_gameplan);
 		createNewGameplan = (Button)findViewById(R.id.gm_create_gp);
 		createNewGameplan.setOnClickListener(this);
+		deleteGameplan.setOnClickListener(this);
 	    delete.setOnClickListener(this);
 	    delete.setBackgroundColor(Color.LTGRAY);
 	}
@@ -132,12 +149,31 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 				deletePressed = true;
 			}else{
 				delete.setBackgroundColor(Color.LTGRAY);
-				delete.setText("Select to delete Play");
+				delete.setText("Select gameplan play to delete");
 				deletePressed = false;
 			}
 		}else if(v.getId() == createNewGameplan.getId()){
 			popupForName();
+		}else if(v.getId() == deleteGameplan.getId()){
+			gameplanDeleteContext = this;
+			gameplanDeleteVerify();
 		}
+	}
+	private void gameplanDeleteVerify() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Caution");
+		alert.setMessage("You have selected to delete the entire gameplan. Are you sure you want to do this? It will be deleted from the database.");
+		alert.setPositiveButton("Yes. Delete", new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int whichButton) {
+			int index = gameplansSpinner.getSelectedItemPosition();
+			gameplans.remove(index);
+			ArrayAdapter<String>adapter = new ArrayAdapter<String>(gameplanDeleteContext,android.R.layout.simple_list_item_1,gameplans);
+			gameplansSpinner.setAdapter(adapter);
+			}
+		});
+		alert.setNegativeButton("Whoops. No don't delete",null);
+		alert.show();
+		
 	}
 
 	private void popupForName() {
@@ -159,6 +195,18 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		});
 
 		alert.show();
+		
+	}
+
+	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3) {
+		String gameplanSelected = (String)adapter.getSelectedItem();
+		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
+		toast.show();
+		//TODO call getPlayFromGameplan(gameplanSelected);
+	}
+
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -1,6 +1,8 @@
 package com.businessclasses;
 
-public enum Route {
+import java.io.Serializable;
+
+public enum Route implements Serializable{
 	BLOCK,
 	ARROW;
 }

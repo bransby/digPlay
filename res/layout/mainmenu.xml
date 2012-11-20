@@ -15,11 +15,11 @@
 
     <Button
         android:id="@+id/mainviewgameplan"
-		android:layout_width="600dp" 
-		android:layout_height="100dp"
-        android:layout_marginTop="200dp"
+        android:layout_width="600dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:text="VIEW GAME PLAN"
+        android:layout_marginTop="200dp"
+        android:text="VIEW GAMEPLAN"
         android:textSize="50dp" />
 
     <Button

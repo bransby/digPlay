@@ -1,6 +1,8 @@
 package com.businessclasses;
 
-public enum Position {
+import java.io.Serializable;
+
+public enum Position implements Serializable{
 	QUARTERBACK,
 	WIDE_RECIEVER,
 	RUNNING_BACK,

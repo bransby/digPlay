@@ -9,7 +9,10 @@ import com.businessclasses.Player;
 import com.businessclasses.Route;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -19,11 +22,14 @@ import android.graphics.Picture;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class EditorActivity extends Activity implements OnClickListener  {
 
@@ -59,6 +65,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button dashButton;
 	private Button clearPlayerRoute;
 	private Button testButton;
+	private boolean otherSideNotification = true;
 	
 	private static Button trashCan;
 	
@@ -70,7 +77,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		DENSITY = getResources().getDisplayMetrics().density;
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.editor);
-		
+
 		arrowRoute = true;
 		solidPath = true;
 		
@@ -498,5 +505,62 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			previousPlayerIndex = -1;
 			drawView.invalidate(); // redraw the screen
 		}
+	}
+	public void tooManyPlayersError(){
+		if(otherSideNotification)return;
+		Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Caution");
+		alert.setMessage("You have placed more than 11 players on the field. Place in trash can if you want to remove.");
+		alert.setPositiveButton("Yes",null);
+		alert.show();
+	}
+	public void playerOnOtherSideError(){
+		Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Caution");
+		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to turn off warning.");
+		alert.setPositiveButton("Whoops, my mistake",null);
+		alert.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {	
+			public void onClick(DialogInterface dialog, int which) {
+				otherSideNotification = false;
+			}
+		});
+		alert.show();
+	}
+	public void playerOnTopError(){
+		Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Caution");
+		alert.setMessage("You have placed a player on top of another!");
+		alert.setPositiveButton("Ok",null);
+		alert.show();
+	}
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState){
+		super.onSaveInstanceState(savedInstanceState);
+		savedInstanceState.putSerializable("Field", field);
+	}
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState){
+		super.onRestoreInstanceState(savedInstanceState);
+		field = (Field) savedInstanceState.getSerializable("Field");
+	}
+	@Override
+	public boolean onKeyDown(int keyCode,KeyEvent event){
+		if(keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_BACK){
+			verifyBack();
+		}
+		return false;
+	}
+	
+	private void verifyBack(){
+			Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle("Caution");
+			alert.setMessage("Are you sure you want to leave this screen? Data will be lost");
+			alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {	
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			alert.setNegativeButton("Cancel", null);
+			alert.show();
 	}
 }
