@@ -6,6 +6,7 @@ import com.businessclasses.Path;
 import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
+import com.example.digplay.EditorActivity.DrawView;
 
 import android.graphics.Camera;
 import android.graphics.Canvas;
@@ -26,142 +27,93 @@ public class DrawingUtils {
 
 		// add players at bottom of screen, 75dp width between each of them
 		Location playerLocQB = new Location((int)(75*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QUARTERBACK);
+		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QB);
 		
 		Location playerLocWR = new Location((int)(150*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WIDE_RECIEVER);
+		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WR);
 		
 		Location playerLocRB = new Location((int)(225*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RUNNING_BACK);
+		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RB);
 		
 		Location playerLocFB = new Location((int)(300*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FULLBACK);
+		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FB);
 		
 		Location playerLocTE = new Location((int)(375*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TIGHT_END);
+		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TE);
 		
 		Location playerLocC = new Location((int)(450*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocC, Position.CENTER);
+		fieldForCreatePlayer.addPlayer(playerLocC, Position.C);
 		
 		Location playerLocG = new Location((int)(525*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocG, Position.GUARD);
+		fieldForCreatePlayer.addPlayer(playerLocG, Position.G);
 		
 		Location playerLocT = new Location((int)(600*DENSITY), (int)(adjustedHeight));
-		fieldForCreatePlayer.addPlayer(playerLocT, Position.TACKLE);
+		fieldForCreatePlayer.addPlayer(playerLocT, Position.T);
 
-		// orangish color
-		paint.setColor(0xFFFF8000);
+		paint.setColor(Color.WHITE);
+		paint.setStrokeWidth(2*DENSITY);
 
 		// y values are all the same, so just reuse one
 		float eightPlayerY = playerLocQB.getY() - TOP_ANDROID_BAR;
 		
-		// the c does is not exactly the same as the real pixels, because
-		// the c is drawn at 50 pixels down from the top of the screen
-		canvas.drawCircle(playerLocQB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocWR.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocRB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocFB.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocTE.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocC.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocG.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-		canvas.drawCircle(playerLocT.getX(), eightPlayerY, PLAYER_ICON_RADIUS, paint);
-					
-		paint.setColor(Color.BLACK);
-		
+		// for drawing the text
 		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(PLAYER_ICON_RADIUS);
-		
 		// descent and ascent are used for centering text vertically
 		float height = (playerLocQB.getY()-TOP_ANDROID_BAR)-((paint.descent() + paint.ascent()) / 2);
+
 		
-		canvas.drawText("QB", playerLocQB.getX(), height, paint);
-		canvas.drawText("WR", playerLocWR.getX(), height, paint);
-		canvas.drawText("RB", playerLocRB.getX(), height, paint);
-		canvas.drawText("FB", playerLocFB.getX(), height, paint);
-		canvas.drawText("TE", playerLocTE.getX(), height, paint);
-		canvas.drawText("C", playerLocC.getX(), height, paint);
-		canvas.drawText("G", playerLocG.getX(), height, paint);
-		canvas.drawText("T", playerLocT.getX(), height, paint);
+		for (int i = 0; i < fieldForCreatePlayer.getAllPlayers().size(); i++)
+		{
+			paint.setColor(Color.WHITE);
+			Player tempPlayer = fieldForCreatePlayer.getPlayer(i);
+			float playerXLocation = tempPlayer.getLocation().getX();
+			canvas.drawCircle(playerXLocation, eightPlayerY, PLAYER_ICON_RADIUS, paint);
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setColor(Color.BLACK);
+			canvas.drawCircle(playerXLocation, eightPlayerY, PLAYER_ICON_RADIUS, paint);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawText(tempPlayer.getPosition().toString(), playerXLocation, height, paint);
+		}
 	}
 	
-	public static void drawPlayersWithOffset(Field field, float xOffset, float yOffset, Canvas canvas, Paint paint, int playerIndex, int color, float PLAYER_ICON_RADIUS)
+	public static void drawPlayers(Field field, float xOffset, float yOffset, Canvas canvas, 
+			Paint paint, int playerIndex, int color, float PLAYER_ICON_RADIUS, float DENSITY)
 	{
 		int xpos = -1;
 		int ypos = -1;
 		float height = -1;
 		
+		// for drawing the text
+		paint.setTextAlign(Align.CENTER);
+		paint.setTextSize(PLAYER_ICON_RADIUS);
+		paint.setStrokeWidth(2*DENSITY);
+		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
 		{
-			xpos = (int) (field.getAllPlayers().get(i).getLocation().getX() - xOffset);
-			// -50, because 50 pixels are used at the top of the screen on all android devices
-			// for the time and app name
-			ypos = (int) (field.getAllPlayers().get(i).getLocation().getY() - yOffset);
+			Player tempPlayer = field.getAllPlayers().get(i);
+			Location tempLocation = tempPlayer.getLocation();
+			xpos = (int) (tempLocation.getX() - xOffset);
+			ypos = (int) (tempLocation.getY() - yOffset);
 			// this is the selected player
 			if (playerIndex == i)
 			{
 				paint.setColor(color);
 			}
+			else
+			{
+				paint.setColor(Color.WHITE);
+			}
 			// draw the player again, but red this time
 			canvas.drawCircle(xpos, ypos, PLAYER_ICON_RADIUS, paint);
 			// descent and ascent are used for centering text vertically
 			height = ypos-((paint.descent() + paint.ascent()) / 2);
-			
+			paint.setStyle(Paint.Style.STROKE);
 			paint.setColor(Color.BLACK);
-			switch(field.getAllPlayers().get(i).getPosition()) {
-			case QUARTERBACK:
-				drawCenteredText("QB", xpos, height, canvas, paint);
-				break;
-			case WIDE_RECIEVER:
-				drawCenteredText("WR", xpos, height, canvas, paint);
-				break;
-			case RUNNING_BACK:
-				drawCenteredText("RB", xpos, height, canvas, paint);
-				break;
-			case FULLBACK:
-				drawCenteredText("FB", xpos, height, canvas, paint);
-				break;
-			case TIGHT_END:
-				drawCenteredText("TE", xpos, height, canvas, paint);
-				break;
-			case CENTER:
-				drawCenteredText("C", xpos, height, canvas, paint);
-				break;
-			case GUARD:
-				drawCenteredText("G", xpos, height, canvas, paint);
-				break;
-			case TACKLE:
-				drawCenteredText("T", xpos, height, canvas, paint);
-				break;
-			default:
-				break;
-			}
-			// reset to orangish color
-			paint.setColor(0xFFFF8000);
+			canvas.drawCircle(xpos, ypos, PLAYER_ICON_RADIUS, paint);
+			paint.setStyle(Paint.Style.FILL);
+			canvas.drawText(tempPlayer.getPosition().toString(), xpos, height, paint);
 		}
-	}
-	
-	public static void drawBitmapPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
-			int playerIndex, Canvas canvas, Paint paint, int color, float LEFT_MARGIN, float TOP_MARGIN)
-	{
-		// orangish color
-		paint.setColor(0xFFFF8000);
-
-		drawPlayersWithOffset(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, canvas, paint, playerIndex, color, PLAYER_ICON_RADIUS);
-	}
-	
-	public static void drawPlayers(Field field, float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS,
-			int playerIndex, Canvas canvas, Paint paint, int color)
-	{
-		// orangish color
-		paint.setColor(0xFFFF8000);
-		
-		drawPlayersWithOffset(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, color, PLAYER_ICON_RADIUS);
-	}
-	
-	// for drawing the positions on players
-	public static void drawCenteredText(String value, int xposition, float yposition, Canvas canvas, Paint paint)
-	{
-		canvas.drawText(value, xposition, yposition, paint);
 	}
 	
 	public static void drawArrow(Canvas canvas, Paint paint, float PIXELS_PER_YARD)
@@ -198,51 +150,18 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static void drawBitmapRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
-			Paint paint, float LEFT_MARGIN, float TOP_MARGIN, float PIXELS_PER_YARD, int playerIndex)
-	{
-		paint.setColor(0xFFFF8000);
-		
-		paint.setColor(Color.BLACK);
-		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
-		
-		for (int i = 0; i < field.getAllPlayers().size(); i++)
-		{
-			Player tempPlayer = field.getAllPlayers().get(i);
-			int playerX = (int) (tempPlayer.getLocation().getX() - LEFT_MARGIN);
-			int playerY = (int) (tempPlayer.getLocation().getY() - TOP_ANDROID_BAR - TOP_MARGIN);
-			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
-			{
-				Location tempLocation = tempPlayer.getRouteLocations().get(j);
-				canvas.drawLine(playerX, playerY, tempLocation.getX() - LEFT_MARGIN, tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN, paint);
-				int tempX = (int) (tempLocation.getX() - LEFT_MARGIN);
-				int tempY = (int) (tempLocation.getY() - TOP_ANDROID_BAR - TOP_MARGIN);
-				if (j == tempPlayer.getRouteLocations().size()-1)
-				{
-					int deltaX = playerX - tempX;
-					int deltaY = playerY - tempY;
-					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
-					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
-				}
-				playerX = tempX;
-				playerY = tempY;
-			}
-		}
-		// orangish color
-		paint.setColor(0xFFFF8000);
-	}
-	
-	public static void drawRoutes(Field field, float FIELD_LINE_WIDTHS, float TOP_ANDROID_BAR, Canvas canvas, 
+	public static void drawRoutes(Field field, float xOffset, float yOffset, float FIELD_LINE_WIDTHS, Canvas canvas, 
 			Paint paint, float PIXELS_PER_YARD)
 	{
-		paint.setColor(Color.BLACK);
+		paint.setColor(Color.YELLOW);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
 		{
 			Player tempPlayer = field.getAllPlayers().get(i);
-			int playerX = (int) (tempPlayer.getLocation().getX());
-			int playerY = (int) (tempPlayer.getLocation().getY() - TOP_ANDROID_BAR);
+			// set x and y previous values to player's x/y values
+			int previousX = (int) (tempPlayer.getLocation().getX() - xOffset);
+			int previousY = (int) (tempPlayer.getLocation().getY() - yOffset);
 			if (tempPlayer.getPath() == Path.DOTTED)
 			{
 				paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
@@ -250,26 +169,26 @@ public class DrawingUtils {
 			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
-				canvas.drawLine(playerX, playerY, tempLocation.getX(), tempLocation.getY() - TOP_ANDROID_BAR, paint);
-				int tempX = (int) (tempLocation.getX());
-				int tempY = (int) (tempLocation.getY() - TOP_ANDROID_BAR);
+				int currentX = (int) (tempLocation.getX() - xOffset);
+				int currentY = (int) (tempLocation.getY() - yOffset);
+				canvas.drawLine(previousX, previousY, currentX, currentY, paint);
+				int tempX = (int) (tempLocation.getX() - xOffset);
+				int tempY = (int) (tempLocation.getY() - yOffset);
 				if (j == tempPlayer.getRouteLocations().size()-1)
 				{
-					int deltaX = playerX - tempX;
-					int deltaY = playerY - tempY;
+					int deltaX = previousX - tempX;
+					int deltaY = previousY - tempY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
 					// solid line
 					paint.setPathEffect(null);
 					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
 				}
-				playerX = tempX;
-				playerY = tempY;
+				previousX = tempX;
+				previousY = tempY;
 			}
 			// solid line
 			paint.setPathEffect(null);
 		}
-		// orangish color
-		paint.setColor(0xFFFF8000);
 		// solid line
 		paint.setPathEffect(null);
 	}
@@ -398,54 +317,94 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static int actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
-			float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float TOP_ANDROID_BAR, int x, int y)
+	// boolean[0] = added more than 11 players
+	// boolean[1] = player added on other side of line of scrimmage
+	// boolean[2] = player put on top of another player
+	public static boolean[] actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
+			float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float TOP_ANDROID_BAR, float PIXELS_PER_YARD, 
+			float FIELD_LINE_WIDTHS, float DENSITY, int x, int y, boolean moreThanElevenPlayers, boolean movePlayer)
 	{
+		boolean retVal[] = {moreThanElevenPlayers, false, false};
 		if (playerIndex != -1)
 		{
-			// is player outside of the field?
-			if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS 
-					|| y < TOP_MARGIN + TOP_ANDROID_BAR + PLAYER_ICON_RADIUS 
-					|| y > BOTTOM_MARGIN + TOP_ANDROID_BAR - PLAYER_ICON_RADIUS)
+			if (movePlayer)
 			{
-				field.getAllPlayers().remove(playerIndex);
-				// disable route possibilities
-				return -1;
-			}
-			else
-			{
-				Player tempPlayer = field.getAllPlayers().get(playerIndex);
-				int tempX = tempPlayer.getLocation().getX() - (int)(LEFT_MARGIN);
-				int tempY = tempPlayer.getLocation().getY() - (int)(TOP_MARGIN);
-				// this is the grid
-				if(tempX % 25 >= 13)
+				// is player outside of the field?
+				if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS 
+						|| y < TOP_MARGIN + TOP_ANDROID_BAR + PLAYER_ICON_RADIUS 
+						|| y > BOTTOM_MARGIN + TOP_ANDROID_BAR - PLAYER_ICON_RADIUS)
 				{
-					tempX = tempX + (25 - tempX % 25);
+					field.getAllPlayers().remove(playerIndex);
+					retVal[0] = false;
+					// disable route possibilities
+					EditorActivity.setPlayerIndex(-1);
 				}
 				else
 				{
-					tempX = tempX - (tempX % 25);
+					Player tempPlayer = field.getAllPlayers().get(playerIndex);
+					int tempX = tempPlayer.getLocation().getX() - (int)(LEFT_MARGIN);
+					int tempY = tempPlayer.getLocation().getY() - (int)(TOP_MARGIN);
+					// this is the grid
+					if(tempX % 25 >= 13)
+					{
+						tempX = tempX + (25 - tempX % 25);
+					}
+					else
+					{
+						tempX = tempX - (tempX % 25);
+					}
+					if(tempY % 25 >= 13)
+					{
+						tempY = tempY + (25 - tempY % 25);
+					}
+					else
+					{
+						tempY = tempY - (tempY % 25);
+					}
+					
+					int tempXLocation = tempX + (int)(LEFT_MARGIN);
+					int tempYLocation = tempY + (int)(TOP_MARGIN);
+					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)*DENSITY;
+					
+					if (tempYLocation <= lineOfScrimmageYValue)
+					{
+						retVal[1] = true;
+					}
+					for (int i = 0; i < field.getAllPlayers().size(); i++)
+					{
+						if (playerIndex != i)
+						{
+							Location playerLoc = field.getPlayer(i).getLocation();
+							int playerX = playerLoc.getX();
+							int playerY = playerLoc.getY();
+							
+							if ((tempXLocation + PLAYER_ICON_RADIUS == playerX || tempXLocation == playerX || (tempXLocation - PLAYER_ICON_RADIUS == playerX)) &&
+									(tempYLocation + PLAYER_ICON_RADIUS == playerY || tempYLocation == playerY || (tempYLocation - PLAYER_ICON_RADIUS == playerY)))
+							{
+								retVal[2] = true;
+								break;
+							}
+						}
+					}
+					Location tempLocation = new Location(tempXLocation, tempYLocation);
+					tempPlayer.setLocation(tempLocation);
+					EditorActivity.setPlayerIndex(playerIndex);
 				}
-				if(tempY % 25 >= 13)
-				{
-					tempY = tempY + (25 - tempY % 25);
-				}
-				else
-				{
-					tempY = tempY - (tempY % 25);
-				}
-				Location tempLocation = new Location(tempX + (int)(LEFT_MARGIN), tempY + (int)(TOP_MARGIN));
-				tempPlayer.setLocation(tempLocation);
-				return playerIndex;
 			}
 		}
-		return -1;
+		else
+		{
+			EditorActivity.setPlayerIndex(-1);
+		}
+		return retVal;
 	}
 	
-	public static int actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
+	// boolean = added more than 11 players
+	public static boolean actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
+		boolean retVal = false;
 		
 		double playerIndexDistance = Float.MAX_VALUE;
 		
@@ -491,19 +450,24 @@ public class DrawingUtils {
 					}
 				}
 			}
-			// if not selected, disable the route spinner and reset player index
+			// if not selected reset player index
 			if (!hasBeenSet)
 			{
-				return -1;
+				EditorActivity.setPlayerIndex(-1);
 			}
 			else
 			{
-				return playerIndex;
+				EditorActivity.setPlayerIndex(playerIndex);
 			}
 		}
 		else
 		{
-			return playerIndex;
+			EditorActivity.setPlayerIndex(playerIndex);
+			if (field.getAllPlayers().size() > 11)
+			{
+				retVal = true;
+			}
 		}
+		return retVal;
 	}
 }

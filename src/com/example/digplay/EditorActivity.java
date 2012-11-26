@@ -33,6 +33,8 @@ import android.widget.Toast;
 
 public class EditorActivity extends Activity implements OnClickListener  {
 
+	private static Context context;
+	
 	private static boolean arrowRoute;
 	private static boolean solidPath;
 	
@@ -65,7 +67,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button dashButton;
 	private Button clearPlayerRoute;
 	private Button testButton;
-	private boolean otherSideNotification = true;
+	private static boolean otherSideNotification;
 	
 	private static Button trashCan;
 	
@@ -80,6 +82,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		arrowRoute = true;
 		solidPath = true;
+		otherSideNotification = false;
 		
 		movePlayer = false;
 		selectionColor = TAN_COLOR;
@@ -123,6 +126,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		
 		private boolean drawCreatedPlayers;
 		private boolean drawField;
+		private boolean moreThanElevenPlayers;
+		private boolean onOtherSideOfScrimmage;
+		private boolean putOnTopOfOtherPlayer;
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
@@ -143,7 +149,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		Picture createdPlayersPicture; 
 		Picture fieldPicture;
 		
-		//private Bitmap bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
 		Canvas createdPlayersCanvas;
 		Canvas fieldCanvas;
 		
@@ -153,6 +158,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		public DrawView(Context context, AttributeSet attrs) throws IOException {
 			super(context, attrs);
 			build(context, attrs);
+			EditorActivity.setContext(context);
 		}
 
 		public Bitmap getBitmap() {
@@ -164,6 +170,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		{		
 			drawField = true;
 			drawCreatedPlayers = true;
+			moreThanElevenPlayers = false;
+			onOtherSideOfScrimmage = false;
+			putOnTopOfOtherPlayer = false;
 			
 			createdPlayersPicture = new Picture();
 			fieldPicture = new Picture();
@@ -204,7 +213,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			}
 			c.drawPicture(fieldPicture);
 			
-			DrawingUtils.drawRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, c, paint, PIXELS_PER_YARD);
+			DrawingUtils.drawRoutes(field, 0, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, c, paint, PIXELS_PER_YARD);
 	
 			if (drawCreatedPlayers)
 			{
@@ -214,8 +223,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			}
 			c.drawPicture(createdPlayersPicture);
 			
-			DrawingUtils.drawPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
-					c, paint, selectionColor);
+			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
 		}
 		
 		private void drawToBitmap()
@@ -227,10 +235,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			DrawingUtils.drawField(0, RIGHT_MARGIN-LEFT_MARGIN, 0, BOTTOM_MARGIN-TOP_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawBitmapRoutes(field, FIELD_LINE_WIDTHS, TOP_ANDROID_BAR, bitmapCanvas, paint, LEFT_MARGIN, TOP_MARGIN, PIXELS_PER_YARD, playerIndex);
-	
-			DrawingUtils.drawBitmapPlayers(field, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, playerIndex, 
-					bitmapCanvas, paint, TAN_COLOR, LEFT_MARGIN, TOP_MARGIN);
+			DrawingUtils.drawRoutes(field, LEFT_MARGIN, TOP_ANDROID_BAR-TOP_MARGIN, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD);
+			
+			DrawingUtils.drawPlayers(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
 			
 			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
@@ -242,7 +249,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				playerIndex = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
+				moreThanElevenPlayers = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
 				if (playerIndex != -1)
 				{
 					Player selectedPlayer = field.getPlayer(playerIndex);
@@ -310,9 +317,26 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_UP:
+				boolean[] returnedErrors = new boolean[3];
+				returnedErrors = DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, 
+						TOP_ANDROID_BAR, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, x, y, moreThanElevenPlayers, movePlayer);
+				moreThanElevenPlayers = returnedErrors[0];
+				onOtherSideOfScrimmage = returnedErrors[1];
+				putOnTopOfOtherPlayer = returnedErrors[2];
+				if (moreThanElevenPlayers)
+				{
+					tooManyPlayersError();
+				}
+				if (onOtherSideOfScrimmage)
+				{
+					playerOnOtherSideError();
+				}
+				if (putOnTopOfOtherPlayer)
+				{
+					playerOnTopError();
+				}
 				if (movePlayer)
 				{
-					playerIndex = DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, TOP_ANDROID_BAR, x, y);
 					selectionColor = Color.RED;	
 				}
 				else if (!movePlayer && previousPlayerIndex == playerIndex)
@@ -343,7 +367,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 					if (selectionColor == Color.RED)
 					{
 						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
-						if (dist > PLAYER_ICON_RADIUS)
+						if (dist > TOUCH_SENSITIVITY)
 						{
 							field.getPlayer(playerIndex).clearRouteLocations();
 							movePlayer = true;
@@ -369,7 +393,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 							y = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
 						}
 						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
-						if (dist > PLAYER_ICON_RADIUS)
+						if (dist > TOUCH_SENSITIVITY)
 						{
 							if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
 							{
@@ -506,28 +530,32 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			drawView.invalidate(); // redraw the screen
 		}
 	}
-	public void tooManyPlayersError(){
-		if(otherSideNotification)return;
-		Builder alert = new AlertDialog.Builder(this);
+	public static void setContext(Context c)
+	{
+		context = c;
+	}
+	public static void tooManyPlayersError()
+	{
+		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed more than 11 players on the field. Place in trash can if you want to remove.");
 		alert.setPositiveButton("Yes",null);
 		alert.show();
 	}
-	public void playerOnOtherSideError(){
-		Builder alert = new AlertDialog.Builder(this);
+	public static void playerOnOtherSideError(){
+		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to turn off warning.");
-		alert.setPositiveButton("Whoops, my mistake",null);
-		alert.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {	
+		alert.setPositiveButton("Whoops, my mistake", new DialogInterface.OnClickListener() {	
 			public void onClick(DialogInterface dialog, int which) {
-				otherSideNotification = false;
+				
 			}
 		});
+		alert.setNegativeButton("Ignore", null);
 		alert.show();
 	}
-	public void playerOnTopError(){
-		Builder alert = new AlertDialog.Builder(this);
+	public static void playerOnTopError(){
+		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed a player on top of another!");
 		alert.setPositiveButton("Ok",null);
@@ -562,5 +590,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			});
 			alert.setNegativeButton("Cancel", null);
 			alert.show();
+	}
+	public static void setPlayerIndex(int index)
+	{
+		playerIndex = index;
 	}
 }
