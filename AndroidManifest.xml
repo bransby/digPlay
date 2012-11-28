@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".MainMenuActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="sensorLandscape"
             android:label="@string/title_activity_main_menu" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,15 +22,15 @@
             </intent-filter>
         </activity>
         <activity android:name="PlayViewActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="sensorLandscape"></activity>
         <activity android:name="BrowsingActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="sensorLandscape"></activity>
         <activity android:name="EditorActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="sensorLandscape"></activity>
         <activity android:name="SaveActivity"
-            android:screenOrientation="landscape"></activity>        
-            <activity android:name="GameplanManagerActivity"
-                android:screenOrientation="landscape"></activity>
-            <activity android:name="FormationManagerActivity"></activity>
+            android:screenOrientation="sensorLandscape"></activity>        
+        <activity android:name="GameplanManagerActivity"
+            android:screenOrientation="sensorLandscape"></activity>
+        <activity android:name="FormationManagerActivity"></activity>
     </application>
 </manifest>

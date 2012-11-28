@@ -3,6 +3,10 @@ package com.example.digplay;
 import java.util.ArrayList;
 
 import com.businessclasses.Constants;
+import com.businessclasses.Field;
+import com.businessclasses.Formation;
+import com.businessclasses.FormationAdapter;
+import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -19,14 +23,14 @@ import android.widget.Toast;
 
 public class FormationManagerActivity extends Activity implements OnItemClickListener, OnClickListener {
 	private ListView formationsList;
-	private ArrayList<String> formations;
+	private ArrayList<Formation> formations;
 	private Button addFormation;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.formation_manager);
-	    formations = Constants.getFormations();
+	    //formations = Constants.getFormations();
 	    setListView();
 	    setButton();
 	    Toast toast = Toast.makeText(this, "Choose formation to place on field", Toast.LENGTH_LONG);
@@ -38,13 +42,23 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 	}
 	private void setListView() {
 		formationsList = (ListView)findViewById(R.id.formations_list);
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
-		if(formations.isEmpty())formations.add("There are no saved formations");
+		//DigPlayDB db = new DigPlayDB(this);
+		//db.getAllFormations();
+		formations = new ArrayList<Formation>();
+		if(formations.isEmpty()){
+			Field f = new Field();
+			f = Constants.dummyField();
+			Formation emptyFormation = new Formation("There are no saved formations",f);
+			formations.add(emptyFormation);
+			formations.add(emptyFormation);
+			formations.add(emptyFormation);
+		}
+		FormationAdapter adapter = new FormationAdapter(this,R.layout.formation_listview_item_row,formations);
 		formationsList.setAdapter(adapter);
 		formationsList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
-		String selectedFormation = (String)adapter.getSelectedItem();
+		Formation selectedFormation = (Formation)adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),EditorActivity.class);
 		intent.putExtra("Formation", selectedFormation);
 		startActivity(intent);

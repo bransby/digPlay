@@ -3,6 +3,7 @@ package com.example.digplay;
 import java.io.IOException;
 
 import com.businessclasses.Field;
+import com.businessclasses.Formation;
 import com.businessclasses.Location;
 import com.businessclasses.Path;
 import com.businessclasses.Player;
@@ -23,6 +24,8 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -71,6 +74,10 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 	private static Button trashCan;
 	
+	private static boolean tooManyPlayers = true;
+	private static boolean lineOfScrimmage = true;
+	private static boolean playersOnTop = true;
+	
 	private static float DENSITY; // DENSITY coefficient
 	
 	/** Called when the activity is first created. */
@@ -93,8 +100,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		drawView = (DrawView) findViewById(R.id.DrawView);
 		
 		save = (Button) findViewById(R.id.save);
-		clearRoutes = (Button) findViewById(R.id.clear_routes);
-		clearField = (Button) findViewById(R.id.clear_field);
 		trashCan = (Button) findViewById(R.id.editor_trash_can);
 		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
 		dashButton = (Button)findViewById(R.id.edi_dash_button);
@@ -112,6 +117,14 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
+		
+		Bundle extras = getIntent().getExtras();
+		if(extras == null)field = new Field();
+		else{
+			Formation formation = (Formation)extras.getSerializable("Formation");
+			if(formation == null)field = new Field();
+			else field = formation.getFormation();
+		}
 	}
 	
 	public static Bitmap getBitmap()
@@ -186,7 +199,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			fieldForCreatePlayer = new Field();
 			
 			// the main field
-			field = new Field();
+			//field = new Field();
 			
 			paint = new Paint();
 			
@@ -536,6 +549,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	}
 	public static void tooManyPlayersError()
 	{
+		if(!tooManyPlayers)return;
 		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed more than 11 players on the field. Place in trash can if you want to remove.");
@@ -543,6 +557,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		alert.show();
 	}
 	public static void playerOnOtherSideError(){
+		if(!lineOfScrimmage)return;
 		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to turn off warning.");
@@ -555,6 +570,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		alert.show();
 	}
 	public static void playerOnTopError(){
+		if(!playersOnTop)return;
 		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
 		alert.setMessage("You have placed a player on top of another!");
@@ -594,5 +610,38 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	public static void setPlayerIndex(int index)
 	{
 		playerIndex = index;
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		super.onCreateOptionsMenu(menu);
+		menu.add("Clear all routes");
+		menu.add("Clear entire field");
+		menu.add("Disable too many players warning");
+		menu.add("Disable players on top of each other warning");
+		menu.add("Disable line of scrimmage warning");
+		return true;
+	}
+	public boolean onOptionsItemSelected(MenuItem item){
+		if(item.getTitle().equals("Clear entire field")){
+			field.clearField();
+			playerIndex = -1;
+			previousPlayerIndex = -1;
+			drawView.invalidate(); // redraw the screen
+		}else if(item.getTitle().equals("Clear all routes")){
+			field.clearRoutes(playerRoute);
+			field.clearPaths(playerPath);
+			field.clearRouteLocations();
+			playerIndex = -1;
+			previousPlayerIndex = -1;
+			drawView.invalidate(); // redraw the screen
+		}else if(item.getTitle().equals("Disable too many players warning")){
+			tooManyPlayers = false;
+		}else if(item.getTitle().equals("Disable players on top of each other warning")){
+			playersOnTop = false;
+		}else if(item.getTitle().equals("Disable line of scrimmage warning")){
+			lineOfScrimmage = false;
+		}
+		
+		return true;
 	}
 }

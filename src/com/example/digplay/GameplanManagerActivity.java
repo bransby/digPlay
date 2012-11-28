@@ -3,6 +3,7 @@ package com.example.digplay;
 import java.util.ArrayList;
 
 import com.businessclasses.Constants;
+import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -110,8 +111,9 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 			String playSelected = (String) adapter.getItemAtPosition(position);
 			if(!gameplanPlays.contains(playSelected)){
 				gameplanPlays.add(playSelected);
-				ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
-				gameplanLV.setAdapter(thisAdapter);
+				//ArrayAdapter<String> thisAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
+				//gameplanLV.setAdapter(thisAdapter);
+				resetGameplanList();
 				Toast.makeText(this, "Play has been added to the gameplan",Toast.LENGTH_SHORT).show();
 			}else{
 				Builder alert = new AlertDialog.Builder(this);
@@ -186,6 +188,8 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int whichButton) {
 		  gameplanName = input.getText().toString();
+		  gameplanPlays = new ArrayList<String>();
+		  resetGameplanList();
 		  }
 		});
 
@@ -200,13 +204,20 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 
 	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3) {
 		String gameplanSelected = (String)adapter.getSelectedItem();
+		DigPlayDB db = new DigPlayDB(this);
+		//GamePlan newGamelan = db.getGameplanPlays(gameplanSelected); 
+		//gameplanPlays = newGameplan.getGamePlan();
+		resetGameplanList();
 		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
 		toast.show();
-		//TODO call getPlayFromGameplan(gameplanSelected);
 	}
 
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// TODO Auto-generated method stub
 		
+	}
+	private void resetGameplanList(){
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,gameplanPlays);
+		gameplanLV.setAdapter(adapter);
 	}
 }

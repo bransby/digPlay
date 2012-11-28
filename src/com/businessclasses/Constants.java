@@ -47,4 +47,14 @@ public class Constants {
 	public static int getBackground(){
 		return R.drawable.brown_backgroud;
 	}
+	public static Field dummyField(){
+		Field f = new Field();
+		Location loc = new Location(500,600);
+		Location loc2 = new Location(300, 500);
+		Player p1 = new Player(loc,Position.FB);
+		Player p2 = new Player(loc2,Position.QB);
+		f.addPlayer(loc, Position.G);
+		f.addPlayer(loc2, Position.RB);
+		return f;
+	}
 }

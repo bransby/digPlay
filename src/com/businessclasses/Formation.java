@@ -1,10 +1,12 @@
 package com.businessclasses;
 
-public class Formation {
+import java.io.Serializable;
+
+public class Formation implements Serializable{
 	Field theField;
 	String formationName;
 	public Formation(String name, Field f){
-		theField = f.clone();
+		theField =f; //f.clone();
 		theField.clearRouteLocations();
 		formationName = name;
 	}
