@@ -7,15 +7,16 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Base64;
+import android.util.Log;
 
 public class Field implements Serializable{
 	private ArrayList<Player> _playersOnField;
 	private boolean _run;
 	private String _playName;
 	private String _playType;
-	private Bitmap _bitmap;
+	//private Bitmap _bitmap;
 	private String _playFormation;
-	private byte[] _image;
+	//private byte[] _image;
 
 	public String getPlayName(){
 		return _playName;
@@ -46,15 +47,25 @@ public class Field implements Serializable{
 	public void addPlayers(ArrayList<Player> newPlayers){
 		this._playersOnField = newPlayers;
 	}
-	
+
+	/*
 	public Bitmap getImage(){
-	       return BitmapFactory.decodeByteArray(this._image, 0, _image.length);
+		Long start = System.nanoTime();
+		
+		Bitmap temp =  BitmapFactory.decodeByteArray(this._image, 0, _image.length);
+
+		Long end = System.nanoTime();
+		Log.i("image decode", "" + ((end - start)/1000000));
+		
+		return temp;
 	}
 	public void setImage(Bitmap image){
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
 		this._image = stream.toByteArray();
 	}
+	
+	*/
 	public void clearField(){
 		_playersOnField.clear();
 	}

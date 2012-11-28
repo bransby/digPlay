@@ -104,7 +104,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
 		Field play = (Field) adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),BrowsingActivity.class);
-		//intent.putExtra("playName", play.getPlayName());
+		intent.putExtra("playName", play.getPlayName());
 		startActivity(intent);
 	}
 	
