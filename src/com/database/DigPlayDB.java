@@ -2,6 +2,7 @@ package com.database;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Application;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.util.Log;
 
 import com.businessclasses.Field;
 import com.businessclasses.GamePlan;
+import com.businessclasses.Image;
 import com.businessclasses.Player;
 import com.db4o.Db4o;
 import com.db4o.Db4oEmbedded;
@@ -21,10 +23,13 @@ import com.db4o.ObjectSet;
 import com.db4o.config.AndroidSupport;
 import com.db4o.config.Configuration;
 import com.db4o.config.EmbeddedConfiguration;
+import com.db4o.ext.ExtObjectSet;
 import com.db4o.query.Query;
+import com.db4o.ta.TransparentActivationSupport;
 
 public final class DigPlayDB extends Application{
 	private static ObjectContainer playsDB;
+	private static ObjectContainer imageDB;
 	private static ObjectContainer gamePlanDB;
 
 	private final Context context;
@@ -47,9 +52,17 @@ public final class DigPlayDB extends Application{
 		//creates and/or loads the databases
 		EmbeddedConfiguration config =  Db4oEmbedded.newConfiguration();
 		config.common().objectClass(Field.class).objectField("_playName").indexed(true);
-		config.common().objectClass(Field.class).objectField("_image").indexed(true);
+		//config.common().objectClass(Field.class).objectField("_image").indexed(true);
+		config.common().objectClass(Field.class).indexed(true);
+		config.common().objectClass(Field.class).cascadeOnUpdate(true);
+		config.common().objectClass(Field.class).cascadeOnDelete(true);
+		//config.common().objectClass(Field.class).objectField("_image").cascadeOnActivate(true);
+		config.common().objectClass(Field.class).objectField("_playName").cascadeOnActivate(true);
+		config.common().add(new TransparentActivationSupport());
+		
 		
 		playsDB = Db4oEmbedded.openFile(config, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
+		imageDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/imageDB.db4o");
 		gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/GamePlansDB.db4o");
 	
 	}
@@ -63,13 +76,35 @@ public final class DigPlayDB extends Application{
 	}
 
 	/////////////////////////////////////////////////////////////////////
+	//image database stuffz
+	/////////////////////////////////////////////////////////////////////
+
+	public void addImage(Image image){
+		if(image != null){
+			imageDB.store(image);
+			imageDB.commit();
+		}
+	}
+
+	public byte[] getImage(String playName){
+		Image obj = new Image();
+		obj.setPlayName(playName);
+
+		ObjectSet result = imageDB.queryByExample(obj);
+		if(result.hasNext()){
+			return ((Image) result.next()).getImage();
+		}
+		return null;
+	}
+
+	/////////////////////////////////////////////////////////////////////
 	//Plays database stuffz
 	/////////////////////////////////////////////////////////////////////
 
 
 	//completely empties the database
 	public void emptyDB(){
-		ObjectSet result = playsDB.queryByExample(new Object());
+		ObjectSet result = playsDB.queryByExample(new Field());
 		while(result.hasNext()){
 			playsDB.delete(result.next());
 		}
@@ -77,11 +112,19 @@ public final class DigPlayDB extends Application{
 	}
 	
 	public int getPlaysDBSize(){
-		return this.getAllPlays().size();
+		ObjectSet result = playsDB.queryByExample(new Field());
+		Log.i("getsize " , "" + result.size());
+		return result.size();
 	}
-	public Field getPlayByInt(int x){
-		return this.getAllPlays().get(x);
+	
+	/*
+	public Bitmap getPlayByInt(int x){		
+		ObjectSet result = playsDB.queryByExample(new Field());
+		Log.i("getplaybyint result" , "" + result.get(x));
+		return ((Field) result.get(x)).getImage();
 	}
+	*/
+	
 	public int getIndexByPlayName(String playName){
 		Field obj = new Field();
 		obj.setPlayName(playName);
@@ -148,7 +191,7 @@ public final class DigPlayDB extends Application{
 		}
 	}
 	
-	public ArrayList<Field> getAllPlays(){
+	public ArrayList<Field> getAllPlays(){	
 		ArrayList<Field> temp = new ArrayList<Field>();
 		Field obj = new Field();
 		
@@ -156,19 +199,26 @@ public final class DigPlayDB extends Application{
 		
 		while(result.hasNext()){
 			temp.add((Field)result.next());
-		}
+		}		
 		return temp;		
 	}
 	
 	public ArrayList<String> getAllPlayNames(){
+		
+		Long start = System.nanoTime();
+		
 		ArrayList<String> temp = new ArrayList<String>();
 		Field obj = new Field();
 		
 		ObjectSet result = playsDB.queryByExample(obj);
 		
-		while(result.hasNext()){
-			temp.add(((Field)result.next()).toString());
+		for(int i = 0 ; i < result.size(); i ++){
+			temp.add(((Field)result.get(i)).getPlayName());
 		}
+		
+		Long end = System.nanoTime();
+		Log.i("getting all plays names", "" + ((end - start)/1000000));
+		
 		return temp;		
 	}
 
@@ -214,27 +264,6 @@ public final class DigPlayDB extends Application{
 		}
 	}
 
-	//inputs new image if the field changes
-	public boolean changeImage(String playName, Bitmap newImage){
-		Field found = null;
-
-		Field obj = new Field();
-		obj.setPlayName(playName);
-
-		ObjectSet<Field> result = playsDB.queryByExample(obj);
-
-		if(result.hasNext()){
-			found = result.next();
-			found.setImage(newImage);
-			playsDB.store(found);
-			playsDB.commit();
-
-			return true;
-		}
-		else{
-			return false;
-		}
-	}
 
 
 	////////////////////////////////////////////////////////////
@@ -270,10 +299,25 @@ public final class DigPlayDB extends Application{
 			found = result.next();
 
 			for(int i = 0; i < found.getGamePlan().size(); i++){
-				images.add(this.getPlayByName(found.getGamePlan().get(i)).getImage());
+				//images.add(this.getPlayByName(found.getGamePlan().get(i)).getImage());
 			}
 		}
 		return images;
+	}
+	
+	public ArrayList<String> getPlaysInGameplan(String gameplanName){
+		GamePlan found = null;
+		
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gameplanName);
+		
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+		
+		if(result.hasNext()){
+			found = result.next();
+			return found.getGamePlan();
+		}
+		return null;
 	}
 
 	//delete game play from database

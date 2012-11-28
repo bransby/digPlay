@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
+import com.businessclasses.Image;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
@@ -67,16 +68,18 @@ public class SaveActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		
 		name = playName.getText().toString();
+		formation = playFormation.getText().toString();
 		Field newField = EditorActivity.getField();
 		newField.setPlayName(name);
 		newField.setPlayType(playType.getSelectedItem().toString());
-		newField.setImage(EditorActivity.getBitmap());
-
 		newField.setPlayFormation(formation);
-
-		//newField.setPlayFormation(playFormation.getText().toString());
-
+			
+		Image newImage = new Image();
+		newImage.setPlayName(name);
+		newImage.setImage(EditorActivity.getBitmap());
+		
 		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false && DigPlayDB.getInstance(getBaseContext()).storePlay(newField) == true){
+			DigPlayDB.getInstance(getBaseContext()).addImage(newImage);
 			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", null).show(); 
 
 			Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
@@ -87,13 +90,6 @@ public class SaveActivity extends Activity implements OnClickListener {
 			playName.setText("");
 		}
 
-
-
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
-
-		//System.out.println(AnotherTest.getInstance(getBaseContext()).getPlayByName(newField.getPlayName()).getPlayName());
-		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getPlayName());
-		//System.out.println(DigPlayDB.getInstance(getBaseContext()).getPlayByName("Testing123").getAllPlayers().toString());
-
 	}
 }

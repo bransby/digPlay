@@ -3,11 +3,13 @@ package com.example.digplay;
 import java.util.ArrayList;
 import java.util.Timer;
 
+import com.businessclasses.Field;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,27 +55,26 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void setImageView() {
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
 		
-		int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();
-
+		//int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();
 		
-		/*
-		for(int j = 0; j < temp; ++j){
-			test.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(j).getImage());
-			//test1.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(j).getPlayName());
-		}
-		*/
-		Long start = System.nanoTime();
-		
-		for(int i=0;i<temp; i++){
+		ArrayList<Field> tmp = new ArrayList<Field>();
+		tmp  = DigPlayDB.getInstance(getBaseContext()).getAllPlays();	
+	
+		for(int i = 0 ;i < tmp.size(); i++){
 			//  This will create dynamic image view and add them to ViewFlipper	
 			//setFlipperImage(test.get(i), test1.get(i));
 			//setFlipperImage(test.get(i));
-			setFlipperImage(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage());
-			playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
+			Log.i("formation of play", "" + DigPlayDB.getInstance(getBaseContext()).getImage(tmp.get(i).getPlayFormation()));
+			Log.i("play name", "" + DigPlayDB.getInstance(getBaseContext()).getImage(tmp.get(i).getPlayName()));
+			
+			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(tmp.get(i).getPlayName());
+			
+			setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length));
+			//setFlipperImage(DigPlayDB.getInstance(getBaseContext()).getImage(tmp.get(i).getPlayName()));
+			//setFlipperImage(tmp.get(i).getImage());
+			//playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 		}
-		page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
-		Long end = System.nanoTime();
-		Log.d("db load time", "" + ((end - start)/1000000000));
+		//page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
 
 		animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
 		animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
@@ -108,7 +109,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		page.showPrevious();
 		// TODO update text UI
 		int currentIndex = page.getDisplayedChild();
-		((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
+		//((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
 	}
 
 	private void SwipeLeft(){
@@ -117,7 +118,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		page.showNext();
 		// TODO update text UI
 		int currentIndex = page.getDisplayedChild();
-		((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
+		//((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
 	}
 	SimpleOnGestureListener simpleOnGestureListener 
 	= new SimpleOnGestureListener(){
@@ -138,13 +139,13 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	};
 	GestureDetector gestureDetector= new GestureDetector(simpleOnGestureListener);
 	
-	private void setFlipperImage(Bitmap image){
+	private void setFlipperImage(Bitmap image){	
 		ImageView _image = new ImageView(getApplicationContext());
 		//_image.setBackgroundDrawable(new BitmapDrawable(getResources(), image));
 		//image.prepareToDraw();
 		_image.setImageBitmap(image);
 		page.addView(_image);
-		Log.d("db", "" + image);
+		//Log.d("db", "" + image);
 	}
 }
 
