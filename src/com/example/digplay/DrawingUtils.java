@@ -322,12 +322,13 @@ public class DrawingUtils {
 	// boolean[2] = player put on top of another player
 	public static boolean[] actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
 			float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float TOP_ANDROID_BAR, float PIXELS_PER_YARD, 
-			float FIELD_LINE_WIDTHS, float DENSITY, int x, int y, boolean moreThanElevenPlayers, boolean movePlayer)
+			float FIELD_LINE_WIDTHS, float DENSITY, int x, int y, boolean moreThanElevenPlayers, boolean movePlayer,
+			boolean addingPlayer)
 	{
 		boolean retVal[] = {moreThanElevenPlayers, false, false};
 		if (playerIndex != -1)
 		{
-			if (movePlayer)
+			if (movePlayer || addingPlayer)
 			{
 				// is player outside of the field?
 				if (x < LEFT_MARGIN + PLAYER_ICON_RADIUS || x > RIGHT_MARGIN - PLAYER_ICON_RADIUS 
@@ -378,8 +379,8 @@ public class DrawingUtils {
 							int playerX = playerLoc.getX();
 							int playerY = playerLoc.getY();
 							
-							if ((tempXLocation + PLAYER_ICON_RADIUS == playerX || tempXLocation == playerX || (tempXLocation - PLAYER_ICON_RADIUS == playerX)) &&
-									(tempYLocation + PLAYER_ICON_RADIUS == playerY || tempYLocation == playerY || (tempYLocation - PLAYER_ICON_RADIUS == playerY)))
+							if ((tempXLocation + PLAYER_ICON_RADIUS == playerX || tempXLocation == playerX || tempXLocation - PLAYER_ICON_RADIUS == playerX) &&
+									(tempYLocation + PLAYER_ICON_RADIUS == playerY || tempYLocation == playerY || tempYLocation - PLAYER_ICON_RADIUS == playerY))
 							{
 								retVal[2] = true;
 								break;
@@ -391,6 +392,10 @@ public class DrawingUtils {
 					EditorActivity.setPlayerIndex(playerIndex);
 				}
 			}
+			else
+			{
+				EditorActivity.setPlayerIndex(playerIndex);
+			}
 		}
 		else
 		{
@@ -399,12 +404,13 @@ public class DrawingUtils {
 		return retVal;
 	}
 	
-	// boolean = added more than 11 players
-	public static boolean actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
+	// boolean[0] = added more than 11 players
+	// boolean[1] = adding a new player
+	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
-		boolean retVal = false;
+		boolean[] retVal = {false, false};
 		
 		double playerIndexDistance = Float.MAX_VALUE;
 		
@@ -425,6 +431,7 @@ public class DrawingUtils {
 				playerIndex = field.getAllPlayers().size()-1; // this player is the last 
 				// player to be added to field
 				staticPlayerSelected = true; // flag to say that one of the 8 players has been selected
+				retVal[1] = true;
 			}
 		}
 		if (!staticPlayerSelected)
@@ -465,7 +472,7 @@ public class DrawingUtils {
 			EditorActivity.setPlayerIndex(playerIndex);
 			if (field.getAllPlayers().size() > 11)
 			{
-				retVal = true;
+				retVal[0] = true;
 			}
 		}
 		return retVal;
