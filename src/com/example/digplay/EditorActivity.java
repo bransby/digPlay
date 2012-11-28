@@ -67,7 +67,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button dashButton;
 	private Button clearPlayerRoute;
 	private Button testButton;
-	private static boolean otherSideNotification;
 	
 	private static Button trashCan;
 	
@@ -82,7 +81,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		arrowRoute = true;
 		solidPath = true;
-		otherSideNotification = false;
 		
 		movePlayer = false;
 		selectionColor = TAN_COLOR;
@@ -129,6 +127,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		private boolean moreThanElevenPlayers;
 		private boolean onOtherSideOfScrimmage;
 		private boolean putOnTopOfOtherPlayer;
+		private boolean addingPlayer;
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
@@ -173,6 +172,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			moreThanElevenPlayers = false;
 			onOtherSideOfScrimmage = false;
 			putOnTopOfOtherPlayer = false;
+			addingPlayer = false;
 			
 			createdPlayersPicture = new Picture();
 			fieldPicture = new Picture();
@@ -249,7 +249,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				moreThanElevenPlayers = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
+				boolean[] returnedFlags = new boolean[2];
+				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
+				moreThanElevenPlayers = returnedFlags[0];
+				addingPlayer = returnedFlags[1];
+				
 				if (playerIndex != -1)
 				{
 					Player selectedPlayer = field.getPlayer(playerIndex);
@@ -319,7 +323,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			case MotionEvent.ACTION_UP:
 				boolean[] returnedErrors = new boolean[3];
 				returnedErrors = DrawingUtils.actionUp(field, playerIndex, LEFT_MARGIN, PLAYER_ICON_RADIUS, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, 
-						TOP_ANDROID_BAR, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, x, y, moreThanElevenPlayers, movePlayer);
+						TOP_ANDROID_BAR, PIXELS_PER_YARD, FIELD_LINE_WIDTHS, DENSITY, x, y, moreThanElevenPlayers, movePlayer, addingPlayer);
 				moreThanElevenPlayers = returnedErrors[0];
 				onOtherSideOfScrimmage = returnedErrors[1];
 				putOnTopOfOtherPlayer = returnedErrors[2];
@@ -353,6 +357,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				previousPlayerIndex = playerIndex;
 				drawingRoute = false;
 				movePlayer = false;
+				addingPlayer = false;
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:
@@ -548,7 +553,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to turn off warning.");
 		alert.setPositiveButton("Whoops, my mistake", new DialogInterface.OnClickListener() {	
 			public void onClick(DialogInterface dialog, int which) {
-				
+				field.getAllPlayers().remove(playerIndex);
+				playerIndex = -1;
 			}
 		});
 		alert.setNegativeButton("Ignore", null);
