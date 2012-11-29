@@ -2,16 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/brown_backgroud"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/fm_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="30dip"
         android:text="Select formation to place on field"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="46dip" />
 
     <ListView
         android:id="@+id/formations_list"
@@ -19,7 +21,7 @@
         android:layout_height="528dp"
         android:layout_marginLeft="150dip"
         android:layout_marginRight="150dip"
-        android:layout_marginTop="70dip" >
+        android:layout_marginTop="20dip" >
 
     </ListView>
 

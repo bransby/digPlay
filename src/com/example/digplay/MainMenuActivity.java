@@ -16,7 +16,6 @@ import android.widget.Button;
 public class MainMenuActivity extends Activity implements OnClickListener {
 	
 	private Button drawNewPlay;
-	private Button viewGameplan;
 	private Button createGameplan;
 	private Button lookAtPlaybook;
 	//public static DigPlayDBHelper db = new DigPlayDBHelper();
@@ -31,12 +30,10 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 
     private void setButtons() {
 		drawNewPlay = (Button) findViewById(R.id.maindrawplay);
-		viewGameplan = (Button) findViewById(R.id.mainviewgameplan);
 		createGameplan = (Button)findViewById(R.id.maincreategameplan);
 		lookAtPlaybook = (Button)findViewById(R.id.mainlookatplaybook);
 		
 		drawNewPlay.setOnClickListener(this);
-		viewGameplan.setOnClickListener(this);
 		createGameplan.setOnClickListener(this);
 		lookAtPlaybook.setOnClickListener(this);
 		/*
@@ -60,8 +57,7 @@ public class MainMenuActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		int buttonPressed = v.getId();
 		Intent intent = null;
-		if(buttonPressed == drawNewPlay.getId())intent = new Intent(v.getContext(),EditorActivity.class);
-		else if(buttonPressed == viewGameplan.getId())intent = new Intent(v.getContext(),FormationManagerActivity.class);
+		if(buttonPressed == drawNewPlay.getId())intent = new Intent(v.getContext(),FormationManagerActivity.class);
 		else if(buttonPressed == createGameplan.getId())intent = new Intent(v.getContext(),GameplanManagerActivity.class);
 		else intent = new Intent(v.getContext(),PlayViewActivity.class);
 		startActivity(intent);
