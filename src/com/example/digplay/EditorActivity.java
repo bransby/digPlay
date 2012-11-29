@@ -642,10 +642,24 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			drawView.invalidate(); // redraw the screen
 		}else if(item.getTitle().equals("Disable too many players warning")){
 			tooManyPlayers = false;
-		}else if(item.getTitle().equals("Disable players on top of each other warning")){
+			item.setTitle("Enable too many players warning");
+		}else if(item.getTitle().equals("Enable too many players warning")){
+			tooManyPlayers = true;
+			item.setTitle("Disable too many players warning");
+		}
+		else if(item.getTitle().equals("Disable players on top of each other warning")){
 			playersOnTop = false;
-		}else if(item.getTitle().equals("Disable line of scrimmage warning")){
+			item.setTitle("Enable players on top of each other warning");
+		}else if(item.getTitle().equals("Enable players on top of each other warning")){
+			playersOnTop = true;
+			item.setTitle("Disable players on top of each other warning");
+		}
+		else if(item.getTitle().equals("Disable line of scrimmage warning")){
 			lineOfScrimmage = false;
+			item.setTitle("Enable line of scrimmage warning");
+		}else if(item.getTitle().equals("Enable line of scrimmage warning")){
+			lineOfScrimmage = true;
+			item.setTitle("Disable line of scrimmage warning");
 		}
 		
 		return true;
