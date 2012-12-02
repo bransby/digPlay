@@ -10,7 +10,9 @@ import com.database.DigPlayDB;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -65,7 +67,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 		playType.setAdapter(adapter);
 	}
 
-	public void onClick(View v) {
+	public void onClick(final View v) {
 		
 		name = playName.getText().toString();
 		formation = playFormation.getText().toString();
@@ -80,10 +82,23 @@ public class SaveActivity extends Activity implements OnClickListener {
 		
 		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false && DigPlayDB.getInstance(getBaseContext()).storePlay(newField) == true){
 			DigPlayDB.getInstance(getBaseContext()).addImage(newImage);
-			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", null).show(); 
-
-			Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
-			startActivity(intent);
+			newField = null;
+			newImage = null;
+			
+			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					System.gc();
+					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+					startActivity(intent);	
+				}
+			}).show(); 
+		
+			//newField = null;
+			//newImage = null;
+			//System.gc();
+			
+			//Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+			//startActivity(intent);
 		}
 		else{
 			new AlertDialog.Builder(this).setMessage("Play name already used in playbook!").setNegativeButton("Cancel", null).setPositiveButton("OK", null).show(); 
