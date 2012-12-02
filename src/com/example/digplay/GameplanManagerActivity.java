@@ -204,9 +204,9 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 
 	public void onItemSelected(AdapterView<?> adapter, View v, int position,long arg3) {
 		String gameplanSelected = (String)adapter.getSelectedItem();
-		DigPlayDB db = new DigPlayDB(this);
-		//GamePlan newGamelan = db.getGameplanPlays(gameplanSelected); 
-		//gameplanPlays = newGameplan.getGamePlan();
+		DigPlayDB db = DigPlayDB.getInstance(this);
+		//GamePlan newGameplan = db.getGameplanPlays(gameplanSelected); 
+		//gameplanPlays = newGameplan.getGamePlan(game);
 		resetGameplanList();
 		Toast toast = Toast.makeText(this, gameplanSelected, Toast.LENGTH_LONG);
 		toast.show();
