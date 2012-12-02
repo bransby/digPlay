@@ -28,7 +28,8 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
 	private Button editPlay;	
-	ArrayList<String> playNameList = new ArrayList<String>();
+	private ArrayList<String> playNameList = new ArrayList<String>();
+	private int counter;
 	ArrayList<String> playFormationList = new ArrayList<String>();
 	//ArrayList<String> test1 = new ArrayList<String>();
 	ArrayList<Bitmap> test = new ArrayList<Bitmap>();
@@ -49,16 +50,27 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		setTextView();
 		setImageView();
 		setButtons();
-		
 	}
 
 	private void setImageView() {
 		page = (ViewFlipper) findViewById(R.id.viewFlipper1);
+		playNameList = getIntent().getExtras().getStringArrayList("playList");
+		//int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();	
+		//Log.i("list of plays", "" + playNameList);
+				
+		String thePlay = getIntent().getExtras().getString("playName");
+		counter = playNameList.indexOf(thePlay);
+		Log.i("counter", "" + counter);
 		
-		//int temp = DigPlayDB.getInstance(getBaseContext()).getPlaysDBSize();
+		byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(thePlay);	
+		((TextView)findViewById(R.id.browsing_play_name)).setText(thePlay);
+		page.addView(setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length)));
 		
+		
+	/*	
 		ArrayList<Field> tmp = new ArrayList<Field>();
 		tmp  = DigPlayDB.getInstance(getBaseContext()).getAllPlays();	
+		
 	
 		for(int i = 0 ;i < tmp.size(); i++){
 			//  This will create dynamic image view and add them to ViewFlipper	
@@ -75,7 +87,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			//playNameList.add(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getPlayName());
 		}
 		//page.setDisplayedChild(playNameList.indexOf(getIntent().getExtras().getString("playName")));
-
+*/
 		animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
 		animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
 		animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
@@ -106,19 +118,56 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void SwipeRight(){
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
-		page.showPrevious();
+		//page.showPrevious();
 		// TODO update text UI
-		int currentIndex = page.getDisplayedChild();
-		//((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
+		//int currentIndex = page.getDisplayedChild();
+		
+		if(counter - 1 >= 0){
+			counter -= 1;
+			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter));	
+			((TextView)findViewById(R.id.browsing_play_name)).setText(playNameList.get(counter));
+			page.removeAllViews();
+			page.invalidate();
+			System.gc();
+			page.addView(setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length)));
+			
+			Log.i("counter", "" + counter);
+			
+			animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
+			animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
+			animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
+			animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
+			
+			//page.showPrevious();
+		}		
 	}
 
 	private void SwipeLeft(){
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
-		page.showNext();
+		//page.showNext();
 		// TODO update text UI
-		int currentIndex = page.getDisplayedChild();
-		//((TextView)findViewById(R.id.browsing_play_name)).setText(DigPlayDB.getInstance(getBaseContext()).getPlayByInt(currentIndex).getPlayName());
+		//int currentIndex = page.getDisplayedChild();
+		if(counter + 1 < playNameList.size()){
+			counter += 1;
+			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter));	
+			((TextView)findViewById(R.id.browsing_play_name)).setText(playNameList.get(counter));
+			page.removeAllViews();
+			page.invalidate();
+			
+			System.gc();
+			page.addView(setFlipperImage(BitmapFactory.decodeByteArray(test, 0, test.length)));
+			
+			Log.i("counter", "" + counter);
+			
+			animFlipInForeward = AnimationUtils.loadAnimation(this, R.anim.flipin);
+			animFlipOutForeward = AnimationUtils.loadAnimation(this, R.anim.flipout);
+			animFlipInBackward = AnimationUtils.loadAnimation(this, R.anim.flipin_reverse);
+			animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
+			//page.showNext();
+		}
+		
+		
 	}
 	SimpleOnGestureListener simpleOnGestureListener 
 	= new SimpleOnGestureListener(){
@@ -139,12 +188,11 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	};
 	GestureDetector gestureDetector= new GestureDetector(simpleOnGestureListener);
 	
-	private void setFlipperImage(Bitmap image){	
+	private View setFlipperImage(Bitmap image){	
 		ImageView _image = new ImageView(getApplicationContext());
-		//_image.setBackgroundDrawable(new BitmapDrawable(getResources(), image));
-		//image.prepareToDraw();
 		_image.setImageBitmap(image);
-		page.addView(_image);
+		return _image;
+		//page.addView(_image);
 		//Log.d("db", "" + image);
 	}
 }

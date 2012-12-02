@@ -34,6 +34,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	private TextView title;
 	private TextView playTypeTitle;
 	private TextView gamePlanTitle;
+	public static ArrayList<Field> plays = new ArrayList<Field>();
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -102,8 +104,14 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		playList.setOnItemClickListener(this);
 	}
 	public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
+		ArrayList<String> playNameList = new ArrayList<String>();
+		for(int i = 0; i < this.plays.size(); i ++){
+			playNameList.add(this.plays.get(i).getPlayName());
+		}
+		
 		Field play = (Field) adapter.getItemAtPosition(position);
 		Intent intent = new Intent(v.getContext(),BrowsingActivity.class);
+		intent.putStringArrayListExtra("playList", playNameList);
 		intent.putExtra("playName", play.getPlayName());
 		startActivity(intent);
 	}
