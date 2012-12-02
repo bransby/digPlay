@@ -248,9 +248,9 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			DrawingUtils.drawField(0, RIGHT_MARGIN-LEFT_MARGIN, 0, BOTTOM_MARGIN-TOP_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
 					2*DENSITY, 18*DENSITY, bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, LEFT_MARGIN, TOP_ANDROID_BAR-TOP_MARGIN, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD);
+			DrawingUtils.drawRoutes(field, 0, TOP_MARGIN + TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD);
 			
-			DrawingUtils.drawPlayers(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
+			DrawingUtils.drawPlayers(field, 0, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
 			
 			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
