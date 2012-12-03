@@ -99,12 +99,11 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
 				"\nFrom the gameplan: ";
 		String subject = (String)"playSort.getSelectedItem()" + " from ";
-		//this currently returns a list of file names, not full paths...**
-		//DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage()
-		//put images into attachment arrayList
+				
+		// TODO: save image to file system, and add the file paht to atachment
+		String attachments = "";
 		
-		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
-		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
+		EmailPlaybook.EmailWithSingleAttachment(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
 	}
 	
 	private void setButtons() {
@@ -138,9 +137,6 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void SwipeRight(){
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
-		//page.showPrevious();
-		// TODO update text UI
-		//int currentIndex = page.getDisplayedChild();
 		
 		if(counter - 1 >= 0){
 			counter -= 1;
@@ -165,9 +161,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void SwipeLeft(){
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
-		//page.showNext();
-		// TODO update text UI
-		//int currentIndex = page.getDisplayedChild();
+
 		if(counter + 1 < playNameList.size()){
 			counter += 1;
 			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter));	

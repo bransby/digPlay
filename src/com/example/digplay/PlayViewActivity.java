@@ -46,15 +46,15 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setText();
 	    setListView();
 	}
+	
 	private void email() {
 		String emailText = "This email includes the following Play Types: " +(String)playSort.getSelectedItem() + 
 				"\nFrom the gameplan: ";
 		String subject = (String)playSort.getSelectedItem() + " from ";
-		//this currently returns a list of file names, not full paths...**
-		//DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage()
-		//put images into attachment arrayList
 		
+		// TODO: save files to file system, and then add them to this array.
 		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
+		
 		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
 	}
 	
