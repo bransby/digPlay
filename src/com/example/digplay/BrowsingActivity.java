@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 import com.businessclasses.Field;
+import com.businessclasses.Formation;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -109,7 +111,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void setButtons() {
 		editPlay = (Button)findViewById(R.id.browsing_edit_play);
 		editPlay.setOnClickListener(this);
-		emailPlay = (Button)findViewById(R.id.browsing_edit_play);
+		emailPlay = (Button)findViewById(R.id.browsing_email_play);
 		emailPlay.setOnClickListener(this);
 	}
 
@@ -127,9 +129,10 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		if (v.getId() == emailPlay.getId()) {
 			email();
-		} else {
+		} else if (v.getId() == editPlay.getId()){
+			// TODO: Change the next line to send the current image instead of a new one
+			Field selectedPlay = new Field();
 			Intent intent = new Intent(v.getContext(),EditorActivity.class);
-			// TODO: add play into intent sent to enditor
 			startActivity(intent);
 		}
 	}

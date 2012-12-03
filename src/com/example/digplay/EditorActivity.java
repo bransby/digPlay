@@ -120,8 +120,14 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		if(extras == null)field = new Field();
 		else{
 			Formation formation = (Formation)extras.getSerializable("Formation");
-			if(formation == null)field = new Field();
-			else field = formation.getFormation();
+			Field passedField = (Field)extras.getSerializable("Field");
+			
+			if(formation != null) 
+				field = formation.getFormation();
+			else if (passedField != null) 
+				field = passedField.getField();
+			else 
+				field = new Field();
 		}
 	}
 	
