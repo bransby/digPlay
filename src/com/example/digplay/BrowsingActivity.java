@@ -27,7 +27,8 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
-	private Button editPlay;	
+	private Button editPlay;
+	private Button emailPlay;
 	private ArrayList<String> playNameList = new ArrayList<String>();
 	private int counter;
 	ArrayList<String> playFormationList = new ArrayList<String>();
@@ -94,9 +95,23 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 	}
 
+	private void email() {
+		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
+				"\nFrom the gameplan: ";
+		String subject = (String)"playSort.getSelectedItem()" + " from ";
+		//this currently returns a list of file names, not full paths...**
+		//DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage()
+		//put images into attachment arrayList
+		
+		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
+		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
+	}
+	
 	private void setButtons() {
 		editPlay = (Button)findViewById(R.id.browsing_edit_play);
 		editPlay.setOnClickListener(this);
+		emailPlay = (Button)findViewById(R.id.browsing_edit_play);
+		emailPlay.setOnClickListener(this);
 	}
 
 	private void setTextView() {
@@ -111,8 +126,13 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
-		Intent intent = new Intent(v.getContext(),EditorActivity.class);
-		startActivity(intent);
+		if (v.getId() == emailPlay.getId()) {
+			email();
+		} else {
+			Intent intent = new Intent(v.getContext(),EditorActivity.class);
+			// TODO: add play into intent sent to enditor
+			startActivity(intent);
+		}
 	}
 
 	private void SwipeRight(){
