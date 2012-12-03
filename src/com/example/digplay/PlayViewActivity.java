@@ -46,15 +46,15 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setText();
 	    setListView();
 	}
+	
 	private void email() {
-		String emailText = "This email includes the following Play Types: " +(String)playSort.getSelectedItem() + 
-				"\nFrom the gameplan: ";
+		String emailText = "This email includes the following Play Types: " + (String)playSort.getSelectedItem() + 
+				"\nFrom the gameplan: " + (String)gamePlans.getSelectedItem();
 		String subject = (String)playSort.getSelectedItem() + " from ";
-		//this currently returns a list of file names, not full paths...**
-		//DigPlayDB.getInstance(getBaseContext()).getPlayByInt(i).getImage()
-		//put images into attachment arrayList
 		
+		// TODO: save files to file system, and then add them to this array.
 		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
+		
 		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
 	}
 	
@@ -125,10 +125,17 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	public void updateList()
 	{
+		// get plays
 		Sort s = new Sort();
 		PlayAdapter adapter = new PlayAdapter(this,R.layout.listview_item_row,DigPlayDB.getInstance(getBaseContext()).getAllPlays());
+		
+		// get selections from spinners
 		String playType = (String)playSort.getSelectedItem();
+		String playbook = (String)gamePlans.getSelectedItem();
+		
+		// filter by selection
 		adapter = s.sortPlaysByRunPass(adapter, playType);
+		adapter = s.sortPlaysByPlaybook(adapter, playbook);
 		playList.setAdapter(adapter);
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}

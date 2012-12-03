@@ -24,6 +24,10 @@ public class Field implements Serializable{
 	public void setPlayName(String name){
 		_playName = name;
 	}
+	
+	public Field getField() {
+		return this;
+	}
 
 	public Field() {
 		_playersOnField = new ArrayList<Player>();

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Timer;
 
 import com.businessclasses.Field;
+import com.businessclasses.Formation;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -27,7 +29,8 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 
 public class BrowsingActivity extends Activity implements OnClickListener {
 	private TextView playName;
-	private Button editPlay;	
+	private Button editPlay;
+	private Button emailPlay;
 	private ArrayList<String> playNameList = new ArrayList<String>();
 	private int counter;
 	ArrayList<String> playFormationList = new ArrayList<String>();
@@ -94,9 +97,22 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 	}
 
+	private void email() {
+		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
+				"\nFrom the gameplan: ";
+		String subject = (String)"playSort.getSelectedItem()" + " from ";
+				
+		// TODO: save image to file system, and add the file paht to atachment
+		String attachments = "";
+		
+		EmailPlaybook.EmailWithSingleAttachment(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
+	}
+	
 	private void setButtons() {
 		editPlay = (Button)findViewById(R.id.browsing_edit_play);
 		editPlay.setOnClickListener(this);
+		emailPlay = (Button)findViewById(R.id.browsing_email_play);
+		emailPlay.setOnClickListener(this);
 	}
 
 	private void setTextView() {
@@ -111,16 +127,19 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(View v) {
-		Intent intent = new Intent(v.getContext(),EditorActivity.class);
-		startActivity(intent);
+		if (v.getId() == emailPlay.getId()) {
+			email();
+		} else if (v.getId() == editPlay.getId()){
+			// TODO: Change the next line to send the current image instead of a new one
+			Field selectedPlay = new Field();
+			Intent intent = new Intent(v.getContext(),EditorActivity.class);
+			startActivity(intent);
+		}
 	}
 
 	private void SwipeRight(){
 		page.setInAnimation(animFlipInBackward);
 		page.setOutAnimation(animFlipOutBackward);
-		//page.showPrevious();
-		// TODO update text UI
-		//int currentIndex = page.getDisplayedChild();
 		
 		if(counter - 1 >= 0){
 			counter -= 1;
@@ -145,9 +164,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	private void SwipeLeft(){
 		page.setInAnimation(animFlipInForeward);
 		page.setOutAnimation(animFlipOutForeward);
-		//page.showNext();
-		// TODO update text UI
-		//int currentIndex = page.getDisplayedChild();
+
 		if(counter + 1 < playNameList.size()){
 			counter += 1;
 			byte[] test = DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter));	

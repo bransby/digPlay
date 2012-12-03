@@ -27,13 +27,13 @@
         android:textSize="20dp" />
 
     <Button
-        android:id="@+id/browsing_add_to_gameplan"
+        android:id="@+id/browsing_email_play"
         android:layout_width="150dp"
         android:layout_height="75dp"
         android:layout_above="@+id/browsing_edit_play"
         android:layout_alignLeft="@+id/browsing_edit_play"
         android:layout_marginBottom="27dp"
-        android:text="ADD TO GAMEPLAN"
+        android:text="Email Play"
         android:textSize="20dp" />
 
     <ViewFlipper
