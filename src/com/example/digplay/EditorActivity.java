@@ -111,7 +111,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		clearPlayerRoute.setOnClickListener(this);
 		testButton.setOnClickListener(this);
 		
-		playerIndex = 1;
+		playerIndex = -1;
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
 		save.setBackgroundResource(R.drawable.floppy_disk);
@@ -237,6 +237,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			c.drawPicture(createdPlayersPicture);
 			
 			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
+			
+			DrawingUtils.drawButtons(canvas, paint, DENSITY, TOP_ANDROID_BAR, TOP_MARGIN);
 		}
 		
 		private void drawToBitmap()
@@ -488,6 +490,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 	public static boolean toggleSolidButton(boolean solidPath)
 	{
+		System.out.println("hi");
 		if(solidPath){
 			dashButton.setBackgroundResource(R.drawable.dotted_line);
 			playerPath = Path.DOTTED;

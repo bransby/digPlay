@@ -477,4 +477,10 @@ public class DrawingUtils {
 		}
 		return retVal;
 	}
+	
+	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, float TOP_ANDROID_BAR, float TOP_MARGIN)
+	{
+		float value = 565*DENSITY+TOP_MARGIN+TOP_ANDROID_BAR;
+		canvas.drawLine(970, value, 1070, value, paint);
+	}
 }
