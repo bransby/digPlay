@@ -23,6 +23,10 @@ public class GamePlan {
 		}
 	}
 	
+	public void addPlaysToGameplan(ArrayList<String> plays){
+		this.gamesInGamePlan = plays;
+	}
+	
 	public boolean removePlayFromGamePlan(String playName){
 		if(gamesInGamePlan.indexOf(playName) != -1){
 			gamesInGamePlan.remove(playName);

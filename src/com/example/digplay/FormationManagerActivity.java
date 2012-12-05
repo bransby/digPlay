@@ -50,16 +50,15 @@ public class FormationManagerActivity extends Activity implements OnItemClickLis
 	}
 	private void setListView() {
 		formationsList = (ListView)findViewById(R.id.formations_list);
-		//DigPlayDB db = new DigPlayDB(this);
-		//db.getAllFormations();
 		formations = new ArrayList<Formation>();
+		formations = DigPlayDB.getInstance(getBaseContext()).getFormations();
 		if(formations.isEmpty()){
 			Field f = new Field();
 			f = Constants.dummyField();
 			Formation emptyFormation = new Formation("There are no saved formations",f);
 			formations.add(emptyFormation);
-			formations.add(emptyFormation);
-			formations.add(emptyFormation);
+			//formations.add(emptyFormation);
+			//formations.add(emptyFormation);
 		}
 		FormationAdapter adapter = new FormationAdapter(this,R.layout.formation_listview_item_row,formations);
 		formationsList.setAdapter(adapter);

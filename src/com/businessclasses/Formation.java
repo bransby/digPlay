@@ -5,11 +5,20 @@ import java.io.Serializable;
 public class Formation implements Serializable{
 	Field theField;
 	String formationName;
-	public Formation(String name, Field f){
+	byte[] image;
+	
+	public Formation(String name, Field f, byte[] _image){
 		theField =f; //f.clone();
 		theField.clearRouteLocations();
 		formationName = name;
+		this.image = _image;
 	}
+	public Formation(String name, Field f){
+		theField = f;
+		formationName = name;
+	}
+	public Formation(){};
+	
 	public String getName(){
 		return formationName;
 	}
@@ -21,5 +30,8 @@ public class Formation implements Serializable{
 	}
 	public void flipFormation(int width){
 		theField.flip(width);
+	}
+	public byte[] getImage(){
+		return this.image;
 	}
 }
