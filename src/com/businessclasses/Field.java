@@ -91,6 +91,10 @@ public class Field implements Serializable{
 			_playersOnField.get(i).changePath(path);
 		}
 	}
+	public void removePlayer(int index)
+	{
+		_playersOnField.remove(index);
+	}
 	public boolean removePlayer(Player p){
 		for(int i=0;i<_playersOnField.size();i++){
 			if(_playersOnField.get(i).equals(p)){

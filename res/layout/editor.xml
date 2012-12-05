@@ -42,7 +42,7 @@
         android:text="Clear Player Route" />
 
     <Button
-        android:id="@+id/edi_test_button"
+        android:id="@+id/edi_flip_button"
         android:layout_width="125dip"
         android:layout_height="50dip"
         android:layout_alignParentTop="true"

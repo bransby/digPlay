@@ -19,39 +19,39 @@ import android.util.FloatMath;
 public class DrawingUtils {
 	
 	public static void drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
-			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float TOP_MARGIN)
+			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float BAR_Y_VALUE)
 	{
-		float adjustedHeight = (620*DENSITY)+TOP_MARGIN+TOP_ANDROID_BAR; // pixel location we want to draw the 8
+		float adjustedHeight = BAR_Y_VALUE; // pixel location we want to draw the 8
 		   // created players at. 50 pixels is used
 		   // at the top for all android devices
 
 		// add players at bottom of screen, 75dp width between each of them
-		Location playerLocQB = new Location((int)(75*DENSITY), (int)(adjustedHeight));
+		Location playerLocQB = new Location((int)(75/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QB);
 		
-		Location playerLocWR = new Location((int)(150*DENSITY), (int)(adjustedHeight));
+		Location playerLocWR = new Location((int)(150/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WR);
 		
-		Location playerLocRB = new Location((int)(225*DENSITY), (int)(adjustedHeight));
+		Location playerLocRB = new Location((int)(225/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RB);
 		
-		Location playerLocFB = new Location((int)(300*DENSITY), (int)(adjustedHeight));
+		Location playerLocFB = new Location((int)(300/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FB);
 		
-		Location playerLocTE = new Location((int)(375*DENSITY), (int)(adjustedHeight));
+		Location playerLocTE = new Location((int)(375/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TE);
 		
-		Location playerLocC = new Location((int)(450*DENSITY), (int)(adjustedHeight));
+		Location playerLocC = new Location((int)(450/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocC, Position.C);
 		
-		Location playerLocG = new Location((int)(525*DENSITY), (int)(adjustedHeight));
+		Location playerLocG = new Location((int)(525/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocG, Position.G);
 		
-		Location playerLocT = new Location((int)(600*DENSITY), (int)(adjustedHeight));
+		Location playerLocT = new Location((int)(600/DENSITY), (int)(adjustedHeight));
 		fieldForCreatePlayer.addPlayer(playerLocT, Position.T);
 
 		paint.setColor(Color.WHITE);
-		paint.setStrokeWidth(2*DENSITY);
+		paint.setStrokeWidth(2/DENSITY);
 
 		// y values are all the same, so just reuse one
 		float eightPlayerY = playerLocQB.getY() - TOP_ANDROID_BAR;
@@ -87,7 +87,7 @@ public class DrawingUtils {
 		// for drawing the text
 		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(PLAYER_ICON_RADIUS);
-		paint.setStrokeWidth(2*DENSITY);
+		paint.setStrokeWidth(2/DENSITY);
 		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
 		{
@@ -215,10 +215,10 @@ public class DrawingUtils {
 		paint.setColor(0xFF000080);
 		
 		// draw line of scrimmage
-		paint.setStrokeWidth(6*DENSITY);
+		paint.setStrokeWidth(6/DENSITY);
 		
 		// want to draw line of scrimmage at 20 yard line
-		float lineOfScrimmageYValue = BOTTOM_MARGIN-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)*DENSITY;
+		float lineOfScrimmageYValue = BOTTOM_MARGIN-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)/DENSITY;
 		canvas.drawLine(LEFT_MARGIN, lineOfScrimmageYValue, RIGHT_MARGIN, lineOfScrimmageYValue, paint);
 		
 		// fill = fill enclosed shapes with the color, like a circle with the middle one color
@@ -234,7 +234,7 @@ public class DrawingUtils {
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
-		float middleHashOffset = (450*DENSITY);
+		float middleHashOffset = (450/DENSITY);
 		for (int i = 0; i < 45; i++)
 		{
 			if (!(i % 5 == 0))
@@ -263,7 +263,7 @@ public class DrawingUtils {
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		
-		float middleHashOffset = (450*DENSITY);
+		float middleHashOffset = (LEFT_MARGIN+RIGHT_MARGIN)*0.375f;
 		for (int i = 0; i < 45; i++)
 		{
 			if (!(i % 5 == 0))
@@ -365,7 +365,7 @@ public class DrawingUtils {
 					
 					int tempXLocation = tempX + (int)(LEFT_MARGIN);
 					int tempYLocation = tempY + (int)(TOP_MARGIN);
-					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)*DENSITY;
+					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)/DENSITY;
 					
 					if (tempYLocation <= lineOfScrimmageYValue)
 					{
@@ -408,7 +408,7 @@ public class DrawingUtils {
 	// boolean[1] = adding a new player
 	// boolean[2] = clicking on a button
 	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, 
-			int playerIndex, Route route, Path path, float PLAYER_ICON_RADIUS)
+			int playerIndex, Route route, Path path, float PLAYER_ICON_RADIUS, float BUTTON_Y_VALUE, float BUTTON_X_VALUE)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
@@ -462,13 +462,13 @@ public class DrawingUtils {
 			// if not selected reset player index
 			if (!hasBeenSet)
 			{
-				float buttonLowerValue = 730 - PLAYER_ICON_RADIUS;
-				float buttonUpperValue = 730 + PLAYER_ICON_RADIUS;
-				if (x >= 650 && x <= 775 && y >= buttonLowerValue && y <= buttonUpperValue)
+				float buttonLowerValue = BUTTON_Y_VALUE - PLAYER_ICON_RADIUS;
+				float buttonUpperValue = BUTTON_Y_VALUE + PLAYER_ICON_RADIUS;
+				if (x >= BUTTON_X_VALUE && x <= BUTTON_X_VALUE+5*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
 				{
 					retVal[2] = true;
 				}
-				else if (x >= 800 && x <= 925 && y >= buttonLowerValue && y <= buttonUpperValue)
+				else if (x >= BUTTON_X_VALUE+6*PLAYER_ICON_RADIUS && x <= BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
 				{
 					retVal[2] = true;
 				}
@@ -494,7 +494,8 @@ public class DrawingUtils {
 	}
 	
 	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, float TOP_ANDROID_BAR, float TOP_MARGIN, 
-			float PIXELS_PER_YARD, Route route, Path path, float FIELD_LINE_WIDTHS, float PLAYER_ICON_RADIUS)
+			float PIXELS_PER_YARD, Route route, Path path, float FIELD_LINE_WIDTHS, float PLAYER_ICON_RADIUS, 
+			float BUTTON_Y_VALUE, float BUTTON_X_VALUE)
 	{
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		paint.setColor(Color.BLACK);
@@ -502,10 +503,10 @@ public class DrawingUtils {
 		{
 			paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
 		}
-		float value = (620*DENSITY) + TOP_MARGIN;
-		canvas.drawLine(650, value, 775, value, paint);
+		float value = BUTTON_Y_VALUE-TOP_ANDROID_BAR;
+		canvas.drawLine(BUTTON_X_VALUE, value, BUTTON_X_VALUE+5*PLAYER_ICON_RADIUS, value, paint);
 		paint.setPathEffect(null);
-		canvas.drawLine(800, value, 925, value, paint);
-		drawEndOfRoute(canvas, paint, 925, (int)value, PIXELS_PER_YARD, 180, route);
+		canvas.drawLine(BUTTON_X_VALUE+6*PLAYER_ICON_RADIUS, value, BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS, value, paint);
+		drawEndOfRoute(canvas, paint, (int)(BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS), (int)value, PIXELS_PER_YARD, 180, route);
 	}
 }
