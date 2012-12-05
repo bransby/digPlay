@@ -22,14 +22,15 @@ public class EmailPlaybook {
 	    context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 	
-	public static void EmailWithSingleAttachment(Context context, String emailTo, String subject, String emailText, String attachment)
+	public static void EmailWithSingleAttachment(Context context, String emailTo, String subject, String emailText, List<String> filePath)
 	{
 	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
 	emailIntent.setType("text/xml");
 	emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailTo});
 	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, new String[]{subject});
 	emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, new String[]{emailText});
-	emailIntent.putExtra(Intent.EXTRA_STREAM, attachment);
+	ArrayList<Uri> uris = parseFilePaths(filePath);
+	emailIntent.putExtra(Intent.EXTRA_STREAM, uris);
 	context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 	

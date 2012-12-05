@@ -10,9 +10,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.Path;
 import android.util.Log;
 
 import com.businessclasses.Field;
+import com.businessclasses.Formation;
 import com.businessclasses.GamePlan;
 import com.businessclasses.Image;
 import com.businessclasses.Player;
@@ -31,6 +33,7 @@ public final class DigPlayDB extends Application{
 	private static ObjectContainer playsDB;
 	private static ObjectContainer imageDB;
 	private static ObjectContainer gamePlanDB;
+	private static ObjectContainer formationDB;
 
 	private final Context context;
 	private static DigPlayDB instance;
@@ -64,7 +67,7 @@ public final class DigPlayDB extends Application{
 		playsDB = Db4oEmbedded.openFile(config, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
 		imageDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/imageDB.db4o");
 		gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/GamePlansDB.db4o");
-	
+		formationDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/formationDB.db4o");
 	}
 
 	//gets the instance of this class if it is null, otherwise returns this instance.
@@ -73,6 +76,22 @@ public final class DigPlayDB extends Application{
 			instance = new DigPlayDB(context);
 		}
 		return instance;
+	}
+
+	/////////////////////////////////////////////////////////////////////
+	//formation database stuffz
+	/////////////////////////////////////////////////////////////////////
+
+
+	public ArrayList<Formation> getFormations(){
+		ArrayList<Formation> temp = new ArrayList<Formation>();
+		
+
+		ObjectSet result = formationDB.queryByExample(new Formation());
+		while(result.hasNext()){
+			temp.add((Formation) result.next());
+		}
+		return temp;
 	}
 
 	/////////////////////////////////////////////////////////////////////
@@ -96,6 +115,7 @@ public final class DigPlayDB extends Application{
 		}
 		return null;
 	}
+	
 
 	/////////////////////////////////////////////////////////////////////
 	//Plays database stuffz
@@ -276,15 +296,45 @@ public final class DigPlayDB extends Application{
 		while(result.hasNext()){
 			gamePlanDB.delete(result.next());
 		}
+		gamePlanDB.commit();
 	}
 
 	//store the game plan in the database
-	public void storeGamePlan(GamePlan gamePlan){
-		gamePlanDB.store(gamePlan);
-		gamePlanDB.commit();
-		Log.d("added game plan", "game plan added to db");	
+	public boolean storeGamePlan(GamePlan gamePlan){
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gamePlan.getGamePlanName());
+		
+		ObjectSet result = gamePlanDB.queryByExample(obj);
+		
+		if(!result.hasNext()){
+			gamePlanDB.store(gamePlan);
+			gamePlanDB.commit();
+			Log.d("added game plan", "game plan added to db");	
+			return true;
+		}
+		else{
+			GamePlan gp = (GamePlan) result.next();
+			gp.addPlaysToGameplan(gamePlan.getGamePlan());
+			deleteGamePlan(gp.getGamePlanName());
+			gamePlanDB.store(gp);
+			gamePlanDB.commit();
+			return true;
+		}
 	}
 
+
+	public ArrayList<String> getAllGamePlans(){
+		ArrayList<String> temp = new ArrayList<String>();
+		GamePlan found = null;
+		
+		GamePlan obj = new GamePlan();
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+		while(result.hasNext()){
+			temp.add(result.next().getGamePlanName());
+		}
+		return temp;
+	}
+	
 	//takes gameplan name as input and return an arraylist of the images of the plays in the gameplan
 	public ArrayList<Bitmap> getImagesOfGameplan(String gp){
 		ArrayList<Bitmap> images = new ArrayList<Bitmap>();
@@ -317,7 +367,7 @@ public final class DigPlayDB extends Application{
 			found = result.next();
 			return found.getGamePlan();
 		}
-		return null;
+		return new ArrayList<String>();
 	}
 
 	//delete game play from database
@@ -332,10 +382,26 @@ public final class DigPlayDB extends Application{
 		if(result.hasNext()){
 			found = result.next();
 			gamePlanDB.delete(found);
+			gamePlanDB.commit();
 			return true;
 		}
 		else{
 			return false;
+		}
+	}
+	
+	public void removePlayFromGameplan(String gameplan, String playName){
+		GamePlan found = null;
+
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gameplan);
+
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+
+		if(result.hasNext()){
+			found = result.next();
+			found.removePlayFromGamePlan(playName);
+			gamePlanDB.commit();
 		}
 	}
 }

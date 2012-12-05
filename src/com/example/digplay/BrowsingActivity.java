@@ -1,5 +1,9 @@
 package com.example.digplay;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -97,15 +101,22 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		animFlipOutBackward = AnimationUtils.loadAnimation(this, R.anim.flipout_reverse);
 	}
 
-	private void email() {
+	private void email() throws IOException {
 		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
 				"\nFrom the gameplan: ";
 		String subject = (String)"playSort.getSelectedItem()" + " from ";
 				
 		// TODO: save image to file system, and add the file paht to atachment
-		String attachments = "";
+		ArrayList<String> attachment = new ArrayList<String>();
+		attachment.add(getFilesDir().getAbsolutePath() + "/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		File file = new File(getFilesDir().getAbsolutePath() + "/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
+		fos.close();
 		
-		EmailPlaybook.EmailWithSingleAttachment(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
+		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachment);
+		
+		file.delete();
 	}
 	
 	private void setButtons() {
@@ -128,11 +139,16 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 
 	public void onClick(View v) {
 		if (v.getId() == emailPlay.getId()) {
-			email();
+			try {
+				email();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (v.getId() == editPlay.getId()){
-			// TODO: Change the next line to send the current image instead of a new one
-			Field selectedPlay = new Field();
-			Intent intent = new Intent(v.getContext(),EditorActivity.class);
+			Field selectedField = (Field) DigPlayDB.getInstance(getBaseContext()).getPlayByName(playNameList.get(counter)) ;
+			Intent intent = new Intent(getBaseContext(),EditorActivity.class);
+			intent.putExtra("Field", selectedField);
 			startActivity(intent);
 		}
 	}
