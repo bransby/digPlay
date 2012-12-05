@@ -12,11 +12,14 @@ import com.businessclasses.Formation;
 import com.database.DigPlayDB;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -108,12 +111,14 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 				
 		// TODO: save image to file system, and add the file paht to atachment
 		ArrayList<String> attachment = new ArrayList<String>();
-		attachment.add(getFilesDir().getAbsolutePath() + "/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
-		File file = new File(getFilesDir().getAbsolutePath() + "/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+
+		attachment.add("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		File file = new File("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
 		fos.close();
-		
+		new AlertDialog.Builder(this).setMessage("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg").setNegativeButton("Cancel", null).show(); 
 		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachment);
 		
 		file.delete();
@@ -142,7 +147,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 			try {
 				email();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				new AlertDialog.Builder(this).setMessage("This feature does not work on the compter. \n" + e.toString()).setNegativeButton("Cancel", null).show();
 				e.printStackTrace();
 			}
 		} else if (v.getId() == editPlay.getId()){

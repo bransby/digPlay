@@ -1,5 +1,8 @@
 package com.example.digplay;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import com.businessclasses.Constants;
@@ -13,6 +16,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -47,16 +51,29 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	    setListView();
 	}
 	
-	private void email() {
+	private void email() throws IOException {
 		String emailText = "This email includes the following Play Types: " + (String)playSort.getSelectedItem() + 
 				"\nFrom the gameplan: " + (String)gamePlans.getSelectedItem();
 		String subject = (String)playSort.getSelectedItem() + " from ";
-		
-		// TODO: save files to file system, and then add them to this array.
+				
+		// TODO: save image to file system, and add the file paht to atachment
 		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
-		
-		EmailPlaybook.EmailWithMultipleAttachments(this, "zachary.k.nanfelt@gmail.com", subject, emailText, attachments);
+		ArrayList<String> attachmentPath = new ArrayList<String>();
+		for (int att = 0; att < attachments.size(); att++) 
+		{
+
+			attachmentPath.add(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
+			File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
+			
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
+			fos.close();
+
+		}
+
+		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
 	}
+	
 	
 	private void setText() {
 		title = (TextView)findViewById(R.id.pv_title);
@@ -121,7 +138,12 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		refineSearch.setOnClickListener(this);
 	}
 	public void onClick(View v) {
-		email();
+		try {
+			email();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	public void updateList()
 	{

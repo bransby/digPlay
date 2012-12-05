@@ -552,6 +552,16 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			playerIndex = -1;
 			previousPlayerIndex = -1;
 			drawView.invalidate(); // redraw the screen
+		}else if (id == trashCan.getId())
+		{
+			System.out.println("it is doing this");
+			if (playerIndex != -1)
+			{
+				System.out.println("it is do this!");
+				Player selectedPlayer = field.getPlayer(playerIndex);
+				selectedPlayer.deletePlayer();
+				drawView.invalidate();
+			}
 		}
 	}
 	public static void setContext(Context c)
