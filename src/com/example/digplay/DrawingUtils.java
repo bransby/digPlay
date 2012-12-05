@@ -19,9 +19,9 @@ import android.util.FloatMath;
 public class DrawingUtils {
 	
 	public static void drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
-			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS)
+			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float TOP_MARGIN)
 	{
-		float adjustedHeight = (670*DENSITY)+TOP_ANDROID_BAR; // pixel location we want to draw the 8
+		float adjustedHeight = (620*DENSITY)+TOP_MARGIN+TOP_ANDROID_BAR; // pixel location we want to draw the 8
 		   // created players at. 50 pixels is used
 		   // at the top for all android devices
 
@@ -406,11 +406,13 @@ public class DrawingUtils {
 	
 	// boolean[0] = added more than 11 players
 	// boolean[1] = adding a new player
-	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, int playerIndex, Route route, Path path)
+	// boolean[2] = clicking on a button
+	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, 
+			int playerIndex, Route route, Path path, float PLAYER_ICON_RADIUS)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
-		boolean[] retVal = {false, false};
+		boolean[] retVal = {false, false, false};
 		
 		double playerIndexDistance = Float.MAX_VALUE;
 		
@@ -460,7 +462,20 @@ public class DrawingUtils {
 			// if not selected reset player index
 			if (!hasBeenSet)
 			{
-				EditorActivity.setPlayerIndex(-1);
+				float buttonLowerValue = 730 - PLAYER_ICON_RADIUS;
+				float buttonUpperValue = 730 + PLAYER_ICON_RADIUS;
+				if (x >= 650 && x <= 775 && y >= buttonLowerValue && y <= buttonUpperValue)
+				{
+					retVal[2] = true;
+				}
+				else if (x >= 800 && x <= 925 && y >= buttonLowerValue && y <= buttonUpperValue)
+				{
+					retVal[2] = true;
+				}
+				else
+				{
+					EditorActivity.setPlayerIndex(-1);
+				}
 			}
 			else
 			{
@@ -478,9 +493,19 @@ public class DrawingUtils {
 		return retVal;
 	}
 	
-	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, float TOP_ANDROID_BAR, float TOP_MARGIN)
+	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, float TOP_ANDROID_BAR, float TOP_MARGIN, 
+			float PIXELS_PER_YARD, Route route, Path path, float FIELD_LINE_WIDTHS, float PLAYER_ICON_RADIUS)
 	{
-		float value = 565*DENSITY+TOP_MARGIN+TOP_ANDROID_BAR;
-		canvas.drawLine(970, value, 1070, value, paint);
+		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
+		paint.setColor(Color.BLACK);
+		if (path == Path.DOTTED)
+		{
+			paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
+		}
+		float value = (620*DENSITY) + TOP_MARGIN;
+		canvas.drawLine(650, value, 775, value, paint);
+		paint.setPathEffect(null);
+		canvas.drawLine(800, value, 925, value, paint);
+		drawEndOfRoute(canvas, paint, 925, (int)value, PIXELS_PER_YARD, 180, route);
 	}
 }

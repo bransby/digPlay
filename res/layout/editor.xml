@@ -30,44 +30,25 @@
         android:layout_marginLeft="40dip"
         android:layout_marginTop="7dip"
         android:background="@android:color/transparent" />
-
-    <Button
-        android:id="@+id/edi_dash_button"
-        android:layout_width="125dip"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="50dip"
-        android:layout_marginRight="320dip"
-        android:background="@drawable/line" />
-
-    <Button
-        android:id="@+id/edi_arrow_button"
-        android:layout_width="125dip"
-        android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="50dip"
-        android:layout_marginRight="170dip"
-        android:background="@drawable/right_arrow" />
 
     <Button
         android:id="@+id/edi_clear_player_route"
         android:layout_width="150dip"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="50dip"
-        android:layout_marginRight="20dip"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="650dip"
+        android:layout_marginLeft="1100dp"
         android:text="Clear Player Route" />
-
+
     <Button
         android:id="@+id/edi_test_button"
         android:layout_width="125dip"
         android:layout_height="50dip"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="50dip"
-        android:layout_toLeftOf="@+id/edi_dash_button"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="650dip"
+        android:layout_marginLeft="950dp"
         android:background="@drawable/flip"
         android:text="Flip play" />
 

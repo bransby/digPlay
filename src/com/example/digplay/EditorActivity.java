@@ -47,8 +47,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 	private static Route playerRoute;
 	private static Path playerPath;
-	
-	private static final int TAN_COLOR = 0xFFFF8000;
 
 	private static Field field; // the one field
 	private static int playerIndex = -1; // index of array for which player has been selected
@@ -66,10 +64,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	private static Button clearRoutes;
 	private static Button clearField;
 	
-	private static Button arrowButton;
-	private static Button dashButton;
-	private Button clearPlayerRoute;
-	private Button testButton;
+	private static Button clearPlayerRoute;
+	private static Button testButton;
 	
 	private static Button trashCan;
 	
@@ -90,7 +86,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		solidPath = true;
 		
 		movePlayer = false;
-		selectionColor = TAN_COLOR;
+		selectionColor = Color.WHITE;
 		
 		playerRoute = Route.ARROW;
 		playerPath = Path.SOLID;
@@ -99,15 +95,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		
 		save = (Button) findViewById(R.id.save);
 		trashCan = (Button) findViewById(R.id.editor_trash_can);
-		arrowButton  = (Button)findViewById(R.id.edi_arrow_button);
-		dashButton = (Button)findViewById(R.id.edi_dash_button);
 		clearPlayerRoute = (Button)findViewById(R.id.edi_clear_player_route);
 		testButton = (Button)findViewById(R.id.edi_test_button);
 
 		trashCan.setOnClickListener(this);
 		save.setOnClickListener(this);
-		arrowButton.setOnClickListener(this);
-		dashButton.setOnClickListener(this);
 		clearPlayerRoute.setOnClickListener(this);
 		testButton.setOnClickListener(this);
 		
@@ -147,6 +139,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		private boolean onOtherSideOfScrimmage;
 		private boolean putOnTopOfOtherPlayer;
 		private boolean addingPlayer;
+		private boolean clickingButton;
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
@@ -192,6 +185,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			onOtherSideOfScrimmage = false;
 			putOnTopOfOtherPlayer = false;
 			addingPlayer = false;
+			clickingButton = false;
 			
 			createdPlayersPicture = new Picture();
 			fieldPicture = new Picture();
@@ -236,7 +230,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 			if (drawCreatedPlayers)
 			{
-				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS);
+				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, TOP_MARGIN);
 				createdPlayersPicture.endRecording();
 				drawCreatedPlayers = false;
 			}
@@ -244,7 +238,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			
 			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
 			
-			DrawingUtils.drawButtons(canvas, paint, DENSITY, TOP_ANDROID_BAR, TOP_MARGIN);
+			DrawingUtils.drawButtons(canvas, paint, DENSITY, TOP_ANDROID_BAR, TOP_MARGIN, PIXELS_PER_YARD, playerRoute, playerPath, FIELD_LINE_WIDTHS, 
+					PLAYER_ICON_RADIUS);
 		}
 		
 		private void drawToBitmap()
@@ -270,13 +265,30 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 			switch (event.getAction() & MotionEvent.ACTION_MASK) {
 			case MotionEvent.ACTION_DOWN:
-				boolean[] returnedFlags = new boolean[2];
-				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath);
+				int tempPlayerIndex = playerIndex;
+				boolean[] returnedFlags = new boolean[3];
+				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, playerPath, PLAYER_ICON_RADIUS);
 				moreThanElevenPlayers = returnedFlags[0];
 				addingPlayer = returnedFlags[1];
+				clickingButton = returnedFlags[2];
 				
+				System.out.println(playerIndex);
 				if (playerIndex != -1)
 				{
+					System.out.println(clickingButton);
+					if (clickingButton)
+					{
+						float buttonLowerValue = 730 - PLAYER_ICON_RADIUS;
+						float buttonUpperValue = 730 + PLAYER_ICON_RADIUS;
+						if (x >= 650 && x <= 775 && y >= buttonLowerValue && y <= buttonUpperValue)
+						{
+							EditorActivity.toggleSolidButton();
+						}
+						else if (x >= 800 && x <= 925 && y >= buttonLowerValue && y <= buttonUpperValue)
+						{
+							EditorActivity.toggleArrowButton();
+						}
+					}
 					Player selectedPlayer = field.getPlayer(playerIndex);
 					boolean arrowRouteForPlayer;
 					if (selectedPlayer.getRoute() == Route.ARROW)
@@ -298,15 +310,15 @@ public class EditorActivity extends Activity implements OnClickListener  {
 					{
 						solidPathForPlayer = false;
 					}
-					if (selectedPlayer.getRouteLocations().size() != 0)
+					if (selectedPlayer.getRouteLocations().size() != 0 && !clickingButton)
 					{
 						if (!arrowRouteForPlayer && arrowRoute || arrowRouteForPlayer && !arrowRoute)
 						{
-							arrowRoute = EditorActivity.toggleArrowButton(arrowRoute);
+							EditorActivity.toggleArrowButton();
 						}
 						if (!solidPathForPlayer && solidPath || solidPathForPlayer && !solidPath)
 						{
-							solidPath = EditorActivity.toggleSolidButton(solidPath);
+							EditorActivity.toggleSolidButton();
 						}
 					}
 					else
@@ -330,14 +342,14 @@ public class EditorActivity extends Activity implements OnClickListener  {
 					}
 					lastPlayerX = selectedPlayer.getLocation().getX();
 					lastPlayerY = selectedPlayer.getLocation().getY();
-					if (selectionColor == TAN_COLOR || previousPlayerIndex != playerIndex)
+					if (selectionColor == Color.WHITE || previousPlayerIndex != playerIndex)
 					{
 						selectionColor = Color.RED;
 					}
 				}
 				else
 				{
-					selectionColor = TAN_COLOR;
+					selectionColor = Color.WHITE;
 				}
 				invalidate(); // redraw
 				break;
@@ -364,7 +376,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				{
 					selectionColor = Color.RED;	
 				}
-				else if (!movePlayer && previousPlayerIndex == playerIndex)
+				else if (!movePlayer && previousPlayerIndex == playerIndex && !clickingButton)
 				{
 					if (selectionColor == Color.RED)
 					{
@@ -379,6 +391,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				drawingRoute = false;
 				movePlayer = false;
 				addingPlayer = false;
+				clickingButton = false;
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:
@@ -386,81 +399,84 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			case MotionEvent.ACTION_POINTER_UP:
 				break;
 			case MotionEvent.ACTION_MOVE:
-				// update the player location when dragging
-				if (!movePlayer)
+				if(!clickingButton)
 				{
-					float dist = -1;
-					if (selectionColor == Color.RED)
+					// update the player location when dragging
+					if (!movePlayer)
 					{
-						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
-						if (dist > TOUCH_SENSITIVITY)
+						float dist = -1;
+						if (selectionColor == Color.RED)
 						{
-							field.getPlayer(playerIndex).clearRouteLocations();
-							movePlayer = true;
-							DrawingUtils.actionMove(field, playerIndex, x, y);
+							dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
+							if (dist > TOUCH_SENSITIVITY)
+							{
+								field.getPlayer(playerIndex).clearRouteLocations();
+								movePlayer = true;
+								DrawingUtils.actionMove(field, playerIndex, x, y);
+							}
 						}
-					}
-					else if (selectionColor == Color.BLUE)
-					{
-						if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
-						{
-							x = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
-						}
-						else if (x > RIGHT_MARGIN - FIELD_LINE_WIDTHS/2)
-						{
-							x = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
-						}
-						if (y < TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2)
-						{
-							y = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
-						}
-						else if (y > BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2)
-						{
-							y = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
-						}
-						dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
-						if (dist > TOUCH_SENSITIVITY)
+						else if (selectionColor == Color.BLUE)
 						{
 							if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
 							{
-								lastPlayerX = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
+								x = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
 							}
 							else if (x > RIGHT_MARGIN - FIELD_LINE_WIDTHS/2)
 							{
-								lastPlayerX = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
-							}
-							else
-							{
-								lastPlayerX = x;
+								x = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
 							}
 							if (y < TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2)
 							{
-								lastPlayerY = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
+								y = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
 							}
-							
 							else if (y > BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2)
 							{
-								lastPlayerY = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
+								y = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
 							}
-							else
+							dist = FloatMath.sqrt((x-lastPlayerX)*(x-lastPlayerX) + (y-lastPlayerY)*(y-lastPlayerY));
+							if (dist > TOUCH_SENSITIVITY)
 							{
-								lastPlayerY = y;
+								if (x < LEFT_MARGIN + FIELD_LINE_WIDTHS/2)
+								{
+									lastPlayerX = (int) (LEFT_MARGIN + FIELD_LINE_WIDTHS/2);
+								}
+								else if (x > RIGHT_MARGIN - FIELD_LINE_WIDTHS/2)
+								{
+									lastPlayerX = (int) (RIGHT_MARGIN - FIELD_LINE_WIDTHS/2);
+								}
+								else
+								{
+									lastPlayerX = x;
+								}
+								if (y < TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2)
+								{
+									lastPlayerY = (int) (TOP_MARGIN + TOP_ANDROID_BAR + FIELD_LINE_WIDTHS/2);
+								}
+
+								else if (y > BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2)
+								{
+									lastPlayerY = (int) (BOTTOM_MARGIN + TOP_ANDROID_BAR - FIELD_LINE_WIDTHS/2);
+								}
+								else
+								{
+									lastPlayerY = y;
+								}
+								if (!drawingRoute)
+								{
+									field.getPlayer(playerIndex).clearRouteLocations();
+								}
+								Location temp = new Location(lastPlayerX, lastPlayerY);
+								field.getPlayer(playerIndex).addRouteLocation(temp);
+								drawingRoute = true;
 							}
-							if (!drawingRoute)
-							{
-								field.getPlayer(playerIndex).clearRouteLocations();
-							}
-							Location temp = new Location(lastPlayerX, lastPlayerY);
-							field.getPlayer(playerIndex).addRouteLocation(temp);
-							drawingRoute = true;
 						}
 					}
-				}
-				else
-				{
-					if (selectionColor == Color.RED)
+					else
 					{
-						DrawingUtils.actionMove(field, playerIndex, x, y);
+						if (selectionColor == Color.RED)
+						{
+							DrawingUtils.actionMove(field, playerIndex, x, y);
+						}
 					}
 				}
 				invalidate(); // redraw
@@ -480,32 +496,27 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		return field;
 	}
 	
-	public static boolean toggleArrowButton(boolean arrowRoute)
+	public static void toggleArrowButton()
 	{
 		if(arrowRoute){
-			arrowButton.setBackgroundResource(R.drawable.perpendicular_line);
 			playerRoute = Route.BLOCK;
-			return false;
+			arrowRoute = false;
 		}
 		else {
-			arrowButton.setBackgroundResource(R.drawable.right_arrow);
 			playerRoute = Route.ARROW;
-			return true;
+			arrowRoute = true;
 		}
 	}
 	
-	public static boolean toggleSolidButton(boolean solidPath)
+	public static void toggleSolidButton()
 	{
-		System.out.println("hi");
 		if(solidPath){
-			dashButton.setBackgroundResource(R.drawable.dotted_line);
 			playerPath = Path.DOTTED;
-			return false;
+			solidPath = false;
 		}
 		else {
-			dashButton.setBackgroundResource(R.drawable.line);
 			playerPath = Path.SOLID;
-			return true;
+			solidPath = true;
 		}
 	}
 	public void onClick(View v) {
@@ -515,20 +526,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			drawView.drawToBitmap();
 			intent = new Intent(v.getContext(),SaveActivity.class);
 			startActivity(intent);
-		}else if(id == arrowButton.getId()){
-			arrowRoute = toggleArrowButton(arrowRoute);
-			if (playerIndex != -1)
-			{
-				field.getPlayer(playerIndex).changeRoute(playerRoute);
-				drawView.invalidate();
-			}
-		}else if(id == dashButton.getId()){
-			solidPath = toggleSolidButton(solidPath);
-			if (playerIndex != -1)
-			{
-				field.getPlayer(playerIndex).changePath(playerPath);
-				drawView.invalidate();
-			}
 		}else if(id == clearPlayerRoute.getId()){
 			if (playerIndex != -1)
 			{
