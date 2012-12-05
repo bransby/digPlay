@@ -15,7 +15,7 @@ public class GamePlan {
 	}
 	
 	public void addPlayToGamePlan(String newPlay){
-		if(gamesInGamePlan.indexOf(newPlay) == -1){
+		if(!gamesInGamePlan.contains(newPlay)){
 			gamesInGamePlan.add(newPlay);
 		}
 		else{
