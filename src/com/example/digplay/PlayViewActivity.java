@@ -88,11 +88,12 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		playSort = (Spinner)findViewById(R.id.playview_sort_by);
 		gamePlans = (Spinner)findViewById(R.id.playview_gameplan);
 		ArrayList<String> playTypes = Constants.getPlayTypes();
-		ArrayList<String> listOfGamePlans = new GamePlan().getGamePlan();
+		ArrayList<String> listOfGamePlans = new ArrayList<String>();
+		listOfGamePlans.add("All Gameplans");
+		listOfGamePlans.addAll(DigPlayDB.getInstance(getBaseContext()).getAllGamePlans());
 		
 		ArrayAdapter<String> playTypeAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,playTypes);
 		ArrayAdapter<String> gamePlanAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,listOfGamePlans);
-		
 		playSort.setAdapter(playTypeAdapter);
 		gamePlans.setAdapter(gamePlanAdapter);
 
@@ -156,8 +157,9 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		String playbook = (String)gamePlans.getSelectedItem();
 		
 		// filter by selection
+		ArrayList<String> listOfGamePlans = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(playbook);
 		adapter = s.sortPlaysByRunPass(adapter, playType);
-		adapter = s.sortPlaysByPlaybook(adapter, playbook);
+		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfGamePlans);
 		playList.setAdapter(adapter);
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}
