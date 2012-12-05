@@ -404,4 +404,19 @@ public final class DigPlayDB extends Application{
 			gamePlanDB.commit();
 		}
 	}
+	
+	public void addPlayToGameplan(String gameplan, String playName){
+		GamePlan found = null;
+
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gameplan);
+
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+
+		if(result.hasNext()){
+			found = (GamePlan)result.next();
+			found.addPlayToGamePlan(playName);
+			gamePlanDB.commit();
+		}
+	}
 }
