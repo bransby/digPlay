@@ -93,6 +93,24 @@ public final class DigPlayDB extends Application{
 		}
 		return temp;
 	}
+	
+	public void storeFormation(Formation form){
+		if(form != null){
+			formationDB.store(form);
+			formationDB.commit();
+		}
+		else{}
+	}
+	
+	public ArrayList<String> getFormationNames(){
+		ArrayList<String> temp = new ArrayList<String>();
+		
+		ObjectSet result = formationDB.queryByExample(new Formation());
+		while(result.hasNext()){
+			temp.add(((Formation)result.next()).getName());
+		}
+		return temp;
+	}
 
 	/////////////////////////////////////////////////////////////////////
 	//image database stuffz
