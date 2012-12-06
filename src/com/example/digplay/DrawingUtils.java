@@ -500,7 +500,7 @@ public class DrawingUtils {
 		float buttonLength = 5*PLAYER_ICON_RADIUS;
 		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS;
 		// gray for buttons
-		paint.setColor(0xC0C0C0FF);
+		paint.setColor(0xE7E7E7FF);
 		canvas.drawRect(BUTTON_X_VALUE, value + PLAYER_ICON_RADIUS, BUTTON_X_VALUE + buttonLength, value - PLAYER_ICON_RADIUS, paint);
 		canvas.drawRect(secondButtonStartPos, value + PLAYER_ICON_RADIUS, secondButtonStartPos + buttonLength, value - PLAYER_ICON_RADIUS, paint);
 		paint.setColor(Color.BLACK);
