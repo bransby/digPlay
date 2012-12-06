@@ -14,6 +14,7 @@ import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -43,13 +44,31 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private LayoutParams params;
 	boolean click = true;
 	
+	private TextView enterName;
+	private TextView enterFormation;
+	private TextView enterType;
+	
+	private Spinner selectFormation;
+	
+	private ArrayList<String> formations;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.save);
 	    setControls();
-	    
+	    setText();
+	}
+
+	private void setText() {
+		enterName = (TextView)findViewById(R.id.save_enter_name);
+		enterFormation = (TextView)findViewById(R.id.save_enter_formation);
+		enterType = (TextView)findViewById(R.id.save_enter_type);
+		
+		enterName.setTextColor(Color.WHITE);
+		enterFormation.setTextColor(Color.WHITE);
+		enterType.setTextColor(Color.WHITE);
 	}
 
 	private void setControls() {
@@ -57,9 +76,18 @@ public class SaveActivity extends Activity implements OnClickListener {
 		playName = (EditText) findViewById(R.id.save_name);
 		submit = (Button) findViewById(R.id.save_submit);
 		playType = (Spinner) findViewById(R.id.save_play_type);
+		selectFormation = (Spinner)findViewById(R.id.save_select_formation);
 		
 		submit.setOnClickListener(this);
 		populateSpinner();
+		populateFormationSpinner();
+	}
+
+	private void populateFormationSpinner() {
+		//TODO: formations = Database formations - Ryan - delete next line when done
+		formations = Constants.getFormations();
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
+		selectFormation.setAdapter(adapter);
 	}
 
 	private void populateSpinner() {

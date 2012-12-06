@@ -2,33 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/cu_stadium"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/save_enter_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dip"
-        android:text="Enter play formation"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <EditText
-        android:id="@+id/save_formation"
-        android:layout_width="600dip"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="40dip"
-        android:ems="10" >
-
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:layout_marginTop="50dip"
         android:text="Enter play name"
         android:textAppearance="?android:attr/textAppearanceLarge" />
@@ -37,12 +17,34 @@
         android:id="@+id/save_name"
         android:layout_width="600dip"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dip"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/save_formation"
+        android:layout_width="600dip"
+        android:layout_height="wrap_content"
         android:layout_marginTop="40dip"
         android:ems="10" />
 
+    <Spinner
+        android:id="@+id/save_select_formation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/save_enter_formation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dip"
+        android:text="Enter play formation"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/save_enter_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

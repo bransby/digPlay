@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/brown_backgroud" >
+    android:background="@drawable/cu_stadium" >
 	
     <TextView
         android:id="@+id/browsing_play_name"
