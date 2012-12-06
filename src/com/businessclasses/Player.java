@@ -63,9 +63,6 @@ public class Player implements Serializable{
 	public void clearRoute() {
 		this.clearRouteLocations();
 	}
-	public void deletePlayer() {
-		this.deletePlayer();
-	}
 	public void flipLocation(int width){
 		Location l = this._spotOnField;
 		int newX = (int) (width - l._x);

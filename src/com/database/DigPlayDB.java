@@ -93,6 +93,24 @@ public final class DigPlayDB extends Application{
 		}
 		return temp;
 	}
+	
+	public void storeFormation(Formation form){
+		if(form != null){
+			formationDB.store(form);
+			formationDB.commit();
+		}
+		else{}
+	}
+	
+	public ArrayList<String> getFormationNames(){
+		ArrayList<String> temp = new ArrayList<String>();
+		
+		ObjectSet result = formationDB.queryByExample(new Formation());
+		while(result.hasNext()){
+			temp.add(((Formation)result.next()).getName());
+		}
+		return temp;
+	}
 
 	/////////////////////////////////////////////////////////////////////
 	//image database stuffz
@@ -401,6 +419,21 @@ public final class DigPlayDB extends Application{
 		if(result.hasNext()){
 			found = result.next();
 			found.removePlayFromGamePlan(playName);
+			gamePlanDB.commit();
+		}
+	}
+	
+	public void addPlayToGameplan(String gameplan, String playName){
+		GamePlan found = null;
+
+		GamePlan obj = new GamePlan();
+		obj.setGamePlanName(gameplan);
+
+		ObjectSet<GamePlan> result = gamePlanDB.queryByExample(obj);
+
+		if(result.hasNext()){
+			found = (GamePlan)result.next();
+			found.addPlayToGamePlan(playName);
 			gamePlanDB.commit();
 		}
 	}

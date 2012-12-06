@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -121,9 +122,11 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 				int index = gameplansSpinner.getSelectedItemPosition();
 				GamePlan gameplan = new GamePlan();
 				if(index >= 0){
-					gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
-					gameplan.addPlaysToGameplan(gameplanPlays);
-					DigPlayDB.getInstance(getBaseContext()).storeGamePlan(gameplan);
+					//gameplan.setGamePlanName(gameplansSpinner.getAdapter().getItem(index).toString());
+					//gameplan.addPlayToGamePlan(playSelected);
+					//gameplan.addPlaysToGameplan(gameplanPlays);
+					DigPlayDB.getInstance(getBaseContext()).addPlayToGameplan(gameplansSpinner.getAdapter().getItem(index).toString(), playSelected);
+					Log.i("plays in gameplan", DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(gameplansSpinner.getAdapter().getItem(index).toString()).toString());
 				}
 			}
 			else{
