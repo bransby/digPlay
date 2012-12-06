@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
+import com.businessclasses.GamePlan;
 import com.businessclasses.Image;
 import com.database.DigPlayDB;
 
@@ -52,6 +53,8 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private Spinner selectFormation;
 	
 	private ArrayList<String> formations;
+	
+	private String newFormationName;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -102,7 +105,6 @@ public class SaveActivity extends Activity implements OnClickListener {
 
 	public void onClick(final View v) {
 		name = playName.getText().toString();
-		formation = playFormation.getText().toString();
 					
 		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false){
 			newImage = new Image();
@@ -132,6 +134,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 		else{
 			new AlertDialog.Builder(this).setTitle("Play name already used in playbook!").setMessage("Would you like to overwrite the play?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
+					formation = getFormation();
 					newImage = new Image();
 					newImage.setPlayName(name);
 					newImage.setImage(EditorActivity.getBitmap());
@@ -158,7 +161,28 @@ public class SaveActivity extends Activity implements OnClickListener {
 				}
 			}).show();	
 		}
-
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
+	}
+
+	private String getFormation() {
+		if(selectFormation.getSelectedItemPosition() != 0){
+			//case when formation is in the list
+			return (String)selectFormation.getSelectedItem();
+		}
+		return popupForFormation();
+	}
+	private String popupForFormation(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Add Formation");
+		alert.setMessage("Type in name of formation to add");
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {		
+				newFormationName = input.getText().toString();
+			}
+		});
+		alert.show();
+		return newFormationName;
 	}
 }

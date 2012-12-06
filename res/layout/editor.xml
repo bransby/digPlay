@@ -43,13 +43,12 @@
 
     <Button
         android:id="@+id/edi_flip_button"
-        android:layout_width="125dip"
+        android:layout_width="150dip"
         android:layout_height="50dip"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_marginTop="650dip"
         android:layout_marginLeft="950dp"
-        android:background="@drawable/flip"
         android:text="Flip play" />
 
 </RelativeLayout>
