@@ -45,6 +45,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private TextView enterName;
 	private TextView enterFormation;
 	private TextView enterType;
+	private TextView title;
 	
 	private Spinner selectFormation;
 	
@@ -63,14 +64,15 @@ public class SaveActivity extends Activity implements OnClickListener {
 		enterName = (TextView)findViewById(R.id.save_enter_name);
 		enterFormation = (TextView)findViewById(R.id.save_enter_formation);
 		enterType = (TextView)findViewById(R.id.save_enter_type);
+		title = (TextView)findViewById(R.id.save_title);
 		
 		enterName.setTextColor(Color.WHITE);
 		enterFormation.setTextColor(Color.WHITE);
 		enterType.setTextColor(Color.WHITE);
+		title.setTextColor(Color.WHITE);
 	}
 
 	private void setControls() {
-		playFormation = (EditText) findViewById(R.id.save_formation);
 		playName = (EditText) findViewById(R.id.save_name);
 		submit = (Button) findViewById(R.id.save_submit);
 		playType = (Spinner) findViewById(R.id.save_play_type);
@@ -84,6 +86,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private void populateFormationSpinner() {
 		//TODO: formations = Database formations - Ryan - delete next line when done
 		formations = Constants.getFormations();
+		formations.add(0,"Formation not here");
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
 		selectFormation.setAdapter(adapter);
 	}
