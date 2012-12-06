@@ -34,6 +34,8 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private String formation;
 	private String name;
 	private String type;
+	private Field newField;
+	private Image newImage;
 	
 	private PopupWindow popUp;
 	private TextView text;
@@ -99,41 +101,62 @@ public class SaveActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(final View v) {
-		
 		name = playName.getText().toString();
 		formation = playFormation.getText().toString();
-		Field newField = EditorActivity.getField();
-		newField.setPlayName(name);
-		newField.setPlayType(playType.getSelectedItem().toString());
-		newField.setPlayFormation(formation);
+					
+		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false){
+			newImage = new Image();
+			newImage.setPlayName(name);
+			newImage.setImage(EditorActivity.getBitmap());
 			
-		Image newImage = new Image();
-		newImage.setPlayName(name);
-		newImage.setImage(EditorActivity.getBitmap());
-		
-		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false && DigPlayDB.getInstance(getBaseContext()).storePlay(newField) == true){
+			
+			newField = EditorActivity.getField();
+			newField.setPlayName(name);
+			newField.setPlayType(playType.getSelectedItem().toString());
+			newField.setPlayFormation(formation);
+			
+			DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
 			DigPlayDB.getInstance(getBaseContext()).addImage(newImage);
-			newField = null;
-			newImage = null;
-			
+					
 			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
+					newField = null;
+					newImage = null;
+			
 					System.gc();
 					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
 					startActivity(intent);	
 				}
 			}).show(); 
-		
-			//newField = null;
-			//newImage = null;
-			//System.gc();
-			
-			//Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
-			//startActivity(intent);
 		}
 		else{
-			new AlertDialog.Builder(this).setMessage("Play name already used in playbook!").setNegativeButton("Cancel", null).setPositiveButton("OK", null).show(); 
-			playName.setText("");
+			new AlertDialog.Builder(this).setTitle("Play name already used in playbook!").setMessage("Would you like to overwrite the play?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					newImage = new Image();
+					newImage.setPlayName(name);
+					newImage.setImage(EditorActivity.getBitmap());
+					
+					newField = EditorActivity.getField();
+					newField.setPlayName(name);
+					newField.setPlayType(playType.getSelectedItem().toString());
+					newField.setPlayFormation(formation);
+					
+					DigPlayDB.getInstance(getBaseContext()).overwritePlay(newField);
+					DigPlayDB.getInstance(getBaseContext()).overwriteImage(name, newImage);
+					
+					newField = null;
+					newImage = null; 
+					
+					System.gc();
+					
+					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+					startActivity(intent);	
+				}
+			}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					playName.setText("");
+				}
+			}).show();	
 		}
 
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
