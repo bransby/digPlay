@@ -6,15 +6,12 @@ import com.businessclasses.Path;
 import com.businessclasses.Player;
 import com.businessclasses.Position;
 import com.businessclasses.Route;
-import com.example.digplay.EditorActivity.DrawView;
 
-import android.graphics.Camera;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
-import android.util.FloatMath;
 
 public class DrawingUtils {
 	
@@ -346,21 +343,22 @@ public class DrawingUtils {
 					int tempX = tempPlayer.getLocation().getX() - (int)(LEFT_MARGIN);
 					int tempY = tempPlayer.getLocation().getY() - (int)(TOP_MARGIN);
 					// this is the grid
-					if(tempX % 25 >= 13)
+					float halfPlayerIconRadius = PLAYER_ICON_RADIUS/2;
+					if(tempX % (int)(PLAYER_ICON_RADIUS) >= halfPlayerIconRadius)
 					{
-						tempX = tempX + (25 - tempX % 25);
+						tempX = tempX + ((int)(PLAYER_ICON_RADIUS) - tempX % (int)(PLAYER_ICON_RADIUS));
 					}
 					else
 					{
-						tempX = tempX - (tempX % 25);
+						tempX = tempX - (tempX % (int)(PLAYER_ICON_RADIUS));
 					}
-					if(tempY % 25 >= 13)
+					if(tempY % (int)(PLAYER_ICON_RADIUS) >= halfPlayerIconRadius)
 					{
-						tempY = tempY + (25 - tempY % 25);
+						tempY = tempY + ((int)(PLAYER_ICON_RADIUS) - tempY % (int)(PLAYER_ICON_RADIUS));
 					}
 					else
 					{
-						tempY = tempY - (tempY % 25);
+						tempY = tempY - (tempY % (int)(PLAYER_ICON_RADIUS));
 					}
 					
 					int tempXLocation = tempX + (int)(LEFT_MARGIN);
@@ -498,15 +496,21 @@ public class DrawingUtils {
 			float BUTTON_Y_VALUE, float BUTTON_X_VALUE)
 	{
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
+		float value = BUTTON_Y_VALUE-TOP_ANDROID_BAR;
+		float buttonLength = 5*PLAYER_ICON_RADIUS;
+		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS;
+		// gray for buttons
+		paint.setColor(0xC0C0C0FF);
+		canvas.drawRect(BUTTON_X_VALUE, value + PLAYER_ICON_RADIUS, BUTTON_X_VALUE + buttonLength, value - PLAYER_ICON_RADIUS, paint);
+		canvas.drawRect(secondButtonStartPos, value + PLAYER_ICON_RADIUS, secondButtonStartPos + buttonLength, value - PLAYER_ICON_RADIUS, paint);
 		paint.setColor(Color.BLACK);
 		if (path == Path.DOTTED)
 		{
 			paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
 		}
-		float value = BUTTON_Y_VALUE-TOP_ANDROID_BAR;
-		canvas.drawLine(BUTTON_X_VALUE, value, BUTTON_X_VALUE+5*PLAYER_ICON_RADIUS, value, paint);
+		canvas.drawLine(BUTTON_X_VALUE, value, BUTTON_X_VALUE + buttonLength, value, paint);
 		paint.setPathEffect(null);
-		canvas.drawLine(BUTTON_X_VALUE+6*PLAYER_ICON_RADIUS, value, BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS, value, paint);
-		drawEndOfRoute(canvas, paint, (int)(BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS), (int)value, PIXELS_PER_YARD, 180, route);
+		canvas.drawLine(secondButtonStartPos, value, secondButtonStartPos + buttonLength, value, paint);
+		drawEndOfRoute(canvas, paint, (int)(secondButtonStartPos + buttonLength), (int)value, PIXELS_PER_YARD, 180, route);
 	}
 }
