@@ -134,6 +134,31 @@ public final class DigPlayDB extends Application{
 		return null;
 	}
 	
+	public boolean overwriteImage(String playName, Image image){
+		if(image != null){
+			Image found = null;
+			
+			Image newImage = new Image();
+			newImage.setPlayName(image.getPlayName());
+			
+			ObjectSet result = imageDB.queryByExample(newImage);
+			
+			if(result.hasNext()){
+				found = (Image) result.next();
+				Log.i("old play image", "" + found.getImage().toString());
+				imageDB.delete(found);
+				imageDB.store(image);
+				Log.i("new play image", "" + found.getImage().toString());
+				imageDB.commit();
+				return true;
+			}
+			else{
+				Log.i("image check isnt finding", "fuck");
+			}
+		}
+		return false;
+	}
+	
 
 	/////////////////////////////////////////////////////////////////////
 	//Plays database stuffz
@@ -182,6 +207,25 @@ public final class DigPlayDB extends Application{
 			return false;
 		}
 	}	
+	
+	public boolean overwritePlay(Field field){
+		if(field != null){
+			Field found = null;
+			Field newField = new Field();
+			newField.setPlayName(field.getPlayName());
+			
+			ObjectSet result = playsDB.queryByExample(newField);
+			
+			if(result.hasNext()){
+				found = (Field) result.next();
+				playsDB.delete(found);
+				playsDB.store(field);
+				playsDB.commit();
+				return true;
+			}
+		}
+		return false;
+	}
 
 	//deletes a play given the play name
 	public boolean deletePlay(String playName){
