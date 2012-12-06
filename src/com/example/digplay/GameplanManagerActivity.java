@@ -171,7 +171,7 @@ public class GameplanManagerActivity extends Activity implements OnItemClickList
 				deletePressed = true;
 			}else{
 				delete.setBackgroundColor(Color.LTGRAY);
-				delete.setText("Select gameplan play to delete");
+				delete.setText("Click to enable deleting");
 				deletePressed = false;
 			}
 		}else if(v.getId() == createNewGameplan.getId()){
