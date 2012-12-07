@@ -11,35 +11,35 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="45dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="52dp"
         android:text="PLAY NAME"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="30dp" />
+        android:textSize="40dp" />
 
     <Button
         android:id="@+id/browsing_edit_play"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/browsing_play_name"
         android:layout_marginBottom="63dp"
         android:text="EDIT PLAY"
-        android:textSize="15dp" />
+        android:textSize="20dp" />
 
     <Button
         android:id="@+id/browsing_email_play"
-        android:layout_width="100dp"
-        android:layout_height="60dp"
+        android:layout_width="150dp"
+        android:layout_height="75dp"
         android:layout_above="@+id/browsing_edit_play"
         android:layout_alignLeft="@+id/browsing_edit_play"
         android:layout_marginBottom="27dp"
         android:text="Email Play"
-        android:textSize="15dp" />
+        android:textSize="20dp" />
 
     <ViewFlipper
         android:id="@+id/viewFlipper1"
-        android:layout_width="700dp"
-        android:layout_height="450dp"
+        android:layout_width="900dp"
+        android:layout_height="600dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="56dp" >

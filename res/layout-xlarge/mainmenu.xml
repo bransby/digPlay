@@ -6,29 +6,29 @@
 
     <Button
         android:id="@+id/maindrawplay"
-        android:layout_width="500dp"
-        android:layout_height="75dp"
+        android:layout_width="600dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="150dp"
         android:text="DRAW NEW PLAY"
-        android:textSize="30dp" />
+        android:textSize="50dp" />
 
     <Button
         android:id="@+id/maincreategameplan"
-        android:layout_width="500dp"
-        android:layout_height="75dp"
+        android:layout_width="600dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="300dp"
         android:text="GAMEPLAN MANAGER"
-        android:textSize="30dp" />
+        android:textSize="50dp" />
 
     <Button
         android:id="@+id/mainlookatplaybook"
-        android:layout_width="500dp"
-        android:layout_height="75dp"
+        android:layout_width="600dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="325dp"
+        android:layout_marginTop="450dp"
         android:text="LOOK AT PLAYBOOK"
-        android:textSize="30dp" />
+        android:textSize="50dp" />
 
 </RelativeLayout>
