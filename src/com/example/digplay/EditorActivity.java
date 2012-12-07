@@ -111,7 +111,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		flipButton.setOnClickListener(this);
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
-		save.setBackgroundResource(R.drawable.floppy_disk);
+		save.setBackgroundResource(R.drawable.floppy_disk_trans);
 		
 		Bundle extras = getIntent().getExtras();
 		if(extras == null)field = new Field();

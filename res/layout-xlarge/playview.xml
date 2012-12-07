@@ -21,11 +21,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_centerInParent="false"
-        android:layout_marginTop="20dip"
         android:gravity="center"
         android:text="CLICK PLAY TO SEE IN BROWSER"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35dp" />
+        android:textSize="40dp" />
 
     <Spinner
         android:id="@+id/playview_sort_by"

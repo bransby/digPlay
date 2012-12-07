@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.businessclasses.Constants;
 import com.businessclasses.Field;
+import com.businessclasses.GamePlan;
 import com.businessclasses.Image;
 import com.database.DigPlayDB;
 
@@ -34,6 +35,8 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private String formation;
 	private String name;
 	private String type;
+	private Field newField;
+	private Image newImage;
 	
 	private PopupWindow popUp;
 	private TextView text;
@@ -45,10 +48,13 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private TextView enterName;
 	private TextView enterFormation;
 	private TextView enterType;
+	private TextView title;
 	
 	private Spinner selectFormation;
 	
 	private ArrayList<String> formations;
+	
+	private String newFormationName;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -63,14 +69,15 @@ public class SaveActivity extends Activity implements OnClickListener {
 		enterName = (TextView)findViewById(R.id.save_enter_name);
 		enterFormation = (TextView)findViewById(R.id.save_enter_formation);
 		enterType = (TextView)findViewById(R.id.save_enter_type);
+		title = (TextView)findViewById(R.id.save_title);
 		
 		enterName.setTextColor(Color.WHITE);
 		enterFormation.setTextColor(Color.WHITE);
 		enterType.setTextColor(Color.WHITE);
+		title.setTextColor(Color.WHITE);
 	}
 
 	private void setControls() {
-		playFormation = (EditText) findViewById(R.id.save_formation);
 		playName = (EditText) findViewById(R.id.save_name);
 		submit = (Button) findViewById(R.id.save_submit);
 		playType = (Spinner) findViewById(R.id.save_play_type);
@@ -84,6 +91,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private void populateFormationSpinner() {
 		//TODO: formations = Database formations - Ryan - delete next line when done
 		formations = Constants.getFormations();
+		formations.add(0,"Formation not here");
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
 		selectFormation.setAdapter(adapter);
 	}
@@ -96,43 +104,85 @@ public class SaveActivity extends Activity implements OnClickListener {
 	}
 
 	public void onClick(final View v) {
-		
 		name = playName.getText().toString();
-		formation = playFormation.getText().toString();
-		Field newField = EditorActivity.getField();
-		newField.setPlayName(name);
-		newField.setPlayType(playType.getSelectedItem().toString());
-		newField.setPlayFormation(formation);
+					
+		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false){
+			newImage = new Image();
+			newImage.setPlayName(name);
+			newImage.setImage(EditorActivity.getBitmap());
 			
-		Image newImage = new Image();
-		newImage.setPlayName(name);
-		newImage.setImage(EditorActivity.getBitmap());
-		
-		if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false && DigPlayDB.getInstance(getBaseContext()).storePlay(newField) == true){
+			
+			newField = EditorActivity.getField();
+			newField.setPlayName(name);
+			newField.setPlayType(playType.getSelectedItem().toString());
+			newField.setPlayFormation(formation);
+			
+			DigPlayDB.getInstance(getBaseContext()).storePlay(newField);
 			DigPlayDB.getInstance(getBaseContext()).addImage(newImage);
-			newField = null;
-			newImage = null;
-			
+					
 			new AlertDialog.Builder(this).setMessage("Play added").setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
+					newField = null;
+					newImage = null;
+			
 					System.gc();
 					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
 					startActivity(intent);	
 				}
 			}).show(); 
-		
-			//newField = null;
-			//newImage = null;
-			//System.gc();
-			
-			//Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
-			//startActivity(intent);
 		}
 		else{
-			new AlertDialog.Builder(this).setMessage("Play name already used in playbook!").setNegativeButton("Cancel", null).setPositiveButton("OK", null).show(); 
-			playName.setText("");
+			new AlertDialog.Builder(this).setTitle("Play name already used in playbook!").setMessage("Would you like to overwrite the play?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					formation = getFormation();
+					newImage = new Image();
+					newImage.setPlayName(name);
+					newImage.setImage(EditorActivity.getBitmap());
+					
+					newField = EditorActivity.getField();
+					newField.setPlayName(name);
+					newField.setPlayType(playType.getSelectedItem().toString());
+					newField.setPlayFormation(formation);
+					
+					DigPlayDB.getInstance(getBaseContext()).overwritePlay(newField);
+					DigPlayDB.getInstance(getBaseContext()).overwriteImage(name, newImage);
+					
+					newField = null;
+					newImage = null; 
+					
+					System.gc();
+					
+					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+					startActivity(intent);	
+				}
+			}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					playName.setText("");
+				}
+			}).show();	
 		}
-
 		//DigPlayDB.getInstance(getBaseContext()).emptyDB();
+	}
+
+	private String getFormation() {
+		if(selectFormation.getSelectedItemPosition() != 0){
+			//case when formation is in the list
+			return (String)selectFormation.getSelectedItem();
+		}
+		return popupForFormation();
+	}
+	private String popupForFormation(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Add Formation");
+		alert.setMessage("Type in name of formation to add");
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {		
+				newFormationName = input.getText().toString();
+			}
+		});
+		alert.show();
+		return newFormationName;
 	}
 }

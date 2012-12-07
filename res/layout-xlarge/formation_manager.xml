@@ -13,12 +13,12 @@
         android:layout_marginTop="30dip"
         android:text="Select formation to place on field"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35dip" />
+        android:textSize="46dip" />
 
     <ListView
         android:id="@+id/formations_list"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
+        android:layout_height="528dp"
         android:layout_marginLeft="150dip"
         android:layout_marginRight="150dip"
         android:layout_marginTop="20dip" >
