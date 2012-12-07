@@ -501,8 +501,11 @@ public class DrawingUtils {
 		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS;
 		// gray for buttons
 		paint.setColor(0xE7E7E7FF);
-		canvas.drawRect(BUTTON_X_VALUE, value + PLAYER_ICON_RADIUS, BUTTON_X_VALUE + buttonLength, value - PLAYER_ICON_RADIUS, paint);
-		canvas.drawRect(secondButtonStartPos, value + PLAYER_ICON_RADIUS, secondButtonStartPos + buttonLength, value - PLAYER_ICON_RADIUS, paint);
+		float doubleLineWidths = FIELD_LINE_WIDTHS * 2;
+		canvas.drawRect(BUTTON_X_VALUE-doubleLineWidths, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
+				BUTTON_X_VALUE + buttonLength + doubleLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
+		canvas.drawRect(secondButtonStartPos - doubleLineWidths, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
+				secondButtonStartPos + buttonLength + doubleLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
 		paint.setColor(Color.BLACK);
 		if (path == Path.DOTTED)
 		{
