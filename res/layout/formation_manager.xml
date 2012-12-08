@@ -13,14 +13,15 @@
         android:layout_marginTop="30dip"
         android:text="Select formation to place on field"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35dip" />
+        android:textSize="20dip" />
 
     <ListView
         android:id="@+id/formations_list"
         android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        android:layout_marginLeft="150dip"
-        android:layout_marginRight="150dip"
+        android:layout_height="160dip"
+        android:layout_marginBottom="50dip"
+        android:layout_marginLeft="50dip"
+        android:layout_marginRight="50dip"
         android:layout_marginTop="20dip" >
 
     </ListView>
@@ -29,8 +30,8 @@
         android:id="@+id/fm_add_formation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="150dip"
-        android:layout_marginTop="30dip"
+        android:layout_marginBottom="15dip"
+        android:layout_marginLeft="50dip"
         android:text="I don&apos;t see my formation here!" />
 
 </LinearLayout>
