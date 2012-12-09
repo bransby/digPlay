@@ -1,6 +1,7 @@
 package com.example.digplay;
 
 import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,15 +23,14 @@ public class EmailPlaybook {
 	    context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 	
-	public static void EmailWithSingleAttachment(Context context, String emailTo, String subject, String emailText, List<String> filePath)
+	public static void EmailWithSingleAttachment(Context context, String emailTo, String subject, String emailText, URI filePath)
 	{
 	final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND_MULTIPLE);
 	emailIntent.setType("text/xml");
 	emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{emailTo});
 	emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, new String[]{subject});
 	emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, new String[]{emailText});
-	ArrayList<Uri> uris = parseFilePaths(filePath);
-	emailIntent.putExtra(Intent.EXTRA_STREAM, uris);
+	emailIntent.putExtra(Intent.EXTRA_STREAM, filePath);
 	context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
 	}
 	

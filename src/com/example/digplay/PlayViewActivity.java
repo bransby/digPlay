@@ -52,9 +52,9 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 	}
 	
 	private void email() throws IOException {
-		String emailText = "This email includes the following Play Types: " + (String)playSort.getSelectedItem() + 
-				"\nFrom the gameplan: " + (String)gamePlans.getSelectedItem();
-		String subject = (String)playSort.getSelectedItem() + " from ";
+		String emailText = "This email includes the following Play Types: " + playSort.getSelectedItem().toString() + 
+				"\nFrom the gameplan: " + gamePlans.getSelectedItem().toString();
+		String subject = playSort.getSelectedItem().toString() + " from " + gamePlans.getSelectedItem().toString();
 				
 		// TODO: save image to file system, and add the file paht to atachment
 		ArrayList<String> attachments = DigPlayDB.getInstance(getBaseContext()).getAllPlayNames();
@@ -62,8 +62,8 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		for (int att = 0; att < attachments.size(); att++) 
 		{
 
-			attachmentPath.add(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
-			File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
+			attachmentPath.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
+			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
 			
 			FileOutputStream fos = new FileOutputStream(file);
 			fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
@@ -71,7 +71,7 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 
 		}
 
-		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
+		EmailPlaybook.EmailWithMultipleAttachments(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
 	}
 	
 	

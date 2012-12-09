@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Timer;
 
@@ -17,7 +18,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -108,17 +111,20 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
 				"\nFrom the gameplan: ";
 		String subject = (String)"playSort.getSelectedItem()" + " from ";
-				
-		// TODO: save image to file system, and add the file paht to atachment
-		ArrayList<String> attachment = new ArrayList<String>();
-
-		attachment.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
-		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
 		
-		FileOutputStream fos = new FileOutputStream(file);
+		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/", ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		
+		file.setWritable(true);
+		boolean canWrite = file.canWrite();
+		
+		
+		
+		FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/", ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg"));
 		fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
-		fos.close();
-		new AlertDialog.Builder(this).setMessage(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg").setNegativeButton("Cancel", null).show(); 
+		fos.close(); 
+		
+		file.setReadable(true);
+		URI attachment = file.toURI();
 		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachment);
 		
 		file.delete();
@@ -136,6 +142,7 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		//String thePlayer = getIntent().getExtras().getString("playName");
 		String thePlayer = "";
 		playName.setText(thePlayer);
+		playName.setTextColor(Color.WHITE);
 	}
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
