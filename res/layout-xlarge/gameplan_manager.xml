@@ -16,20 +16,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="40dip"
+            android:layout_marginTop="75dip"
             android:text="Playbook Plays"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="17dip" />
+            android:textSize="36dip" />
 
         <ListView
             android:id="@+id/gm_playbook"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="350dp"
+            android:layout_height="500dp"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_marginBottom="15dip"
-            android:layout_marginLeft="20dip"
-            android:layout_marginRight="20dip"
-            android:layout_marginTop="15dip"
+            android:layout_marginTop="25dip"
             android:dividerHeight="5dip" >
 
         </ListView>
@@ -47,50 +44,47 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="30dip"
             android:text="Gameplan Manager"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="20dip" />
+            android:textSize="46dip" />
 
         <Button
             android:id="@+id/gm_create_gp"
             android:layout_width="fill_parent"
-            android:layout_height="34dip"
+            android:layout_height="60dip"
             android:layout_gravity="center"
-            android:layout_marginLeft="30dip"
-            android:layout_marginRight="30dip"
-            android:layout_marginTop="55dip"
-            android:text="Create new gameplan"
-            android:textSize="10dip" />
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="100dip"
+            android:text="Create new gameplan" />
 
         <Spinner
             android:id="@+id/gm_spinner"
             android:layout_width="fill_parent"
-            android:layout_height="40dip"
-            android:layout_marginLeft="30dip"
-            android:layout_marginRight="30dip"
-            android:layout_marginTop="20dip" />
+            android:layout_height="60dip"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip" />
 
         <Button
             android:id="@+id/gm_delete"
             android:layout_width="fill_parent"
-            android:layout_height="30dip"
+            android:layout_height="60dip"
             android:layout_gravity="center"
-            android:layout_marginLeft="34dip"
-            android:layout_marginRight="34dip"
-            android:layout_marginTop="20dip"
-            android:text="Click to enable deleting"
-            android:textSize="10dip" />
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip"
+            android:text="Click to enable deleting" />
 
         <Button
             android:id="@+id/gm_delete_gameplan"
             android:layout_width="fill_parent"
-            android:layout_height="34dip"
-            android:layout_marginLeft="30dip"
-            android:layout_marginRight="30dip"
-            android:layout_marginTop="20dip"
-            android:text="Delete this gameplan"
-            android:textSize="10dip" />
+            android:layout_height="60dip"
+            android:layout_marginLeft="50dip"
+            android:layout_marginRight="50dip"
+            android:layout_marginTop="30dip"
+            android:text="Delete this gameplan" />
 
     </LinearLayout>
 
@@ -105,20 +99,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="40dip"
+            android:layout_marginTop="75dip"
             android:text="Gameplan Plays"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="17dip" />
+            android:textSize="36dip" />
 
         <ListView
             android:id="@+id/gm_gameplan"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="350dp"
+            android:layout_height="500dp"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:layout_marginBottom="15dip"
-            android:layout_marginLeft="20dip"
-            android:layout_marginRight="20dip"
-            android:layout_marginTop="15dip"
+            android:layout_marginTop="25dip"
             android:dividerHeight="5dip" >
 
         </ListView>

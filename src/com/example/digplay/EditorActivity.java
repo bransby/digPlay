@@ -111,7 +111,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		flipButton.setOnClickListener(this);
 		
 		trashCan.setBackgroundResource(R.drawable.trashcan);
-		save.setBackgroundResource(R.drawable.floppy_disk);
+		save.setBackgroundResource(R.drawable.floppy_disk_trans);
 		
 		Bundle extras = getIntent().getExtras();
 		if(extras == null)field = new Field();
@@ -187,17 +187,16 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		public void build(Context context, AttributeSet attrs) throws IOException
 		{		
 			LEFT_MARGIN = 40/DENSITY;
-			RIGHT_MARGIN = SCREEN_WIDTH-LEFT_MARGIN;
+			RIGHT_MARGIN = SCREEN_WIDTH - LEFT_MARGIN;
 			TOP_MARGIN = 60/DENSITY;
-			PIXELS_PER_YARD = 13/DENSITY;
 			FIELD_LINE_WIDTHS = 4/DENSITY;
-			PLAYER_ICON_RADIUS = 25/DENSITY;
-			FIELD_HEIGHT = 575/DENSITY;
-			BOTTOM_MARGIN = TOP_MARGIN+FIELD_HEIGHT;
 			TOP_ANDROID_BAR = 50*DENSITY;
-			TOUCH_SENSITIVITY = 35/DENSITY;
-			BUTTON_Y_VALUE = (620/DENSITY)+TOP_MARGIN+TOP_ANDROID_BAR;
-			BUTTON_X_VALUE = (650/DENSITY);
+			FIELD_HEIGHT = SCREEN_HEIGHT - TOP_ANDROID_BAR - TOP_MARGIN*3;
+			PIXELS_PER_YARD = FIELD_HEIGHT/45;
+			BOTTOM_MARGIN = TOP_MARGIN+FIELD_HEIGHT;
+			PLAYER_ICON_RADIUS = (RIGHT_MARGIN - LEFT_MARGIN)/48; // 48 is a good number
+			TOUCH_SENSITIVITY = PLAYER_ICON_RADIUS*1.5f;
+			BUTTON_Y_VALUE = SCREEN_HEIGHT - TOP_MARGIN;
 			
 			drawField = true;
 			drawCreatedPlayers = true;
@@ -247,7 +246,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 	
 			if (drawCreatedPlayers)
 			{
-				DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, PLAYER_ICON_RADIUS, BUTTON_Y_VALUE);
+				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, 
+						PLAYER_ICON_RADIUS, BUTTON_Y_VALUE);
 				createdPlayersPicture.endRecording();
 				drawCreatedPlayers = false;
 			}

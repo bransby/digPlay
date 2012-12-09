@@ -53,41 +53,82 @@ public final class DigPlayDB extends Application{
 		Log.d("db",	"" + context.getFilesDir().getAbsolutePath());
 
 		//creates and/or loads the databases
-		EmbeddedConfiguration config =  Db4oEmbedded.newConfiguration();
-		config.common().objectClass(Field.class).objectField("_playName").indexed(true);
+		EmbeddedConfiguration playsConfig =  Db4oEmbedded.newConfiguration();
+		playsConfig.common().objectClass(Field.class).objectField("_playName").indexed(true);
 		//config.common().objectClass(Field.class).objectField("_image").indexed(true);
-		config.common().objectClass(Field.class).indexed(true);
-		config.common().objectClass(Field.class).cascadeOnUpdate(true);
-		config.common().objectClass(Field.class).cascadeOnDelete(true);
+		playsConfig.common().objectClass(Field.class).indexed(true);
+		playsConfig.common().objectClass(Field.class).cascadeOnUpdate(true);
+		playsConfig.common().objectClass(Field.class).cascadeOnDelete(true);
 		//config.common().objectClass(Field.class).objectField("_image").cascadeOnActivate(true);
-		config.common().objectClass(Field.class).objectField("_playName").cascadeOnActivate(true);
-		config.common().add(new TransparentActivationSupport());
+		playsConfig.common().objectClass(Field.class).objectField("_playName").cascadeOnActivate(true);
+		playsConfig.common().add(new TransparentActivationSupport());
 		
-		config.common().objectClass(Formation.class).indexed(true);
-		config.common().objectClass(Formation.class).cascadeOnUpdate(true);
-		config.common().objectClass(Formation.class).cascadeOnDelete(true);
+		EmbeddedConfiguration imageConfig =  Db4oEmbedded.newConfiguration();
+		imageConfig.common().objectClass(Image.class).objectField("_playName").indexed(true);
+		imageConfig.common().objectClass(Image.class).objectField("_image").indexed(true);
+		imageConfig.common().objectClass(Image.class).indexed(true);
+		imageConfig.common().objectClass(Image.class).cascadeOnUpdate(true);
+		imageConfig.common().objectClass(Image.class).cascadeOnDelete(true);
+		imageConfig.common().add(new TransparentActivationSupport());
 		
-		config.common().objectClass(Image.class).indexed(true);
-		config.common().objectClass(Image.class).cascadeOnUpdate(true);
-		config.common().objectClass(Image.class).cascadeOnDelete(true);
-		
-		config.common().objectClass(GamePlan.class).indexed(true);
-		config.common().objectClass(GamePlan.class).cascadeOnUpdate(true);
-		config.common().objectClass(GamePlan.class).cascadeOnDelete(true);
+		EmbeddedConfiguration formationConfig =  Db4oEmbedded.newConfiguration();
+		imageConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
+		imageConfig.common().objectClass(Formation.class).indexed(true);
+		imageConfig.common().objectClass(Formation.class).cascadeOnUpdate(true);
+		imageConfig.common().objectClass(Formation.class).cascadeOnDelete(true);
 		
 		
-		playsDB = Db4oEmbedded.openFile(config, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
-		imageDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/imageDB.db4o");
-		gamePlanDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/GamePlansDB.db4o");
-		formationDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/formationDB.db4o");
+		EmbeddedConfiguration gamePlanConfig =  Db4oEmbedded.newConfiguration();
+		gamePlanConfig.common().objectClass(GamePlan.class).objectField("gamePlanName").indexed(true);
+		gamePlanConfig.common().objectClass(GamePlan.class).indexed(true);
+		gamePlanConfig.common().objectClass(GamePlan.class).cascadeOnUpdate(true);
+		gamePlanConfig.common().objectClass(GamePlan.class).cascadeOnDelete(true);
+		
+		
+		playsDB = Db4oEmbedded.openFile(playsConfig, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
+		imageDB = Db4oEmbedded.openFile(imageConfig, context.getFilesDir().getAbsolutePath() + "/imageDB.db4o");
+		gamePlanDB = Db4oEmbedded.openFile(gamePlanConfig, context.getFilesDir().getAbsolutePath() + "/GamePlansDB.db4o");
+		formationDB = Db4oEmbedded.openFile(formationConfig, context.getFilesDir().getAbsolutePath() + "/formationDB.db4o");
 	}
 
+	
+	public void clearAllDatabases(){
+		emptyGamePlanDB();
+		emptyImageDB();
+		emptyPlaysDB();
+		emptyFormationDB();
+		
+	}
 	//gets the instance of this class if it is null, otherwise returns this instance.
 	public static synchronized DigPlayDB getInstance(Context context){
 		if(instance == null){
 			instance = new DigPlayDB(context);
 		}
 		return instance;
+	}
+	
+	public void emptyImageDB(){
+		ObjectSet result = imageDB.queryByExample(new Object());
+		while(result.hasNext()){
+			imageDB.delete(result.next());
+		}
+		imageDB.commit();
+	}
+	
+	public void emptyPlaysDB(){
+		ObjectSet result = playsDB.queryByExample(new Object());
+		while(result.hasNext()){
+			playsDB.delete(result.next());
+		}
+		playsDB.commit();
+	}
+	
+	public void emptyFormationDB(){
+		ObjectSet result = formationDB.queryByExample(new Object());
+		while(result.hasNext()){
+			formationDB.delete(result.next());
+		}
+		formationDB.commit();
 	}
 
 	/////////////////////////////////////////////////////////////////////

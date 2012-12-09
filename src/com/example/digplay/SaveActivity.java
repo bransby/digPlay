@@ -39,6 +39,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private Image newImage;
 	private int forIndex;
 	private Formation form;
+	private String newFormationName;
 	
 	private PopupWindow popUp;
 	private TextView text;
@@ -52,7 +53,6 @@ public class SaveActivity extends Activity implements OnClickListener {
 	private TextView enterType;
 	
 	private Spinner selectFormation;
-	
 	private ArrayList<String> formations;
 	
 	/** Called when the activity is first created. */
@@ -62,6 +62,9 @@ public class SaveActivity extends Activity implements OnClickListener {
 	    setContentView(R.layout.save);
 	    setControls();
 	    setText();
+	    
+	    
+	    //DigPlayDB.getInstance(getBaseContext()).clearAllDatabases();
 	}
 
 	private void setText() {
@@ -75,7 +78,7 @@ public class SaveActivity extends Activity implements OnClickListener {
 	}
 
 	private void setControls() {
-		playFormation = (EditText) findViewById(R.id.save_formation);
+		//playFormation = (EditText) findViewById(R.id.save_formation);
 		playName = (EditText) findViewById(R.id.save_name);
 		submit = (Button) findViewById(R.id.save_submit);
 		playType = (Spinner) findViewById(R.id.save_play_type);
@@ -88,6 +91,9 @@ public class SaveActivity extends Activity implements OnClickListener {
 
 	private void populateFormationSpinner() {
 		formations = DigPlayDB.getInstance(getBaseContext()).getFormationNames();
+		formations.add("--New Formation--");
+		//formations.addAll(DigPlayDB.getInstance(getBaseContext()).getFormationNames());
+		//formations = DigPlayDB.getInstance(getBaseContext()).getFormationNames();
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,formations);
 		selectFormation.setAdapter(adapter);
 	}
@@ -101,12 +107,36 @@ public class SaveActivity extends Activity implements OnClickListener {
 
 	public void onClick(final View v) {
 		name = playName.getText().toString();
-
-		if(playFormation.getText().toString() != null){
-			formation = playFormation.getText().toString();
-			form = new Formation(formation, EditorActivity.getField(), EditorActivity.getBitmap());
-			DigPlayDB.getInstance(getBaseContext()).storeFormation(form);
+		boolean t = true;
+		
+	
+		if(selectFormation.getAdapter().getItem(selectFormation.getSelectedItemPosition()) == "--New Formation--"){
+			//formation = popupForFormation();
 			
+			
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle("Add Formation");
+			alert.setMessage("Type in name of formation to add");
+			final EditText input = new EditText(this);
+			alert.setView(input);
+			alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {		
+					newFormationName = input.getText().toString();
+					form = new Formation(newFormationName, EditorActivity.getField(), EditorActivity.getBitmap());
+					DigPlayDB.getInstance(getBaseContext()).storeFormation(form);			
+					
+					form = null;
+
+					System.gc();
+					Intent intent = new Intent(v.getContext(), MainMenuActivity.class);
+					startActivity(intent);
+				}
+			});
+			alert.show();
+			
+		}
+			
+			/*
 			new AlertDialog.Builder(this).setMessage("Formation added").setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					form = null;
@@ -117,9 +147,12 @@ public class SaveActivity extends Activity implements OnClickListener {
 				}
 			}).show(); 
 		}
+		*/
+		
 		else{
 			forIndex = selectFormation.getSelectedItemPosition();
 			formation = selectFormation.getAdapter().getItem(forIndex).toString();
+			
 
 			if(DigPlayDB.getInstance(getBaseContext()).playNameExists(name) == false){
 				newImage = new Image();
@@ -179,4 +212,27 @@ public class SaveActivity extends Activity implements OnClickListener {
 			//DigPlayDB.getInstance(getBaseContext()).emptyDB();
 		}
 	}
+/*
+	private String getFormation() {
+		if(selectFormation.getAdapter().getItem(selectFormation.getSelectedItemPosition()) != "--New Formation--"){
+			//case when formation is in the list
+			return (String)selectFormation.getSelectedItem();
+		}
+		return popupForFormation();
+	}
+	private String popupForFormation(){
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle("Add Formation");
+		alert.setMessage("Type in name of formation to add");
+		final EditText input = new EditText(this);
+		alert.setView(input);
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {		
+				newFormationName = input.getText().toString();
+			}
+		});
+		alert.show();
+		return newFormationName;
+	}
+	*/
 }

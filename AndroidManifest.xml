@@ -2,7 +2,10 @@
     package="com.example.digplay"
     android:versionCode="1"
     android:versionName="1.0" >
-
+	<supports-screens android:largeScreens="true"
+	    			  android:xlargeScreens="true"
+	    			  android:normalScreens="false"
+	    			  android:smallScreens="false"/>
     <uses-sdk
         android:minSdkVersion="10"
         android:targetSdkVersion="15" />

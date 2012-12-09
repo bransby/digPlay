@@ -157,9 +157,9 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		String playbook = (String)gamePlans.getSelectedItem();
 		
 		// filter by selection
-		ArrayList<String> listOfGamePlans = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(playbook);
+		ArrayList<String> listOfPlaysInGameplan = DigPlayDB.getInstance(getBaseContext()).getPlaysInGameplan(playbook);
 		adapter = s.sortPlaysByRunPass(adapter, playType);
-		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfGamePlans);
+		adapter = s.sortPlaysByPlaybook(adapter, playbook, listOfPlaysInGameplan);
 		playList.setAdapter(adapter);
 	}
 	public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {}
