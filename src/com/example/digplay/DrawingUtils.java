@@ -328,7 +328,7 @@ public class DrawingUtils {
 					Player tempPlayer = field.getAllPlayers().get(playerIndex);
 					
 					int temp = (RIGHT_MARGIN) % PLAYER_ICON_RADIUS;
-					int tempX = tempPlayer.getLocation().getX() - LEFT_MARGIN + 512;
+					int tempX = tempPlayer.getLocation().getX() - LEFT_MARGIN;
 					int tempY = tempPlayer.getLocation().getY() - TOP_MARGIN;
 					// this is the grid
 					float halfPlayerIconRadius = PLAYER_ICON_RADIUS/2;
@@ -350,9 +350,9 @@ public class DrawingUtils {
 						tempY = tempY - tempY % PLAYER_ICON_RADIUS;
 					}
 					
-					int tempXLocation = tempX + LEFT_MARGIN - 512;
+					int tempXLocation = tempX + LEFT_MARGIN;
 					int tempYLocation = tempY + TOP_MARGIN;
-					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2);
+					float lineOfScrimmageYValue = BOTTOM_MARGIN+PLAYER_ICON_RADIUS + TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2);
 					
 					if (tempYLocation <= lineOfScrimmageYValue)
 					{
