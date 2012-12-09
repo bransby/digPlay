@@ -63,6 +63,18 @@ public final class DigPlayDB extends Application{
 		config.common().objectClass(Field.class).objectField("_playName").cascadeOnActivate(true);
 		config.common().add(new TransparentActivationSupport());
 		
+		config.common().objectClass(Formation.class).indexed(true);
+		config.common().objectClass(Formation.class).cascadeOnUpdate(true);
+		config.common().objectClass(Formation.class).cascadeOnDelete(true);
+		
+		config.common().objectClass(Image.class).indexed(true);
+		config.common().objectClass(Image.class).cascadeOnUpdate(true);
+		config.common().objectClass(Image.class).cascadeOnDelete(true);
+		
+		config.common().objectClass(GamePlan.class).indexed(true);
+		config.common().objectClass(GamePlan.class).cascadeOnUpdate(true);
+		config.common().objectClass(GamePlan.class).cascadeOnDelete(true);
+		
 		
 		playsDB = Db4oEmbedded.openFile(config, context.getFilesDir().getAbsolutePath() + "/PlaysDB.db4o");
 		imageDB = Db4oEmbedded.openFile(Db4oEmbedded.newConfiguration(), context.getFilesDir().getAbsolutePath() + "/imageDB.db4o");
