@@ -11,27 +11,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="50dip"
+        android:layout_marginTop="15dip"
         android:text="Enter Play Information"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="35dip" />
+        android:textSize="20dip" />
 
     <TextView
         android:id="@+id/save_enter_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="30dip"
+        android:layout_marginTop="7dip"
         android:text="Enter play name"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20dip" />
+        android:textSize="15dip" />
 
     <EditText
         android:id="@+id/save_name"
-        android:layout_width="500dip"
-        android:layout_height="wrap_content"
+        android:layout_width="350dip"
+        android:layout_height="30dip"
         android:layout_gravity="center"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="7dip"
         android:ems="10" >
 
         <requestFocus />
@@ -42,41 +42,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dip"
+        android:layout_marginTop="7dip"
         android:text="Select Formation"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20dip" />
+        android:textSize="15dip" />
 
     <Spinner
         android:id="@+id/save_select_formation"
-        android:layout_width="500dip"
-        android:layout_height="wrap_content"
+        android:layout_width="350dip"
+        android:layout_height="50dip"
         android:layout_gravity="center"
-        android:layout_marginTop="20dip" />
+        android:layout_marginTop="7dip" 
+        />
 
     <TextView
         android:id="@+id/save_enter_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="10dip"
+        android:layout_marginTop="7dip"
         android:text="Select play type"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="20dip" />
+        android:textSize="15dip" />
 
     <Spinner
         android:id="@+id/save_play_type"
-        android:layout_width="500dip"
-        android:layout_height="wrap_content"
+        android:layout_width="350dip"
+        android:layout_height="50dip"
         android:layout_gravity="center"
-        android:layout_marginTop="20dip" />
+        android:layout_marginTop="7dip" />
 
     <Button
         android:id="@+id/save_submit"
-        android:layout_width="200dip"
+        android:layout_width="150dip"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginTop="40dip"
+        android:layout_marginTop="7dip"
         android:text="Submit" />
 
     <TextView

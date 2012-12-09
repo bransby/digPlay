@@ -15,40 +15,55 @@ import android.graphics.Paint.Align;
 
 public class DrawingUtils {
 	
-	public static void drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
+	public static float drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
 			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float BAR_Y_VALUE)
 	{
-		float adjustedHeight = BAR_Y_VALUE; // pixel location we want to draw the 8
-		   // created players at. 50 pixels is used
-		   // at the top for all android devices
-
+		float threeTimesIcon = PLAYER_ICON_RADIUS*3;
+		float xValue = threeTimesIcon;
+		
 		// add players at bottom of screen, 75dp width between each of them
-		Location playerLocQB = new Location((int)(75/DENSITY), (int)(adjustedHeight));
+		Location playerLocQB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QB);
 		
-		Location playerLocWR = new Location((int)(150/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocWR = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WR);
 		
-		Location playerLocRB = new Location((int)(225/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocRB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RB);
 		
-		Location playerLocFB = new Location((int)(300/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocFB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FB);
 		
-		Location playerLocTE = new Location((int)(375/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocTE = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TE);
 		
-		Location playerLocC = new Location((int)(450/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocC = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocC, Position.C);
 		
-		Location playerLocG = new Location((int)(525/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocG = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocG, Position.G);
 		
-		Location playerLocT = new Location((int)(600/DENSITY), (int)(adjustedHeight));
+		xValue += threeTimesIcon;
+		
+		Location playerLocT = new Location((int)(xValue), (int)(BAR_Y_VALUE));
 		fieldForCreatePlayer.addPlayer(playerLocT, Position.T);
+		
+		xValue += PLAYER_ICON_RADIUS*2;
 
 		paint.setColor(Color.WHITE);
-		paint.setStrokeWidth(2/DENSITY);
+		paint.setStrokeWidth(2);
 
 		// y values are all the same, so just reuse one
 		float eightPlayerY = playerLocQB.getY() - TOP_ANDROID_BAR;
@@ -72,6 +87,7 @@ public class DrawingUtils {
 			paint.setStyle(Paint.Style.FILL);
 			canvas.drawText(tempPlayer.getPosition().toString(), playerXLocation, height, paint);
 		}
+		return xValue;
 	}
 	
 	public static void drawPlayers(Field field, float xOffset, float yOffset, Canvas canvas, 
@@ -84,7 +100,7 @@ public class DrawingUtils {
 		// for drawing the text
 		paint.setTextAlign(Align.CENTER);
 		paint.setTextSize(PLAYER_ICON_RADIUS);
-		paint.setStrokeWidth(2/DENSITY);
+		paint.setStrokeWidth(2);
 		
 		for (int i = 0; i < field.getAllPlayers().size(); i++)
 		{
@@ -290,7 +306,7 @@ public class DrawingUtils {
 		
 		float pixelsPerFiveYards = PIXELS_PER_YARD*5;
 		float halfFieldLineWidths =  FIELD_LINE_WIDTHS/2;
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < 9; i++)
 		{
 			float temp = BOTTOM_MARGIN - pixelsPerFiveYards + halfFieldLineWidths - i*pixelsPerFiveYards;
 			canvas.drawLine(LEFT_MARGIN, temp, RIGHT_MARGIN, temp, paint);
@@ -498,22 +514,23 @@ public class DrawingUtils {
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		float value = BUTTON_Y_VALUE-TOP_ANDROID_BAR;
 		float buttonLength = 5*PLAYER_ICON_RADIUS;
-		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS;
 		// gray for buttons
 		paint.setColor(0xE7E7E7FF);
 		float doubleLineWidths = FIELD_LINE_WIDTHS * 2;
-		canvas.drawRect(BUTTON_X_VALUE-doubleLineWidths, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
-				BUTTON_X_VALUE + buttonLength + doubleLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
-		canvas.drawRect(secondButtonStartPos - doubleLineWidths, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
-				secondButtonStartPos + buttonLength + doubleLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
+		float quadLineWidths = doubleLineWidths * 2;
+		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS + quadLineWidths;
+		canvas.drawRect(BUTTON_X_VALUE, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
+				BUTTON_X_VALUE + buttonLength + quadLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
+		canvas.drawRect(secondButtonStartPos, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
+				secondButtonStartPos + buttonLength + quadLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
 		paint.setColor(Color.BLACK);
 		if (path == Path.DOTTED)
 		{
 			paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
 		}
-		canvas.drawLine(BUTTON_X_VALUE, value, BUTTON_X_VALUE + buttonLength, value, paint);
+		canvas.drawLine(BUTTON_X_VALUE + doubleLineWidths, value, BUTTON_X_VALUE + buttonLength + doubleLineWidths, value, paint);
 		paint.setPathEffect(null);
-		canvas.drawLine(secondButtonStartPos, value, secondButtonStartPos + buttonLength, value, paint);
-		drawEndOfRoute(canvas, paint, (int)(secondButtonStartPos + buttonLength), (int)value, PIXELS_PER_YARD, 180, route);
+		canvas.drawLine(secondButtonStartPos + doubleLineWidths, value, secondButtonStartPos + buttonLength + doubleLineWidths, value, paint);
+		drawEndOfRoute(canvas, paint, (int)(secondButtonStartPos + buttonLength + doubleLineWidths), (int)value, PIXELS_PER_YARD, 180, route);
 	}
 }
