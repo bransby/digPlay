@@ -112,13 +112,13 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 		// TODO: save image to file system, and add the file paht to atachment
 		ArrayList<String> attachment = new ArrayList<String>();
 
-		attachment.add("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
-		File file = new File("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		attachment.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
 		
 		FileOutputStream fos = new FileOutputStream(file);
 		fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
 		fos.close();
-		new AlertDialog.Builder(this).setMessage("mnt/sdcard/DCIM/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg").setNegativeButton("Cancel", null).show(); 
+		new AlertDialog.Builder(this).setMessage(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg").setNegativeButton("Cancel", null).show(); 
 		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachment);
 		
 		file.delete();
