@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@drawable/cu_stadium"
+    android:orientation="vertical" >
     
     <view class="com.example.digplay.EditorActivity$DrawView"
         android:id="@+id/DrawView"
@@ -12,8 +12,8 @@
     
     <Button
         android:id="@+id/save"
-        android:layout_width="25dp"
-        android:layout_height="25dip"
+        android:layout_width="20dp"
+        android:layout_height="20dip"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="20dip"
@@ -24,7 +24,7 @@
     <Button
         android:id="@+id/editor_trash_can"
         android:layout_width="50dip"
-        android:layout_height="35dip"
+        android:layout_height="30dip"
         android:layout_alignBottom="@+id/save"
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="25dip"
@@ -33,22 +33,22 @@
 
     <Button
         android:id="@+id/edi_clear_player_route"
-        android:layout_width="75dip"
-        android:layout_height="30dp"
+        android:layout_width="90dip"
+        android:layout_height="40dp"
         android:layout_marginRight="5dip"
-        android:layout_marginBottom="8dip"
-        android:textSize="10dip"
+        android:layout_marginBottom="4dip"
+        android:textSize="8dip"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="Clear Player Route" />
 
     <Button
         android:id="@+id/edi_flip_button"
-        android:layout_width="75dip"
-        android:layout_height="30dip"
-        android:layout_marginRight="85dip"
-        android:layout_marginBottom="8dip"
-        android:textSize="10dip"
+        android:layout_width="90dip"
+        android:layout_height="40dip"
+        android:layout_marginRight="100dip"
+        android:layout_marginBottom="4dip"
+        android:textSize="9dip"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:text="Flip play" />
