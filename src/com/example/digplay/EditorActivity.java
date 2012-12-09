@@ -194,8 +194,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			FIELD_LINE_WIDTHS = Math.round(4/DENSITY);
 			TOP_ANDROID_BAR = Math.round(50*DENSITY);
 			FIELD_HEIGHT = SCREEN_HEIGHT - TOP_MARGIN*3 - TOP_ANDROID_BAR;
-			PIXELS_PER_YARD = FIELD_HEIGHT/45; // 45 yards on the field
 			BOTTOM_MARGIN = TOP_MARGIN + FIELD_HEIGHT;
+			PIXELS_PER_YARD = FIELD_HEIGHT/45f; // 45 yards on the field
 			PLAYER_ICON_RADIUS = (RIGHT_MARGIN - LEFT_MARGIN)/50; // 50 is a good number
 			TOUCH_SENSITIVITY = Math.round(PLAYER_ICON_RADIUS*1.5f);
 			BUTTON_Y_VALUE = SCREEN_HEIGHT - TOP_MARGIN;
@@ -216,7 +216,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			createdPlayersCanvas = createdPlayersPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
 			fieldCanvas = fieldPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
 				
-			bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
+			bitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
 			bitmapCanvas = new Canvas(bitmap);
 			
 			fieldForCreatePlayer = new Field();
@@ -293,7 +293,6 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				addingPlayer = returnedFlags[1];
 				clickingPathButton = returnedFlags[2];
 				clickingRouteButton = returnedFlags[3];
-				System.out.println("screenwidth: " + SCREEN_WIDTH);
 				clickingButton = clickingPathButton || clickingRouteButton;
 				
 				if (clickingPathButton)
@@ -507,7 +506,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 
 		public static void flipField() {
-			field.flip((int)(LEFT_MARGIN + RIGHT_MARGIN));
+			field.flip(LEFT_MARGIN + RIGHT_MARGIN);
 		}
 	}	
 	//used for database to get the field object.
