@@ -70,12 +70,20 @@ public final class DigPlayDB extends Application{
 		imageConfig.common().objectClass(Image.class).cascadeOnUpdate(true);
 		imageConfig.common().objectClass(Image.class).cascadeOnDelete(true);
 		imageConfig.common().add(new TransparentActivationSupport());
+		imageConfig.common().objectClass(Image.class).objectField("_playName").cascadeOnActivate(true);
 		
 		EmbeddedConfiguration formationConfig =  Db4oEmbedded.newConfiguration();
-		imageConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
-		imageConfig.common().objectClass(Formation.class).indexed(true);
-		imageConfig.common().objectClass(Formation.class).cascadeOnUpdate(true);
-		imageConfig.common().objectClass(Formation.class).cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
+		formationConfig.common().objectClass(Formation.class).indexed(true);
+		formationConfig.common().objectClass(Formation.class).cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnActivate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").indexed(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnActivate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnDelete(true);
 		
 		
 		EmbeddedConfiguration gamePlanConfig =  Db4oEmbedded.newConfiguration();
@@ -157,8 +165,9 @@ public final class DigPlayDB extends Application{
 	
 	public ArrayList<String> getFormationNames(){
 		ArrayList<String> temp = new ArrayList<String>();
+		Formation obj = new Formation();
 		
-		ObjectSet result = formationDB.queryByExample(new Formation());
+		ObjectSet result = formationDB.queryByExample(obj);
 		while(result.hasNext()){
 			temp.add(((Formation)result.next()).getName());
 		}
