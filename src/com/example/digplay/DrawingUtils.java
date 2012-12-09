@@ -22,42 +22,42 @@ public class DrawingUtils {
 		int xValue = threeTimesIcon;
 		
 		// add players at bottom of screen, 75dp width between each of them
-		Location playerLocQB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocQB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocWR = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocWR = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WR);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocRB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocRB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocFB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocFB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocTE = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocTE = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TE);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocC = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocC = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocC, Position.C);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocG = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocG = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocG, Position.G);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocT = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocT = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocT, Position.T);
 		
 		xValue += PLAYER_ICON_RADIUS*2;
@@ -106,8 +106,8 @@ public class DrawingUtils {
 		{
 			Player tempPlayer = field.getAllPlayers().get(i);
 			Location tempLocation = tempPlayer.getLocation();
-			xpos = (int) (tempLocation.getX() - xOffset);
-			ypos = (int) (tempLocation.getY() - yOffset);
+			xpos = tempLocation.getX() - xOffset;
+			ypos = tempLocation.getY() - yOffset;
 			// this is the selected player
 			if (playerIndex == i)
 			{
@@ -173,8 +173,8 @@ public class DrawingUtils {
 		{
 			Player tempPlayer = field.getAllPlayers().get(i);
 			// set x and y previous values to player's x/y values
-			int previousX = (int) (tempPlayer.getLocation().getX() - xOffset);
-			int previousY = (int) (tempPlayer.getLocation().getY() - yOffset);
+			int previousX = tempPlayer.getLocation().getX() - xOffset;
+			int previousY = tempPlayer.getLocation().getY() - yOffset;
 			if (tempPlayer.getPath() == Path.DOTTED)
 			{
 				float dashAdjusted = 10/DENSITY;
@@ -183,22 +183,20 @@ public class DrawingUtils {
 			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
-				int currentX = (int) (tempLocation.getX() - xOffset);
-				int currentY = (int) (tempLocation.getY() - yOffset);
+				int currentX = tempLocation.getX() - xOffset;
+				int currentY = tempLocation.getY() - yOffset;
 				canvas.drawLine(previousX, previousY, currentX, currentY, paint);
-				int tempX = (int) (tempLocation.getX() - xOffset);
-				int tempY = (int) (tempLocation.getY() - yOffset);
 				if (j == tempPlayer.getRouteLocations().size()-1)
 				{
-					int deltaX = previousX - tempX;
-					int deltaY = previousY - tempY;
+					int deltaX = previousX - currentX;
+					int deltaY = previousY - currentY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
 					// solid line
 					paint.setPathEffect(null);
-					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
+					drawEndOfRoute(canvas, paint, currentX, currentY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
 				}
-				previousX = tempX;
-				previousY = tempY;
+				previousX = currentX;
+				previousY = currentY;
 			}
 			// solid line
 			paint.setPathEffect(null);
@@ -330,7 +328,7 @@ public class DrawingUtils {
 					Player tempPlayer = field.getAllPlayers().get(playerIndex);
 					
 					int temp = (RIGHT_MARGIN) % PLAYER_ICON_RADIUS;
-					int tempX = tempPlayer.getLocation().getX() - LEFT_MARGIN;//(RIGHT_MARGIN-LEFT_MARGIN)/2;
+					int tempX = tempPlayer.getLocation().getX() - LEFT_MARGIN + 512;
 					int tempY = tempPlayer.getLocation().getY() - TOP_MARGIN;
 					// this is the grid
 					float halfPlayerIconRadius = PLAYER_ICON_RADIUS/2;
@@ -352,7 +350,7 @@ public class DrawingUtils {
 						tempY = tempY - tempY % PLAYER_ICON_RADIUS;
 					}
 					
-					int tempXLocation = tempX + LEFT_MARGIN;//(RIGHT_MARGIN-LEFT_MARGIN)/2;
+					int tempXLocation = tempX + LEFT_MARGIN - 512;
 					int tempYLocation = tempY + TOP_MARGIN;
 					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2);
 					
