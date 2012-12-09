@@ -1,17 +1,23 @@
 package com.businessclasses;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
+
+import android.graphics.Bitmap;
 
 public class Formation implements Serializable{
 	Field theField;
 	String formationName;
 	byte[] image;
 	
-	public Formation(String name, Field f, byte[] _image){
+	public Formation(String name, Field f, Bitmap _image){
 		theField =f; //f.clone();
 		theField.clearRouteLocations();
 		formationName = name;
-		this.image = _image;
+		
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		_image.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		this.image = stream.toByteArray();
 	}
 	public Formation(String name, Field f){
 		theField = f;

@@ -29,7 +29,7 @@
     <EditText
         android:id="@+id/save_name"
         android:layout_width="350dip"
-        android:layout_height="30dip"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="7dip"
         android:ems="10" >

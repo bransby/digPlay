@@ -15,49 +15,49 @@ import android.graphics.Paint.Align;
 
 public class DrawingUtils {
 	
-	public static float drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, float DENSITY, 
-			float TOP_ANDROID_BAR, float PLAYER_ICON_RADIUS, float BAR_Y_VALUE)
+	public static int drawCreatePlayers(Field fieldForCreatePlayer, Canvas canvas, Paint paint, 
+			int TOP_ANDROID_BAR, int PLAYER_ICON_RADIUS, int BAR_Y_VALUE)
 	{
-		float threeTimesIcon = PLAYER_ICON_RADIUS*3;
-		float xValue = threeTimesIcon;
+		int threeTimesIcon = PLAYER_ICON_RADIUS*3;
+		int xValue = threeTimesIcon;
 		
 		// add players at bottom of screen, 75dp width between each of them
-		Location playerLocQB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocQB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocQB, Position.QB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocWR = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocWR = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocWR, Position.WR);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocRB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocRB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocRB, Position.RB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocFB = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocFB = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocFB, Position.FB);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocTE = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocTE = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocTE, Position.TE);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocC = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocC = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocC, Position.C);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocG = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocG = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocG, Position.G);
 		
 		xValue += threeTimesIcon;
 		
-		Location playerLocT = new Location((int)(xValue), (int)(BAR_Y_VALUE));
+		Location playerLocT = new Location(xValue, BAR_Y_VALUE);
 		fieldForCreatePlayer.addPlayer(playerLocT, Position.T);
 		
 		xValue += PLAYER_ICON_RADIUS*2;
@@ -90,8 +90,8 @@ public class DrawingUtils {
 		return xValue;
 	}
 	
-	public static void drawPlayers(Field field, float xOffset, float yOffset, Canvas canvas, 
-			Paint paint, int playerIndex, int color, float PLAYER_ICON_RADIUS, float DENSITY)
+	public static void drawPlayers(Field field, int xOffset, int yOffset, Canvas canvas, 
+			Paint paint, int playerIndex, int color, int PLAYER_ICON_RADIUS)
 	{
 		int xpos = -1;
 		int ypos = -1;
@@ -106,8 +106,8 @@ public class DrawingUtils {
 		{
 			Player tempPlayer = field.getAllPlayers().get(i);
 			Location tempLocation = tempPlayer.getLocation();
-			xpos = (int) (tempLocation.getX() - xOffset);
-			ypos = (int) (tempLocation.getY() - yOffset);
+			xpos = tempLocation.getX() - xOffset;
+			ypos = tempLocation.getY() - yOffset;
 			// this is the selected player
 			if (playerIndex == i)
 			{
@@ -163,8 +163,8 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static void drawRoutes(Field field, float xOffset, float yOffset, float FIELD_LINE_WIDTHS, Canvas canvas, 
-			Paint paint, float PIXELS_PER_YARD)
+	public static void drawRoutes(Field field, int xOffset, int yOffset, int FIELD_LINE_WIDTHS, Canvas canvas, 
+			Paint paint, float PIXELS_PER_YARD, float DENSITY)
 	{
 		paint.setColor(Color.YELLOW);
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
@@ -173,31 +173,30 @@ public class DrawingUtils {
 		{
 			Player tempPlayer = field.getAllPlayers().get(i);
 			// set x and y previous values to player's x/y values
-			int previousX = (int) (tempPlayer.getLocation().getX() - xOffset);
-			int previousY = (int) (tempPlayer.getLocation().getY() - yOffset);
+			int previousX = tempPlayer.getLocation().getX() - xOffset;
+			int previousY = tempPlayer.getLocation().getY() - yOffset;
 			if (tempPlayer.getPath() == Path.DOTTED)
 			{
-				paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
+				float dashAdjusted = 10/DENSITY;
+				paint.setPathEffect(new DashPathEffect(new float[] {dashAdjusted, dashAdjusted}, 0));
 			}
 			for (int j = 0; j < tempPlayer.getRouteLocations().size(); j++)
 			{
 				Location tempLocation = tempPlayer.getRouteLocations().get(j);
-				int currentX = (int) (tempLocation.getX() - xOffset);
-				int currentY = (int) (tempLocation.getY() - yOffset);
+				int currentX = tempLocation.getX() - xOffset;
+				int currentY = tempLocation.getY() - yOffset;
 				canvas.drawLine(previousX, previousY, currentX, currentY, paint);
-				int tempX = (int) (tempLocation.getX() - xOffset);
-				int tempY = (int) (tempLocation.getY() - yOffset);
 				if (j == tempPlayer.getRouteLocations().size()-1)
 				{
-					int deltaX = previousX - tempX;
-					int deltaY = previousY - tempY;
+					int deltaX = previousX - currentX;
+					int deltaY = previousY - currentY;
 					float differenceAngle = (float)(Math.atan2(deltaY, deltaX) * 180 / Math.PI);
 					// solid line
 					paint.setPathEffect(null);
-					drawEndOfRoute(canvas, paint, tempX, tempY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
+					drawEndOfRoute(canvas, paint, currentX, currentY, PIXELS_PER_YARD, differenceAngle, tempPlayer.getRoute());
 				}
-				previousX = tempX;
-				previousY = tempY;
+				previousX = currentX;
+				previousY = currentY;
 			}
 			// solid line
 			paint.setPathEffect(null);
@@ -206,9 +205,9 @@ public class DrawingUtils {
 		paint.setPathEffect(null);
 	}
 	
-	public static void drawField(float LEFT_MARGIN, float RIGHT_MARGIN, float TOP_MARGIN, 
-			float BOTTOM_MARGIN, float DENSITY, float FIELD_LINE_WIDTHS, float PIXELS_PER_YARD, 
-			float outOfBoundsSpacing, float hashLength, Canvas canvas, Paint paint)
+	public static void drawField(int LEFT_MARGIN, int RIGHT_MARGIN, int TOP_MARGIN, 
+			int BOTTOM_MARGIN, float DENSITY, int FIELD_LINE_WIDTHS, float PIXELS_PER_YARD, 
+			int outOfBoundsSpacing, int hashLength, Canvas canvas, Paint paint)
 	{
 		// green color
 		paint.setColor(0xFF007900);
@@ -231,45 +230,16 @@ public class DrawingUtils {
 		paint.setStrokeWidth(6/DENSITY);
 		
 		// want to draw line of scrimmage at 20 yard line
-		float lineOfScrimmageYValue = BOTTOM_MARGIN-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)/DENSITY;
+		float lineOfScrimmageYValue = BOTTOM_MARGIN-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2);
 		canvas.drawLine(LEFT_MARGIN, lineOfScrimmageYValue, RIGHT_MARGIN, lineOfScrimmageYValue, paint);
 		
 		// fill = fill enclosed shapes with the color, like a circle with the middle one color
 		paint.setStyle(Paint.Style.FILL);
 	}
 	
-	public static void drawBitmapHashLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 
-			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, float DENSITY, float outOfBoundsSpacing, 
-			float hashLength, Canvas canvas, Paint paint)
-	{
-		paint.setColor(Color.WHITE);
-		// draw a stroke, not a line
-		paint.setStyle(Paint.Style.STROKE);
-		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
-		
-		float middleHashOffset = (450/DENSITY);
-		for (int i = 0; i < 45; i++)
-		{
-			if (!(i % 5 == 0))
-			{
-				float temp = BOTTOM_MARGIN - (PIXELS_PER_YARD*i) + (FIELD_LINE_WIDTHS/2);
-				float leftMarginPlusOutOfBounds = LEFT_MARGIN + outOfBoundsSpacing;
-				float rightMarginPlusHashLength = RIGHT_MARGIN - middleHashOffset;
-				float leftMarginPlusHashLength = LEFT_MARGIN + middleHashOffset;
-				canvas.drawLine(leftMarginPlusOutOfBounds, temp, 
-						leftMarginPlusOutOfBounds + hashLength, temp, paint);
-				canvas.drawLine(RIGHT_MARGIN - hashLength, temp, RIGHT_MARGIN-outOfBoundsSpacing, temp, paint);
-				canvas.drawLine(leftMarginPlusHashLength - hashLength/2, temp, 
-						leftMarginPlusHashLength + hashLength/2, temp, paint);
-				canvas.drawLine(rightMarginPlusHashLength - hashLength/2, temp, 
-						rightMarginPlusHashLength + hashLength/2, temp, paint);
-			}
-		}
-	}
-	
-	public static void drawHashLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 
-			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, float DENSITY, float outOfBoundsSpacing, 
-			float hashLength, Canvas canvas, Paint paint)
+	public static void drawHashLines(int LEFT_MARGIN, int RIGHT_MARGIN, int BOTTOM_MARGIN, 
+			float PIXELS_PER_YARD, int FIELD_LINE_WIDTHS, float DENSITY, int outOfBoundsSpacing, 
+			int hashLength, Canvas canvas, Paint paint)
 	{
 		paint.setColor(Color.WHITE);
 		// draw a stroke, not a line
@@ -296,8 +266,8 @@ public class DrawingUtils {
 		}
 	}
 	
-	public static void drawFiveYardLines(float LEFT_MARGIN, float RIGHT_MARGIN, float BOTTOM_MARGIN, 
-			float PIXELS_PER_YARD, float FIELD_LINE_WIDTHS, Canvas canvas, Paint paint)
+	public static void drawFiveYardLines(int LEFT_MARGIN, int RIGHT_MARGIN, int BOTTOM_MARGIN, 
+			float PIXELS_PER_YARD, int FIELD_LINE_WIDTHS, Canvas canvas, Paint paint)
 	{
 		paint.setColor(Color.WHITE);
 		// draw a stroke, not a line
@@ -333,9 +303,9 @@ public class DrawingUtils {
 	// boolean[0] = added more than 11 players
 	// boolean[1] = player added on other side of line of scrimmage
 	// boolean[2] = player put on top of another player
-	public static boolean[] actionUp(Field field, int playerIndex, float LEFT_MARGIN, float PLAYER_ICON_RADIUS, 
-			float RIGHT_MARGIN, float TOP_MARGIN, float BOTTOM_MARGIN, float TOP_ANDROID_BAR, float PIXELS_PER_YARD, 
-			float FIELD_LINE_WIDTHS, float DENSITY, int x, int y, boolean moreThanElevenPlayers, boolean movePlayer,
+	public static boolean[] actionUp(Field field, int playerIndex, int LEFT_MARGIN, int PLAYER_ICON_RADIUS, 
+			int RIGHT_MARGIN, int TOP_MARGIN, int BOTTOM_MARGIN, int TOP_ANDROID_BAR, float PIXELS_PER_YARD, 
+			int FIELD_LINE_WIDTHS, float DENSITY, int x, int y, boolean moreThanElevenPlayers, boolean movePlayer,
 			boolean addingPlayer)
 	{
 		boolean retVal[] = {moreThanElevenPlayers, false, false};
@@ -356,30 +326,33 @@ public class DrawingUtils {
 				else
 				{
 					Player tempPlayer = field.getAllPlayers().get(playerIndex);
-					int tempX = tempPlayer.getLocation().getX() - (int)(LEFT_MARGIN);
-					int tempY = tempPlayer.getLocation().getY() - (int)(TOP_MARGIN);
+					
+					int temp = (RIGHT_MARGIN) % PLAYER_ICON_RADIUS;
+					int tempX = tempPlayer.getLocation().getX() - LEFT_MARGIN + 512;
+					int tempY = tempPlayer.getLocation().getY() - TOP_MARGIN;
 					// this is the grid
 					float halfPlayerIconRadius = PLAYER_ICON_RADIUS/2;
-					if(tempX % (int)(PLAYER_ICON_RADIUS) >= halfPlayerIconRadius)
+					
+					if(tempX % PLAYER_ICON_RADIUS >= halfPlayerIconRadius)
 					{
-						tempX = tempX + ((int)(PLAYER_ICON_RADIUS) - tempX % (int)(PLAYER_ICON_RADIUS));
+						tempX = tempX + PLAYER_ICON_RADIUS - tempX % PLAYER_ICON_RADIUS;
 					}
 					else
 					{
-						tempX = tempX - (tempX % (int)(PLAYER_ICON_RADIUS));
+						tempX = tempX - tempX % PLAYER_ICON_RADIUS;
 					}
-					if(tempY % (int)(PLAYER_ICON_RADIUS) >= halfPlayerIconRadius)
+					if(tempY % PLAYER_ICON_RADIUS >= halfPlayerIconRadius)
 					{
-						tempY = tempY + ((int)(PLAYER_ICON_RADIUS) - tempY % (int)(PLAYER_ICON_RADIUS));
+						tempY = tempY + PLAYER_ICON_RADIUS - tempY % PLAYER_ICON_RADIUS;
 					}
 					else
 					{
-						tempY = tempY - (tempY % (int)(PLAYER_ICON_RADIUS));
+						tempY = tempY - tempY % PLAYER_ICON_RADIUS;
 					}
 					
-					int tempXLocation = tempX + (int)(LEFT_MARGIN);
-					int tempYLocation = tempY + (int)(TOP_MARGIN);
-					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2)/DENSITY;
+					int tempXLocation = tempX + LEFT_MARGIN - 512;
+					int tempYLocation = tempY + TOP_MARGIN;
+					float lineOfScrimmageYValue = BOTTOM_MARGIN+(PLAYER_ICON_RADIUS/2)+TOP_ANDROID_BAR-(PIXELS_PER_YARD*20)+(FIELD_LINE_WIDTHS/2);
 					
 					if (tempYLocation <= lineOfScrimmageYValue)
 					{
@@ -420,13 +393,15 @@ public class DrawingUtils {
 	
 	// boolean[0] = added more than 11 players
 	// boolean[1] = adding a new player
-	// boolean[2] = clicking on a button
-	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, float TOUCH_SENSITIVITY, int x, int y, 
-			int playerIndex, Route route, Path path, float PLAYER_ICON_RADIUS, float BUTTON_Y_VALUE, float BUTTON_X_VALUE)
+	// boolean[2] = clicking on path button
+	// boolean[3] = clicking on route button
+	public static boolean[] actionDown(Field field, Field fieldForCreatePlayer, int TOUCH_SENSITIVITY, int x, int y, 
+			int playerIndex, Route route, Path path, int PLAYER_ICON_RADIUS, int BUTTON_Y_VALUE, int BUTTON_X_VALUE,
+			int FIELD_LINE_WIDTHS)
 	{
 		int playerXPos = -1;
 		int playerYPos = -1;
-		boolean[] retVal = {false, false, false};
+		boolean[] retVal = {false, false, false, false};
 		
 		double playerIndexDistance = Float.MAX_VALUE;
 		
@@ -476,15 +451,20 @@ public class DrawingUtils {
 			// if not selected reset player index
 			if (!hasBeenSet)
 			{
-				float buttonLowerValue = BUTTON_Y_VALUE - PLAYER_ICON_RADIUS;
-				float buttonUpperValue = BUTTON_Y_VALUE + PLAYER_ICON_RADIUS;
-				if (x >= BUTTON_X_VALUE && x <= BUTTON_X_VALUE+5*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
+				float doubleLineWidths = FIELD_LINE_WIDTHS * 2;
+				float quadLineWidths = doubleLineWidths * 2;
+				float buttonLength = 5*PLAYER_ICON_RADIUS + quadLineWidths;
+				float buttonLowerValue = BUTTON_Y_VALUE - PLAYER_ICON_RADIUS - doubleLineWidths;
+				float buttonUpperValue = BUTTON_Y_VALUE + PLAYER_ICON_RADIUS + doubleLineWidths;
+				float secondButtonStartPos = BUTTON_X_VALUE + buttonLength + PLAYER_ICON_RADIUS;
+				if (x >= BUTTON_X_VALUE && x <= (BUTTON_X_VALUE + buttonLength) && y >= buttonLowerValue && y <= buttonUpperValue)
 				{
 					retVal[2] = true;
 				}
-				else if (x >= BUTTON_X_VALUE+6*PLAYER_ICON_RADIUS && x <= BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
+				else if (x >= secondButtonStartPos && x <= (secondButtonStartPos + buttonLength) 
+						&& y >= buttonLowerValue && y <= buttonUpperValue)
 				{
-					retVal[2] = true;
+					retVal[3] = true;
 				}
 				else
 				{
@@ -507,30 +487,33 @@ public class DrawingUtils {
 		return retVal;
 	}
 	
-	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, float TOP_ANDROID_BAR, float TOP_MARGIN, 
-			float PIXELS_PER_YARD, Route route, Path path, float FIELD_LINE_WIDTHS, float PLAYER_ICON_RADIUS, 
-			float BUTTON_Y_VALUE, float BUTTON_X_VALUE)
+	public static void drawButtons(Canvas canvas, Paint paint, float DENSITY, int TOP_ANDROID_BAR, int TOP_MARGIN, 
+			float PIXELS_PER_YARD, Route route, Path path, int FIELD_LINE_WIDTHS, int PLAYER_ICON_RADIUS, 
+			int BUTTON_Y_VALUE, int BUTTON_X_VALUE)
 	{
 		paint.setStrokeWidth(FIELD_LINE_WIDTHS);
 		float value = BUTTON_Y_VALUE-TOP_ANDROID_BAR;
-		float buttonLength = 5*PLAYER_ICON_RADIUS;
 		// gray for buttons
 		paint.setColor(0xE7E7E7FF);
 		float doubleLineWidths = FIELD_LINE_WIDTHS * 2;
 		float quadLineWidths = doubleLineWidths * 2;
-		float secondButtonStartPos = BUTTON_X_VALUE+buttonLength+PLAYER_ICON_RADIUS + quadLineWidths;
-		canvas.drawRect(BUTTON_X_VALUE, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
-				BUTTON_X_VALUE + buttonLength + quadLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
-		canvas.drawRect(secondButtonStartPos, value + PLAYER_ICON_RADIUS + doubleLineWidths, 
-				secondButtonStartPos + buttonLength + quadLineWidths, value - PLAYER_ICON_RADIUS - doubleLineWidths, paint);
+		float buttonLength = 5*PLAYER_ICON_RADIUS + quadLineWidths;
+		float buttonHeightOffset = PLAYER_ICON_RADIUS + doubleLineWidths;
+		float lineLength = 5*PLAYER_ICON_RADIUS + doubleLineWidths;
+		float secondButtonStartPos = BUTTON_X_VALUE + buttonLength + PLAYER_ICON_RADIUS;
+		canvas.drawRect(BUTTON_X_VALUE, value + buttonHeightOffset, 
+				BUTTON_X_VALUE + buttonLength, value - buttonHeightOffset, paint);
+		canvas.drawRect(secondButtonStartPos, value + buttonHeightOffset, 
+				secondButtonStartPos + buttonLength, value - buttonHeightOffset, paint);
 		paint.setColor(Color.BLACK);
 		if (path == Path.DOTTED)
 		{
-			paint.setPathEffect(new DashPathEffect(new float[] {10,10}, 0));
+			float dashAdjusted = 10/DENSITY;
+			paint.setPathEffect(new DashPathEffect(new float[] {dashAdjusted, dashAdjusted}, 0));
 		}
-		canvas.drawLine(BUTTON_X_VALUE + doubleLineWidths, value, BUTTON_X_VALUE + buttonLength + doubleLineWidths, value, paint);
+		canvas.drawLine(BUTTON_X_VALUE + doubleLineWidths, value, BUTTON_X_VALUE + lineLength, value, paint);
 		paint.setPathEffect(null);
-		canvas.drawLine(secondButtonStartPos + doubleLineWidths, value, secondButtonStartPos + buttonLength + doubleLineWidths, value, paint);
-		drawEndOfRoute(canvas, paint, (int)(secondButtonStartPos + buttonLength + doubleLineWidths), (int)value, PIXELS_PER_YARD, 180, route);
+		canvas.drawLine(secondButtonStartPos + doubleLineWidths, value, secondButtonStartPos + lineLength, value, paint);
+		drawEndOfRoute(canvas, paint, (int)(secondButtonStartPos + lineLength), (int)value, PIXELS_PER_YARD, 180, route);
 	}
 }

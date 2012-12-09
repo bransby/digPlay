@@ -145,24 +145,26 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		private boolean putOnTopOfOtherPlayer;
 		private boolean addingPlayer;
 		private boolean clickingButton;
+		private boolean clickingPathButton;
+		private boolean clickingRouteButton;
 		
 		// this field is used to just store the bottom 8 "players"
 		// that users can drag onto the field
 		private Field fieldForCreatePlayer;
 		
 		// static final values
-		static private float FIELD_HEIGHT;
-		static private float LEFT_MARGIN;
-		static private float RIGHT_MARGIN;
-		static private float TOP_MARGIN;
-		static private float BOTTOM_MARGIN;
+		static private int FIELD_HEIGHT;
+		static private int LEFT_MARGIN;
+		static private int RIGHT_MARGIN;
+		static private int TOP_MARGIN;
+		static private int BOTTOM_MARGIN;
 		static private float PIXELS_PER_YARD;
-		static private float FIELD_LINE_WIDTHS;
-		static private float PLAYER_ICON_RADIUS;
-		static private float TOP_ANDROID_BAR;
-		static private float TOUCH_SENSITIVITY;
-		static private float BUTTON_Y_VALUE;
-		static private float BUTTON_X_VALUE;
+		static private int FIELD_LINE_WIDTHS;
+		static private int PLAYER_ICON_RADIUS;
+		static private int TOP_ANDROID_BAR;
+		static private int TOUCH_SENSITIVITY;
+		static private int BUTTON_Y_VALUE;
+		static private int BUTTON_X_VALUE;
 		
 		Picture createdPlayersPicture; 
 		Picture fieldPicture;
@@ -186,16 +188,16 @@ public class EditorActivity extends Activity implements OnClickListener  {
 
 		public void build(Context context, AttributeSet attrs) throws IOException
 		{		
-			LEFT_MARGIN = 40/DENSITY;
+			LEFT_MARGIN = Math.round(40/DENSITY);
 			RIGHT_MARGIN = SCREEN_WIDTH - LEFT_MARGIN;
-			TOP_MARGIN = 60/DENSITY;
-			FIELD_LINE_WIDTHS = 4/DENSITY;
-			TOP_ANDROID_BAR = 50*DENSITY;
-			FIELD_HEIGHT = SCREEN_HEIGHT - TOP_ANDROID_BAR - TOP_MARGIN*3;
-			PIXELS_PER_YARD = FIELD_HEIGHT/45;
-			BOTTOM_MARGIN = TOP_MARGIN+FIELD_HEIGHT;
-			PLAYER_ICON_RADIUS = (RIGHT_MARGIN - LEFT_MARGIN)/48; // 48 is a good number
-			TOUCH_SENSITIVITY = PLAYER_ICON_RADIUS*1.5f;
+			TOP_MARGIN = Math.round(60/DENSITY);
+			FIELD_LINE_WIDTHS = Math.round(4/DENSITY);
+			TOP_ANDROID_BAR = Math.round(50*DENSITY);
+			FIELD_HEIGHT = SCREEN_HEIGHT - TOP_MARGIN*3 - TOP_ANDROID_BAR;
+			BOTTOM_MARGIN = TOP_MARGIN + FIELD_HEIGHT;
+			PIXELS_PER_YARD = FIELD_HEIGHT/45f; // 45 yards on the field
+			PLAYER_ICON_RADIUS = (RIGHT_MARGIN - LEFT_MARGIN)/50; // 50 is a good number
+			TOUCH_SENSITIVITY = Math.round(PLAYER_ICON_RADIUS*1.5f);
 			BUTTON_Y_VALUE = SCREEN_HEIGHT - TOP_MARGIN;
 			
 			drawField = true;
@@ -205,6 +207,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			putOnTopOfOtherPlayer = false;
 			addingPlayer = false;
 			clickingButton = false;
+			clickingPathButton = false;
+			clickingRouteButton = false;
 			
 			createdPlayersPicture = new Picture();
 			fieldPicture = new Picture();
@@ -212,7 +216,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			createdPlayersCanvas = createdPlayersPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
 			fieldCanvas = fieldPicture.beginRecording(SCREEN_WIDTH, SCREEN_HEIGHT);
 				
-			bitmap = Bitmap.createBitmap((int)(RIGHT_MARGIN-LEFT_MARGIN), (int)(FIELD_HEIGHT), Bitmap.Config.ARGB_8888);
+			bitmap = Bitmap.createBitmap(RIGHT_MARGIN-LEFT_MARGIN, FIELD_HEIGHT, Bitmap.Config.ARGB_8888);
 			bitmapCanvas = new Canvas(bitmap);
 			
 			fieldForCreatePlayer = new Field();
@@ -236,24 +240,24 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 				// 18 = length of the hash marks in pixels 
 				DrawingUtils.drawField(LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
-						2/DENSITY, 18/DENSITY, fieldCanvas, paint);
+						Math.round(2/DENSITY), Math.round(18/DENSITY), fieldCanvas, paint);
 				fieldPicture.endRecording();
 				drawField = false;
 			}
 			c.drawPicture(fieldPicture);
 			
-			DrawingUtils.drawRoutes(field, 0, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, c, paint, PIXELS_PER_YARD);
+			DrawingUtils.drawRoutes(field, 0, TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, c, paint, PIXELS_PER_YARD, DENSITY);
 	
 			if (drawCreatedPlayers)
 			{
-				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, DENSITY, TOP_ANDROID_BAR, 
+				BUTTON_X_VALUE = DrawingUtils.drawCreatePlayers(fieldForCreatePlayer, createdPlayersCanvas, paint, TOP_ANDROID_BAR, 
 						PLAYER_ICON_RADIUS, BUTTON_Y_VALUE);
 				createdPlayersPicture.endRecording();
 				drawCreatedPlayers = false;
 			}
 			c.drawPicture(createdPlayersPicture);
 			
-			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
+			DrawingUtils.drawPlayers(field, 0, TOP_ANDROID_BAR, canvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS);
 			
 			DrawingUtils.drawButtons(canvas, paint, DENSITY, TOP_ANDROID_BAR, TOP_MARGIN, PIXELS_PER_YARD, playerRoute, playerPath, FIELD_LINE_WIDTHS, 
 					PLAYER_ICON_RADIUS, BUTTON_Y_VALUE, BUTTON_X_VALUE);
@@ -266,11 +270,11 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			// 2 = out of bounds spacing, the number of pixels between out of bounds and the hash mark
 			// 18 = length of the hash marks in pixels 
 			DrawingUtils.drawField(0, RIGHT_MARGIN-LEFT_MARGIN, 0, BOTTOM_MARGIN-TOP_MARGIN, DENSITY, FIELD_LINE_WIDTHS, PIXELS_PER_YARD, 
-					2/DENSITY, 18/DENSITY, bitmapCanvas, paint);
+					Math.round(2/DENSITY), Math.round(18/DENSITY), bitmapCanvas, paint);
 			
-			DrawingUtils.drawRoutes(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD);
+			DrawingUtils.drawRoutes(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, FIELD_LINE_WIDTHS, bitmapCanvas, paint, PIXELS_PER_YARD, DENSITY);
 			
-			DrawingUtils.drawPlayers(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS, DENSITY);
+			DrawingUtils.drawPlayers(field, LEFT_MARGIN, TOP_MARGIN + TOP_ANDROID_BAR, bitmapCanvas, paint, playerIndex, selectionColor, PLAYER_ICON_RADIUS);
 			
 			bitmapCanvas.drawBitmap(bitmap, 0, 0, paint);
 		}
@@ -284,23 +288,20 @@ public class EditorActivity extends Activity implements OnClickListener  {
 			case MotionEvent.ACTION_DOWN:
 				boolean[] returnedFlags = new boolean[3];
 				returnedFlags = DrawingUtils.actionDown(field, fieldForCreatePlayer, TOUCH_SENSITIVITY, x, y, playerIndex, playerRoute, 
-						playerPath, PLAYER_ICON_RADIUS, BUTTON_Y_VALUE, BUTTON_X_VALUE);
+						playerPath, PLAYER_ICON_RADIUS, BUTTON_Y_VALUE, BUTTON_X_VALUE, FIELD_LINE_WIDTHS);
 				moreThanElevenPlayers = returnedFlags[0];
 				addingPlayer = returnedFlags[1];
-				clickingButton = returnedFlags[2];
+				clickingPathButton = returnedFlags[2];
+				clickingRouteButton = returnedFlags[3];
+				clickingButton = clickingPathButton || clickingRouteButton;
 				
-				if (clickingButton)
+				if (clickingPathButton)
 				{
-					float buttonLowerValue = BUTTON_Y_VALUE - PLAYER_ICON_RADIUS;
-					float buttonUpperValue = BUTTON_Y_VALUE + PLAYER_ICON_RADIUS;
-					if (x >= BUTTON_X_VALUE && x <= BUTTON_X_VALUE+5*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
-					{
-						EditorActivity.toggleSolidButton();
-					}
-					else if (x >= BUTTON_X_VALUE+6*PLAYER_ICON_RADIUS && x <= BUTTON_X_VALUE+11*PLAYER_ICON_RADIUS && y >= buttonLowerValue && y <= buttonUpperValue)
-					{
-						EditorActivity.toggleArrowButton();
-					}
+					EditorActivity.toggleSolidButton();
+				}
+				else if (clickingRouteButton)
+				{
+					EditorActivity.toggleArrowButton();
 				}
 				if (playerIndex != -1)
 				{	
@@ -407,6 +408,8 @@ public class EditorActivity extends Activity implements OnClickListener  {
 				movePlayer = false;
 				addingPlayer = false;
 				clickingButton = false;
+				clickingPathButton = false;
+				clickingRouteButton = false;
 				invalidate(); // redraw
 				break;
 			case MotionEvent.ACTION_POINTER_DOWN:
@@ -503,7 +506,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		}
 
 		public static void flipField() {
-			field.flip((int)(LEFT_MARGIN + RIGHT_MARGIN));
+			field.flip(LEFT_MARGIN + RIGHT_MARGIN);
 		}
 	}	
 	//used for database to get the field object.
