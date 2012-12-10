@@ -3,6 +3,7 @@ package com.example.digplay;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 import com.businessclasses.Constants;
@@ -61,17 +62,17 @@ public class PlayViewActivity extends Activity implements OnItemClickListener, O
 		ArrayList<String> attachmentPath = new ArrayList<String>();
 		for (int att = 0; att < attachments.size(); att++) 
 		{
-
-			attachmentPath.add(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
-			File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(att)).getText().toString() + ".jpeg");
-			
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
-			fos.close();
-
+			File myFile = new File("/sdcard/DCIM/Play/temp.jpeg");
+			myFile.setWritable(true);
+	        FileOutputStream myOutWriter =new FileOutputStream(myFile);
+	        myOutWriter.write(DigPlayDB.getInstance(getBaseContext()).getImage(attachments.get(att)));
+	        myOutWriter.flush();
+	        myOutWriter.close();
+	        myFile.setReadable(true);
+	        attachmentPath.add(myFile.getAbsolutePath());
 		}
 
-		EmailPlaybook.EmailWithMultipleAttachments(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
+		EmailPlaybook.EmailAttachment(this, "krebsba4@gmail.com", subject, emailText, attachmentPath);
 	}
 	
 	

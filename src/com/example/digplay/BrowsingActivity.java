@@ -1,9 +1,12 @@
 package com.example.digplay;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -108,26 +111,34 @@ public class BrowsingActivity extends Activity implements OnClickListener {
 	}
 
 	private void email() throws IOException {
-		String emailText = "This email includes the following Play Types: " +(String)"playSort.getSelectedItem()" + 
-				"\nFrom the gameplan: ";
-		String subject = (String)"playSort.getSelectedItem()" + " from ";
+		String emailText = "This play was sent to you from the playbook android app.";
+		String subject = "Play: " + playName.getText();
 		
-		File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/", ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		//File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
 		
-		file.setWritable(true);
-		boolean canWrite = file.canWrite();
-		
+		//file.setWritable(true);
+		//FileOutputStream fos = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
 		
 		
-		FileOutputStream fos = new FileOutputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/", ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg"));
-		fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
-		fos.close(); 
+		//fos.write(DigPlayDB.getInstance(getBaseContext()).getImage(((TextView)findViewById(R.id.browsing_play_name)).getText().toString()));
+		//fos.close(); 
+		//File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/playbook/" + ((TextView)findViewById(R.id.browsing_play_name)).getText().toString() + ".jpeg");
+		//f.setReadable(true);
+		//URI attachment = f.toURI();
 		
-		file.setReadable(true);
-		URI attachment = file.toURI();
-		EmailPlaybook.EmailWithSingleAttachment(this, "krebsba4@gmail.com", subject, emailText, attachment);
+		File myFile = new File("/sdcard/DCIM/Play/temp.jpeg");
+		myFile.setWritable(true);
+        FileOutputStream myOutWriter =new FileOutputStream(myFile);
+        myOutWriter.write(DigPlayDB.getInstance(getBaseContext()).getImage(playNameList.get(counter)));
+        myOutWriter.flush();
+        myOutWriter.close();
+        myFile.setReadable(true);
+        ArrayList<String> attachment = new ArrayList<String>();
+        attachment.add(myFile.getAbsolutePath());
+        
+		EmailPlaybook.EmailAttachment(this, "digital-playbook@googlegroups.com", subject, emailText, attachment);
 		
-		file.delete();
+		//myFile.delete();
 	}
 	
 	private void setButtons() {
