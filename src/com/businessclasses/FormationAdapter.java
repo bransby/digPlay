@@ -2,6 +2,7 @@ package com.businessclasses;
 
 import java.util.ArrayList;
 
+import com.database.DigPlayDB;
 import com.example.digplay.R;
 
 import android.content.Context;
@@ -42,7 +43,8 @@ public class FormationAdapter extends ArrayAdapter<Formation>{
             holder = (ContactHolder)row.getTag();
         }
         Formation formation = formations.get(position);
-        holder.formationIcon.setImageResource(R.drawable.field);
+        //holder.formationIcon.setImageResource(R.drawable.field);
+        holder.formationIcon.setImageBitmap(DigPlayDB.getInstance(context).getFormationImage(formation.getName()));
         holder.formationName.setText(formation.getName());
         row.setBackgroundColor(Color.WHITE);
         return row;

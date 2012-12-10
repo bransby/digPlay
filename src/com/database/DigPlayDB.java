@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.util.Log;
 
@@ -70,12 +71,20 @@ public final class DigPlayDB extends Application{
 		imageConfig.common().objectClass(Image.class).cascadeOnUpdate(true);
 		imageConfig.common().objectClass(Image.class).cascadeOnDelete(true);
 		imageConfig.common().add(new TransparentActivationSupport());
+		imageConfig.common().objectClass(Image.class).objectField("_playName").cascadeOnActivate(true);
 		
 		EmbeddedConfiguration formationConfig =  Db4oEmbedded.newConfiguration();
-		imageConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
-		imageConfig.common().objectClass(Formation.class).indexed(true);
-		imageConfig.common().objectClass(Formation.class).cascadeOnUpdate(true);
-		imageConfig.common().objectClass(Formation.class).cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").indexed(true);
+		formationConfig.common().objectClass(Formation.class).indexed(true);
+		formationConfig.common().objectClass(Formation.class).cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnActivate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").indexed(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnDelete(true);
+		formationConfig.common().objectClass(Formation.class).objectField("image").cascadeOnActivate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnUpdate(true);
+		formationConfig.common().objectClass(Formation.class).objectField("formationName").cascadeOnDelete(true);
 		
 		
 		EmbeddedConfiguration gamePlanConfig =  Db4oEmbedded.newConfiguration();
@@ -157,10 +166,26 @@ public final class DigPlayDB extends Application{
 	
 	public ArrayList<String> getFormationNames(){
 		ArrayList<String> temp = new ArrayList<String>();
+		Formation obj = new Formation();
 		
-		ObjectSet result = formationDB.queryByExample(new Formation());
+		ObjectSet result = formationDB.queryByExample(obj);
 		while(result.hasNext()){
 			temp.add(((Formation)result.next()).getName());
+		}
+		return temp;
+	}
+	
+	public Bitmap getFormationImage(String formationName){
+		Bitmap temp = null;
+		Formation found = null;
+		Formation obj = new Formation();
+		obj.changeName(formationName);
+		
+		ObjectSet result = formationDB.queryByExample(obj);
+		if(result.hasNext()){
+			found = (Formation) result.next();
+			temp = BitmapFactory.decodeByteArray(found.getImage(), 0, found.getImage().length);
+			temp.createScaledBitmap(temp, 128, 64, true);
 		}
 		return temp;
 	}
