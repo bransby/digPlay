@@ -43,8 +43,8 @@ public class FormationAdapter extends ArrayAdapter<Formation>{
             holder = (ContactHolder)row.getTag();
         }
         Formation formation = formations.get(position);
-        //holder.formationIcon.setImageResource(R.drawable.field);
-        holder.formationIcon.setImageBitmap(DigPlayDB.getInstance(context).getFormationImage(formation.getName()));
+        holder.formationIcon.setImageResource(R.drawable.field);
+        //holder.formationIcon.setImageBitmap(DigPlayDB.getInstance(context).getFormationImage(formation.getName()));
         holder.formationName.setText(formation.getName());
         row.setBackgroundColor(Color.WHITE);
         return row;
