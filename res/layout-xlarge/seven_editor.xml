@@ -1,56 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    
-    <view class="com.example.digplay.EditorActivity$DrawView"
-        android:id="@+id/DrawView"
-		android:layout_width="wrap_content" 
-		android:layout_height="wrap_content"/>
-    
-    <Button
-        android:id="@+id/save"
-        android:layout_width="50dp"
-        android:layout_height="50dip"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="40dip"
-        android:layout_marginTop="7dip"
-        android:onClick="onClick"
-        android:textSize="30dp" />
-
-    <Button
-        android:id="@+id/editor_trash_can"
-        android:layout_width="100dip"
-        android:layout_height="65dip"
-        android:layout_alignBottom="@+id/save"
-        android:layout_alignParentLeft="true"
-        android:layout_marginLeft="40dip"
-        android:layout_marginTop="7dip"
-        android:background="@android:color/transparent" />
-
-    <Button
-        android:id="@+id/edi_clear_player_route"
-        android:layout_width="150dip"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="650dip"
-        android:layout_marginLeft="1100dp"
-        android:text="Clear Player Route" />
-
-    <Button
-        android:id="@+id/edi_flip_button"
-        android:layout_width="125dip"
-        android:layout_height="50dip"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="650dip"
-        android:layout_marginLeft="950dp"
-        android:background="@drawable/flip"
-        android:text="Flip play" />
-        
-</RelativeLayout>
-
