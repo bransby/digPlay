@@ -575,7 +575,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		if(!lineOfScrimmage)return;
 		Builder alert = new AlertDialog.Builder(context);
 		alert.setTitle("Caution");
-		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to turn off warning.");
+		alert.setMessage("You have placed a player on the other side of the line of scrimmage. Click ignore to disregard the warning.");
 		alert.setPositiveButton("Whoops, my mistake", new DialogInterface.OnClickListener() {	
 			public void onClick(DialogInterface dialog, int which) {
 				field.getAllPlayers().remove(playerIndex);

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_height="fill_parent"
+    android:background="@drawable/cu_stadium"
+    android:orientation="vertical" >
     
     <view class="com.example.digplay.EditorActivity$DrawView"
         android:id="@+id/DrawView"
@@ -62,7 +62,6 @@
         android:layout_alignParentLeft="true"
         android:layout_marginTop="650dip"
         android:layout_marginLeft="950dp"
-        android:background="@drawable/flip"
         android:text="Flip play" />
         
 </RelativeLayout>
