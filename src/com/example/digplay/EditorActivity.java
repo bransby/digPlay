@@ -81,14 +81,7 @@ public class EditorActivity extends Activity implements OnClickListener  {
 		SCREEN_HEIGHT = getResources().getDisplayMetrics().heightPixels;
 		SCREEN_WIDTH = getResources().getDisplayMetrics().widthPixels;
 		super.onCreate(savedInstanceState);
-		if (SCREEN_HEIGHT > 600)
-		{
-			setContentView(R.layout.editor);
-		}
-		else
-		{
-			setContentView(R.layout.seven_editor);
-		}
+		setContentView(R.layout.editor);
 
 		arrowRoute = true; // default route is an arrow
 		solidPath = true; // default path is an arrow
