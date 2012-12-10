@@ -10,6 +10,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Path;
 import android.util.Log;
 
@@ -170,6 +171,21 @@ public final class DigPlayDB extends Application{
 		ObjectSet result = formationDB.queryByExample(obj);
 		while(result.hasNext()){
 			temp.add(((Formation)result.next()).getName());
+		}
+		return temp;
+	}
+	
+	public Bitmap getFormationImage(String formationName){
+		Bitmap temp = null;
+		Formation found = null;
+		Formation obj = new Formation();
+		obj.changeName(formationName);
+		
+		ObjectSet result = formationDB.queryByExample(obj);
+		if(result.hasNext()){
+			found = (Formation) result.next();
+			temp = BitmapFactory.decodeByteArray(found.getImage(), 0, found.getImage().length);
+			temp.createScaledBitmap(temp, 128, 64, true);
 		}
 		return temp;
 	}
